@@ -5269,8 +5269,6 @@ def send_email(filters=''):
         addresseeType = 2 # 2 for clients
         new_html = email_text(content, messageType, refID, addresseeType)
 
-        print(new_html)
-
         data = {
             "data": new_html,
             "langPrefix": session.get('lang', 'en'),
