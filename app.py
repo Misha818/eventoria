@@ -5188,7 +5188,7 @@ def transfer_funds(stuffID=0):
 @app.route("/send-email/<filters>", methods=['GET', 'POST'])
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
-@validate_request
+# @validate_request
 def send_email(filters=''):
     newCSRFtoken = generate_csrf()
     if request.method == "GET":
@@ -5268,6 +5268,8 @@ def send_email(filters=''):
         refID = get_create_email_id(request.form.get('to'))
         addresseeType = 2 # 2 for clients
         new_html = email_text(content, messageType, refID, addresseeType)
+
+        print(new_html)
 
         data = {
             "data": new_html,

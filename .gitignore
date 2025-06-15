@@ -13,3 +13,5 @@ venv/
 ToDo.txt
 
 gunicorn.txt
+
+/static/images/uploads/
