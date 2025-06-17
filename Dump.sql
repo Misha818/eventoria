@@ -544,14 +544,14 @@ VALUES
 INSERT INTO `rol` (`Rol`, `ActionIDs`, `Status`)
 VALUES 
     ('Affiliate', '33,74,75,76,77,78,81', 1),
-    ('Editor', '33,1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,22,23,24,25,34,35,36,37,38,39,41,42,43,44,45,46,81', 1),
-    ('Manager', '33,15,16,17,18,19,20,40,59,60,61,62,66,67,81', 1),
-    ('Sales AND Marketing', '47,48,49,50,51,52,53,54,55,56,57,58,59,62,81', 1),
-    ('HR', '26,27,28,29,63,69,64,65,68,70,71,72,73,81', 1),
-    ('CEO', '33,30,31,32,79,80,81', 1);
+    ('Editor', '33,1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,22,23,24,25,34,35,36,37,38,39,41,42,43,44,45,46,81,82', 1),
+    ('Manager', '33,15,16,17,18,19,20,40,59,60,61,62,66,67,81,82', 1),
+    ('Sales AND Marketing', '47,48,49,50,51,52,53,54,55,56,57,58,59,62,81,82,83', 1),
+    ('HR', '26,27,28,29,63,69,64,65,68,70,71,72,73,81,82', 1),
+    ('CEO', '33,30,31,32,79,80,81,82', 1);
 
 
--- If ActionType = 1 show on dushboard, 2 => actions with POST requests.
+-- If ActionType = 1 show on dushboard, 2 => actions with POST requests and edits  that we do not show as a botton on the dashboard.
 INSERT INTO `actions` (`Action`, `ActionDir`, `ActionName`, `ActionGroup`, `ActionType`, `Img`)
 VALUES 
     ('products', 'products', 'Products', 1, 1, 'fas fa-shopping-basket'),    
@@ -650,7 +650,11 @@ VALUES
     ('positions', 'positions', 'Positions', 16, 1, 'fas fa-chair'),
     ('edit_position', 'edit-position/', 'Edit Positions', 16, 2, ''),
 
-    ('edit_profile', 'edit-profile/', 'Edit Profile', 17, 2, '')
+    ('edit_profile', 'edit-profile/', 'Edit Profile', 17, 2, ''),
+
+    ('setroll', 'setroll/', 'Set role', 18, 2, ''),
+
+    ('get_chart_data', 'get-chart-data', 'Get chart data', 19, 2, '')
     ;
 
     INSERT INTO `position` (`Position`, `rolIDs`, `Status`)

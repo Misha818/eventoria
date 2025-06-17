@@ -78,24 +78,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
+    # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/0",  # Use Redis storage
+    storage_uri="memory://",  # explicitly using in-memory storage
     strategy="fixed-window"
 )
+
+# Initialize limiter with redis storage (for production)
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#    # default_limits=["200 per day", "50 per hour"],
+#     default_limits=[],
+#     storage_uri="redis://localhost:6379/0",  # Use Redis storage
+#     strategy="fixed-window"
+# )
 
 
 defLang = getDefLang()
@@ -5188,7 +5188,7 @@ def transfer_funds(stuffID=0):
 @app.route("/send-email/<filters>", methods=['GET', 'POST'])
 @app.route("/send-email", methods=['GET', 'POST'])
 @login_required
-# @validate_request
+@validate_request
 def send_email(filters=''):
     newCSRFtoken = generate_csrf()
     if request.method == "GET":
@@ -5308,29 +5308,16 @@ def send_email(filters=''):
         "Content-Type": "application/json"
     }
     # resp = requests.post(SMAIL_API, headers=headers, json=data)
+
     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
 
-    print('Response from SMAIL API:', resp.status_code, resp.text)
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
     if resp.status_code == 200:
         return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
     else:
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
-        # msg_id = send_email_mailgun(credentials)
-        # if msg_id.get('emailID'):
-        #     emailID = msg_id.get('emailID')[1:-1]
-        #     dst = check_delivery_status(emailID) #returns Bool
-        #     if dst: 
-        #         return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
-        #     else:
-        #         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-        # else:
-        #     return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-
-# Event: delivered, Timestamp: 1745149909.2146144
-
-
+ 
 # Subproduct situation and situations adding function
 @app.route("/add_sps", methods=['POST'])
 @login_required
@@ -7038,8 +7025,9 @@ ORDER BY `product`.`Order`, `product_type`.`Order`;   """
     
     return jsonify({'status': "1", 'data': result['data'], 'newCSRFtoken': newCSRFtoken})
 
+
 @app.route("/get-chart-data", methods=["POST"])
-# @login_required
+@login_required
 @validate_request
 def get_chart_data():
  
