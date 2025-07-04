@@ -26,8 +26,6 @@
         width: inherit!important;
         padding: unset!important;
     }
-
-
   </style>  
 
 {% endblock %}
@@ -147,8 +145,19 @@
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('click', function(e) {
         const collapseElement = card.querySelector('.collapse-accordion');
+        if (collapseElement.classList.contains('show')) {
+            $(collapseElement).collapse('toggle');
+        } else {
+            // Collapse any other open accordion items
+            let openElement = document.querySelector('.collapse-accordion.show');
+            if (openElement) {
+                $(openElement).collapse('toggle'); // Correct way to call jQuery collapse
+            }
+            $(collapseElement).collapse('toggle');
+        }
+
         // Use jQuery's collapse toggle method (Bootstrap relies on jQuery)
-        $(collapseElement).collapse('toggle');
+        // $(collapseElement).collapse('toggle');
       });
     });
   </script>
