@@ -3630,6 +3630,9 @@ def add_teammate():
         sqlValTuple = ()
         result = sqlSelect(sqlQuery, sqlValTuple, True)
 
+        for row in result['data']:
+            row['Position'] = gettext(row['Position'])
+
         sideBar = side_bar_stuff()
         return render_template('add-teammate.html', result=result, sideBar=sideBar, languageID=languageID, current_locale=get_locale())
 
@@ -5079,6 +5082,7 @@ def transfers(filters):
                         `position`.`Position`
                     FROM `partner_payments`
                         LEFT JOIN `notes` ON `notes`.`refID` = `partner_payments`.`ID`
+                            AND `notes`.`addressee_type` = 3
                         LEFT JOIN `stuff` ON `stuff`.`ID` = `partner_payments`.`affiliateID`
                         LEFT JOIN `position` ON `position`.`ID` = `stuff`.`PositionID`
                     {where}
@@ -5088,7 +5092,7 @@ def transfers(filters):
         
         result = sqlSelect(sqlQuery, sqlValTuple, True)
         resultAff = get_affiliates()
-        
+
         numRows = totalNumRows('partner_payments', where, sqlValTuple)
 
         sideBar = side_bar_stuff()
@@ -5122,6 +5126,7 @@ def affiliate_transfers(page):
                         `notes`.`note`
                     FROM `partner_payments`
                         LEFT JOIN `notes` ON `notes`.`refID` = `partner_payments`.`ID`
+                            AND `notes`.`addressee_type` = 3
                     {where}
                     LIMIT {rowsToSelect}, {int(PAGINATION)};
                     """

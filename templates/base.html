@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
     {% if rolls | length > 0 %}
@@ -137,6 +136,17 @@
       </div>
       
     </div>
+    {% else %}
+      <div class="flex avatar-stuff" 
+        style="gap: 10px;
+          margin-bottom: 20px;
+          width: 100%;
+          padding: 12px;
+          background-color: #2A9D8F;
+      ">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="{{ _('Tools') }}" class="avatar" style="width: 70px; height: 70px;">
+        <span style="font-size: 20px; font-weight: bold; color: #ffffff;"></span>
+      </div>
     {% endif %}
     
     {% block content %}
