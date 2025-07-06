@@ -2576,4 +2576,6 @@ msgid "Edit Positions"
 msgstr "Խմբագրել պաշտոնը"
 msgid "recipient"
 msgstr "ստացող"
+msgid "Affiliate Order Details"
+msgstr "Պատվերի մանրամասներ"
 

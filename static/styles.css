@@ -1143,10 +1143,10 @@ button[type="submit"] {
 
 .filter-button:hover {
   cursor: pointer;
-  color: white;
-  background-color: #E76F51;
-
+  /* color: white; */
+  /* background-color: #E76F51; */
 }
+
 
 .tr-no-data {
   display: inline-block;

@@ -117,7 +117,7 @@
         {% set selected = 'selected' %}
         {% endif %}
         
-        <option value="{{ row['ID'] }}"  {{ selected }}>{{ row['Initials'] + ' ' + row['Position'] }}</option>
+        <option value="{{ row['ID'] }}"  {{ selected }}>{{ row['Initials'] + ' ' + _(row['Position']) }}</option>
         {% endfor %}
         
         {% endif %} 
