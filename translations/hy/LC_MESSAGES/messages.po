@@ -1882,7 +1882,7 @@ msgstr "Խմբագրել խանութը"
 
 #: templates/emails.html:3
 msgid "Emails"
-msgstr "Էլ. փոստի հասցեներ"
+msgstr "Էլ. նամակներ"
 
 #: templates/emails.html:112
 msgid "Filter by email status"
