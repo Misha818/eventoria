@@ -1054,7 +1054,7 @@ def orders(filter):
         where += f"""AND `clients`.`LastName` LIKE '%' %s """
     
     if filters.get('phone') is not None:
-        where += f"""AND `phones`.`phone` = %s """
+        where += f"""AND `phones`.`phone` LIKE CONCAT('%', %s, '%') """
     
     if filters.get('email') is not None:
         where += f"""AND `emails`.`email` = %s """

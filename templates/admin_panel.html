@@ -508,10 +508,15 @@
                   }
 
                   const productSelect = document.getElementById('products');
-                  response.chartData.products.forEach(product => {
+                  response.chartData.products.forEach(pr => {
                     const option = document.createElement('option');
-                    option.value = product.ID;
-                    option.textContent = product.Title;
+                    option.value = pr.ID;
+                    option.textContent = pr.Title;
+                    if (loadPie === false) {
+                      if (pr.ID == product) {
+                        option.selected = true;
+                      }
+                    }
                     productSelect.appendChild(option);
                   });
 
