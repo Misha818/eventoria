@@ -67,7 +67,7 @@ tr:nth-child(even) {
   {% endif %}
   {% set editUrl = 'edit-position/' + row['ID']|string %}
     <tr>
-      <td>{{ row['Position'] }}</td>
+      <td>{{ _(row['Position']) }}</td>
       <td>{{ status }}</td>
       <td>
         <a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('View/Edit') }}"><i class="fa-solid fa-pen-to-square" style="font-size: 20px; color: #E76F51;"></i></a>

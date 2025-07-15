@@ -3333,6 +3333,8 @@ def roles():
                """
     sqlValTuple = ()
     result = sqlSelect(sqlQuery, sqlValTuple, True)
+    for row in result['data']:
+            row['Rol'] = gettext(row['Rol'])
 
     sideBar = side_bar_stuff()
 
@@ -3495,6 +3497,8 @@ def edit_position(positionID):
                 """
         sqlValTupleRols = ()
         resultRols = sqlSelect(sqlQueryRols, sqlValTupleRols, True)
+        for row in resultRols['data']:
+            row['Name'] = gettext(row['Name'])
         sideBar = side_bar_stuff()
 
         return render_template('edit-position.html', row=result['data'][0], sideBar=sideBar, resultActions=resultRols, languageID=languageID, current_locale=get_locale())
@@ -4131,7 +4135,7 @@ def edit_role(RoleID):
         sqlQuery = "SELECT `ID`, `Rol`, `ActionIDs` FROM `rol` WHERE `ID` = %s;"
         sqlValTuple = (RoleID,)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
-        
+         
         if result['length'] != 1:
             return render_template('error.html', current_locale=get_locale()) 
 
@@ -4145,6 +4149,9 @@ def edit_role(RoleID):
                 """
         sqlValTupleActions = ()
         resultActions = sqlSelect(sqlQueryActions, sqlValTupleActions, True)
+        # for row in resultActions['data']:
+        #     row['Name'] = gettext(row['Name'])
+      
         sideBar = side_bar_stuff()
 
         return render_template('edit-role.html', row=result['data'][0], sideBar=sideBar, resultActions=resultActions, languageID=languageID, current_locale=get_locale())
