@@ -13,6 +13,9 @@ venv/
 ToDo.txt
 
 gunicorn.txt
+nginx-conf.txt
 
 /static/images/uploads/
 /static/images/
+
+Project Purpose and Context.docx
