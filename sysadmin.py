@@ -16,6 +16,8 @@ import string
 import time
 import requests
 import cssutils
+import base64
+import imghdr
 
 
 def with_conn(f):
@@ -560,25 +562,66 @@ def get_meta_tags(content):
     return metaTags
 
 
+# # The patterns we want to catch
+# BLACKLIST_PATTERNS = [
+#     # SQL keywords / operators
+#     r"(?i)\b(select|update|delete|insert|drop|alter|union|exec)\b",
+#     r"--",                     # SQL comment
+#     # r";",                      # statement terminator
+#     r";(?=\s*(select|update|delete|insert|drop)\b|$)", # statement terminator
+#     # XSS patterns
+#     r"(?i)<\s*script",         # <script> tag
+#     r"(?i)on\w+\s*=",          # event handlers like onload=
+#     r"(?i)javascript:",        # javascript: URI
+#     # Shell-injection
+#     r"`",                      # backticks
+#     r"\$\(",                   # $(…) subshell
+#     r"\|\|", r"\&\&",          # logical or/and in shell
+# ]
+
+# # precompile
+# COMPILED = [re.compile(p) for p in BLACKLIST_PATTERNS]
+
+# def contains_bad_pattern(value: str) -> bool:
+#     """Returns True if any blacklist pattern is found in value."""
+#     for pat in COMPILED:
+#         if pat.search(value):
+#             return True
+#     return False
+
+
+# def validate_request(f):
+#     @wraps(f)
+#     def wrapper(*args, **kwargs):
+#         ignore_keys = {"cf-turnstile-response"}
+#         for key, values in request.values.lists():
+#             if key in ignore_keys:
+#                 continue
+#             for v in values:
+#                 if isinstance(v, str) and contains_bad_pattern(v):
+#                     abort(400, description=gettext('Something went wrong. Please try again!'))
+#         return f(*args, **kwargs)
+#     return wrapper
+
+
 # The patterns we want to catch
 BLACKLIST_PATTERNS = [
     # SQL keywords / operators
     r"(?i)\b(select|update|delete|insert|drop|alter|union|exec)\b",
-    r"--",                     # SQL comment
-    # r";",                      # statement terminator
-    r";(?=\s*(select|update|delete|insert|drop)\b|$)", # statement terminator
+    r"--",  # SQL comment
+    r";(?=\s*(select|update|delete|insert|drop)\b|$)",  # statement terminator
     # XSS patterns
-    r"(?i)<\s*script",         # <script> tag
-    r"(?i)on\w+\s*=",          # event handlers like onload=
-    r"(?i)javascript:",        # javascript: URI
+    r"(?i)<\s*script",  # <script> tag
+    r"(?i)on\w+\s*=",  # event handlers like onload=
+    r"(?i)javascript:",  # javascript: URI
     # Shell-injection
-    r"`",                      # backticks
-    r"\$\(",                   # $(…) subshell
-    r"\|\|", r"\&\&",          # logical or/and in shell
+    r"`",  # backticks
+    r"\$\(",  # $(…) subshell
+    r"\|\|", r"\&\&",  # logical or/and in shell
 ]
 
-# precompile
 COMPILED = [re.compile(p) for p in BLACKLIST_PATTERNS]
+ALLOWED_IMAGE_TYPES = {"jpeg", "png"}
 
 def contains_bad_pattern(value: str) -> bool:
     """Returns True if any blacklist pattern is found in value."""
@@ -587,31 +630,32 @@ def contains_bad_pattern(value: str) -> bool:
             return True
     return False
 
-# def validate_request(f):
-#     @wraps(f)
-#     def wrapper(*args, **kwargs):
-#         # combine GET & POST; use .lists() to catch multi‐valued params
-#         for key, values in request.values.lists():
-#             for v in values:
-#                 if type(v) is str:
-#                     if contains_bad_pattern(v):
-#                         # you could log key/v here for audit
-#                         abort(400, description=gettext('Something went wrong. Please try again!'))
-#                         # abort(400, description=f"Suspicious input in '{key}'")
-#         return f(*args, **kwargs)
-#     return wrapper
-
+def is_valid_base64_image(value: str) -> bool:
+    """Checks if the base64 string is a valid JPEG or PNG image."""
+    try:
+        if ',' in value:
+            _, value = value.split(',', 1)  # Remove data URI prefix if present
+        decoded = base64.b64decode(value, validate=True)
+        img_type = imghdr.what(None, decoded)
+        return img_type in ALLOWED_IMAGE_TYPES
+    except (ValueError, TypeError):
+        return False
 
 def validate_request(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         ignore_keys = {"cf-turnstile-response"}
+
         for key, values in request.values.lists():
             if key in ignore_keys:
                 continue
             for v in values:
-                if isinstance(v, str) and contains_bad_pattern(v):
-                    abort(400, description=gettext('Something went wrong. Please try again!'))
+                if isinstance(v, str):
+                    # First check if it's a valid base64 image and allow it
+                    if is_valid_base64_image(v):
+                        continue
+                    if contains_bad_pattern(v):
+                        abort(400, description=gettext('Something went wrong. Please try again!'))
         return f(*args, **kwargs)
     return wrapper
 

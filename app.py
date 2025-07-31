@@ -2878,7 +2878,7 @@ def edit_product_category(RefKey):
 @validate_request
 def edit_p_c():
     newCSRFtoken = generate_csrf()
-        
+    
     spsID = 0
     if request.form.get('spsID'):
         spsID = int(request.form.get('spsID'))
