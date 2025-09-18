@@ -1,13 +1,13 @@
 -- Drop the existing database if it exists
-DROP DATABASE IF EXISTS `mmb_db`;
+DROP DATABASE IF EXISTS `eventoria_db`;
 
 -- Create the database again
-CREATE DATABASE `mmb_db`
+CREATE DATABASE `eventoria_db`
     DEFAULT CHARACTER SET utf8
     DEFAULT COLLATE utf8_general_ci;
 
 -- Select the newly created database
-USE `mmb_db`;
+USE `eventoria_db`;
 
 -- Drop tables if they exist and create them again
 DROP TABLE IF EXISTS `product`;
@@ -49,6 +49,35 @@ CREATE TABLE `product_type` (
 ) ENGINE=InnoDB;
 ALTER TABLE `product_type` AUTO_INCREMENT = 1;
 
+DROP TABLE IF EXISTS `home_slide`;
+CREATE TABLE `home_slide` (
+    `ID` INT AUTO_INCREMENT,
+    `Title` VARCHAR(255) NOT NULL,
+    `Title_Color` VARCHAR(20) NOT NULL,
+    `Subtitle` VARCHAR(255) NOT NULL,
+    `Subtitle_Color` VARCHAR(20) NOT NULL,
+    `URL` VARCHAR(255) NOT NULL,
+    `IMG` VARCHAR(255),
+    `Alt_Text` VARCHAR(255),
+    `Start_Date` DATE,
+    `Exp_Date` DATE,
+    `Order` INT,
+    `User_ID` INT,
+    `Status` INT,
+    PRIMARY KEY (`ID`)
+) ENGINE=InnoDB;
+ALTER TABLE `home_slide` AUTO_INCREMENT = 1;
+
+
+DROP TABLE IF EXISTS `home_slide_relatives`;
+CREATE TABLE `home_slide_relatives` (
+    `ID` INT AUTO_INCREMENT,
+    `HS_Ref_Key` INT,
+    `HS_ID` INT,
+    `Language_ID` INT,
+    PRIMARY KEY (`ID`)
+) ENGINE=InnoDB;
+ALTER TABLE `home_slide_relatives` AUTO_INCREMENT = 1;
 
 DROP TABLE IF EXISTS `product_type_relatives`;
 CREATE TABLE `product_type_relatives` (

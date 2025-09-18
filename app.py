@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, g, url_for
-from mmb_db import get_db, close_db
+from eventoria_db import get_db, close_db
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from products import email_text, submit_notes_text, get_pr_order, slidesToEdit, checkCategoryName, checkProductCategoryName, get_RefKey_LangID_by_link, get_article_category_images, get_product_category_images, edit_p_h, submit_reach_text, submit_product_text, add_p_c_sql, edit_p_c_view, edit_a_c_view, edit_p_c_sql, get_product_categories, get_ar_thumbnail_images, get_pr_thumbnail_images, add_product, productDetails, constructPrData, add_product_lang
-from sysadmin import validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
+from sysadmin import is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
@@ -78,24 +78,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
+    # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/0",  # Use Redis storage
+    storage_uri="memory://",  # explicitly using in-memory storage
     strategy="fixed-window"
 )
+
+# Initialize limiter with redis storage (for production)
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#    # default_limits=["200 per day", "50 per hour"],
+#     default_limits=[],
+#     storage_uri="redis://localhost:6379/0",  # Use Redis storage
+#     strategy="fixed-window"
+# )
 
 
 defLang = getDefLang()
@@ -304,7 +304,6 @@ orderStatusList = get_order_status_list()
 #     # resp = requests.post(SMAIL_API, headers=headers, json=data)
 #     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
 
-#     # print(resp)
 #     return render_template_string(resp.text)
 
 
@@ -510,7 +509,6 @@ def setlang():
         else:
             newUrl = url_for('home', _external=True) + translated_path_segment
             return redirect(newUrl)
-    print(request.referrer)
     if request.referrer:
         if 'langID' in request.referrer:
             newUrl = request.referrer.split('&langID=')[0]
@@ -598,18 +596,505 @@ def home():
         setlang()
         
     languageID = getLangID()
+    # result = sqlSelect(sqlQuery, sqlValTuple, True)
+    newCSRFtoken = generate_csrf()
+    return render_template('index.html', result=[], languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+
+@app.route('/get_home_slides', methods=["POST"])
+@validate_request
+def get_home_slides():
+
+    languageID = getLangID()
+    sqlQueryOrder = """
+        SELECT 
+            `IMG`,
+            `Alt_Text`,
+            `Title`,
+            `Title_Color`,
+            `Subtitle`,
+            `Subtitle_Color`,
+            `URL`
+        FROM `home_slide`
+            LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+        WHERE `home_slide_relatives`.`Language_ID` = %s
+            AND `Start_Date` <= CURDATE()
+            AND `Exp_Date` >= CURDATE()
+            AND `Status` = 1
+        ORDER BY `Order`;
+        """
+
+    result = sqlSelect(sqlQueryOrder, (languageID,), True)
+    
+    return jsonify({'status': "1", 'data': result['data']}), 200
+  
+@app.route('/edit-slide/<HS_Ref_Key>', methods=['GET', 'POST'])
+@validate_request
+def edit_slide(HS_Ref_Key):
+    if session.get('lang') == None:
+        setlang()
+    
+    newCSRFtoken = generate_csrf()
+    languageID = getLangID()
+    if request.method == 'GET':
+        sqlQueryOrder = """
+            SELECT 
+                `Order`
+            FROM `home_slide`
+                LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+            WHERE `home_slide_relatives`.`Language_ID` = %s
+                AND `Start_Date` <= CURDATE()
+                AND `Exp_Date` >= CURDATE()
+                AND `Status` = 1
+            ORDER BY `Order`;
+            """
+
+        resultOrder = sqlSelect(sqlQueryOrder, (languageID,), True)
+
+        sqlQuery = """
+            SELECT
+                `home_slide`.`ID`,
+                `home_slide_relatives`.`HS_Ref_Key`, 
+                `IMG`,
+                `Alt_Text`,
+                `Title`,
+                `Title_Color`,
+                `Subtitle`,
+                `Subtitle_Color`,
+                `URL`,
+                `Start_Date`,
+                `Exp_Date`,
+                `Order`,
+                `Status`
+            FROM `home_slide`
+                LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+            WHERE `home_slide_relatives`.`HS_Ref_Key` = %s
+                AND `home_slide_relatives`.`Language_ID` = %s;
+            """
+        result = sqlSelect(sqlQuery, (HS_Ref_Key, languageID), True)
+
+        if result['length'] == 0:
+            # if lang is changed insert new data into home_slide and home_slide_relatives with status 0 then call the function again
+            #Check if slide exists in other languages 
+
+            sqlQueryCheck = """
+                SELECT
+                    `home_slide`.`ID`,
+                    `home_slide_relatives`.`HS_Ref_Key`, 
+                    `IMG`,
+                    `Alt_Text`,
+                    `Title`,
+                    `Title_Color`,
+                    `Subtitle`,
+                    `Subtitle_Color`,
+                    `URL`,
+                    `Start_Date`,
+                    `Exp_Date`,
+                    `Order`,
+                    `Status`
+                FROM `home_slide`
+                    LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+                WHERE `home_slide_relatives`.`HS_Ref_Key` = %s;
+                """
+            resultCheck = sqlSelect(sqlQueryCheck, (HS_Ref_Key,), True)
+            if resultCheck['length'] > 0:
+                # Insert new record into home_slide with status 0
+                startDate = resultCheck['data'][0]['Start_Date']
+                expDate = resultCheck['data'][0]['Exp_Date']
+                order = resultCheck['data'][0]['Order']
+                titleColor = resultCheck['data'][0]['Title_Color']
+                subtitleColor = resultCheck['data'][0]['Subtitle_Color']
+
+                sqlInsertQuery = """
+                    INSERT INTO `home_slide`
+                    (`Title`, `Title_Color`, `Subtitle`, `Subtitle_Color`, `URL`, `Start_Date`, `Exp_Date`, `Order`, `User_ID`, `Status`)
+                    VALUES
+                    ("", %s, "", %s, "", %s, %s ,%s, %s, %s);
+                """
+                sqlValTuple = (titleColor, subtitleColor, startDate, expDate, order, session['user_id'], 0)
+                result = sqlInsert(sqlInsertQuery, sqlValTuple)
+                if result['status'] == 0:
+                    return render_template('error.html', current_locale=get_locale())
+                
+                insertedID = result['inserted_id']
+                sqlInsertRelQuery = """
+                    INSERT INTO `home_slide_relatives`
+                    (`HS_ID`, `HS_Ref_Key`, `Language_ID`)
+                    VALUES (%s, %s, %s);
+                """
+                sqlValTupleRel = (insertedID, HS_Ref_Key, languageID)
+                resultRel = sqlInsert(sqlInsertRelQuery, sqlValTupleRel)
+                if resultRel['status'] == 0:
+                    return render_template('error.html', current_locale=get_locale())
+                
+                 # Call the function again to get the newly inserted record
+                return redirect(url_for('edit_slide', HS_Ref_Key=HS_Ref_Key))
+
+            else:
+                return render_template('error.html', current_locale=get_locale())
+        
+        sqlQueryIMG = """SELECT `IMG`, `Alt_Text` FROM `home_slide`
+                        LEFT JOIN `home_slide_relatives` 
+                            ON `home_slide_relatives`.`HS_ID` = `home_slide`.`ID` 
+                        WHERE `home_slide_relatives`.`HS_Ref_Key` = %s
+                            AND `home_slide`.`ID` != %s;"""
+        
+        resultIMG = sqlSelect(sqlQueryIMG, (HS_Ref_Key, result['data'][0]['ID']), False)
+
+        return render_template('edit_slide.html', result=result, orderLength=resultOrder['length'], resultIMG=resultIMG, languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
+    
+    if request.method == 'POST':
+        slideID = request.form.get('slideID')
+        state = request.form.get('state')
+        oldOrder = int(request.form.get('oldOrder'))
+
+        if not slideID or not slideID.isdigit() or not state:
+            answer = gettext('Something went wrong. Please try again! 1')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+        
+        state = json.loads(state)
+        title = request.form.get('title', "")
+        titleColor = request.form.get('titleColor', "")
+        subtitle = request.form.get('subtitle', "")
+        subtitleColor = request.form.get('subtitleColor', "")
+        status = int(request.form.get('status'))
+        
+        eventLink = request.form.get('eventLink')
+        if not eventLink:
+            answer = gettext('Event URL is required')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+        
+        if not is_valid_url(eventLink):
+            answer = gettext('Please enter a valid URL')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+
+        startDate = request.form.get('startDate')
+        expDate = request.form.get('expDate')
+
+        if not startDate or not expDate:
+            answer = gettext('Start Date and Expiration Date are required')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})   
+        
+        order = int(request.form.get('order'))
+        lastOrder = int(request.form.get('last_order'))
+        altText = request.form.get('altText', '')
+
+        currentLanguage = request.form.get('languageID')
+        userID = session['user_id']
+        
+        IMG = ""
+        sqlValTuple = (title, titleColor, subtitle, subtitleColor, eventLink, altText, startDate, expDate, order, userID, status, slideID)
+            
+        if state.get('status') == 2: # New image is uploaded
+            file = request.files.get('file')
+            if not file:
+                answer = gettext('Please upload an image')
+                return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})   
+
+            uploadDir = os.path.join(app.root_path, 'static', 'images', 'uploads', 'home_slides')
+            filename = fileUpload(file, uploadDir)
+            IMG = " `IMG` = %s, "
+            sqlValTuple = (title, titleColor, subtitle, subtitleColor, eventLink, filename, altText, startDate, expDate, order, userID, status, slideID)
+            oldImageName = getFileName("IMG", "home_slide", "ID", slideID)
+            if oldImageName:
+                if checkForRedundantFiles(oldImageName, "IMG", "home_slide") == 0:
+                    removeRedundantFiles(oldImageName, uploadDir)
+        
+        if state.get('status') == 1: # Image added from another language
+            imageName = state.get('file')
+            if not imageName:
+                answer = gettext('Something went wrong. Please try again!')
+                return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+            IMG = " `IMG` = %s, "
+            sqlValTuple = (title, titleColor, subtitle, subtitleColor, eventLink, imageName, altText, startDate, expDate, order, userID, status, slideID)
+
+        sqlUpdateQuery = f"""
+            UPDATE `home_slide` SET
+            `Title` = %s,
+            `Title_Color` = %s,
+            `Subtitle` = %s,
+            `Subtitle_Color` = %s,
+            `URL` = %s,
+            {IMG}
+            `Alt_Text` = %s,
+            `Start_Date` = %s,
+            `Exp_Date` = %s,
+            `Order` = %s,
+            `User_ID` = %s,
+            `Status` = %s
+        WHERE `ID` = %s;
+        """
+
+        result = sqlUpdate(sqlUpdateQuery, sqlValTuple)
+        if result.get('status') == '-1':
+            answer = gettext('Something went wrong. Please try again!')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+        
+        # Handle slide orders if changed
+        if order != oldOrder:
+            action = " `Order` + 1 " 
+            if order > oldOrder:
+                action = " `Order` - 1 " 
+            order1, order2 = sorted([order, oldOrder])
+            sqlQuery =  f"""
+                            UPDATE `home_slide`
+                            LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+                            SET `Order` = {action}
+                            WHERE `Order` BETWEEN %s AND %s
+                                AND `home_slide`.`ID` != %s
+                                AND `home_slide_relatives`.`Language_ID` = %s
+                        """
+            sqlValTuple = (order1, order2, slideID, languageID)
+            resultUpdate = sqlUpdate(sqlQuery, sqlValTuple)
+            if resultUpdate['status'] == '-1':
+                answer = gettext('Something went wrong. Please try again!')
+                return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+        
+        return jsonify({'status': '1', 'newCSRFtoken': newCSRFtoken})
+
+
+@app.route('/get_products', methods=["POST"])
+@validate_request
+def get_products():
+    if not request.form.get('category') or not request.form.get('limit'):
+        return jsonify({'status': "0"}), 404
+    
+    limit = int(request.form.get('limit'))       
+    category = int(request.form.get('category'))       
+    languageID = getLangID()
     sqlQuery =  f"""SELECT * FROM `product` 
                     LEFT JOIN `product_relatives`
                       ON  `product_relatives`.`P_ID` = `product`.`ID`
                     WHERE `product_relatives`.`Language_ID` = %s
                     AND `Product_Status` = 2
                     ORDER BY `product`.`Order` ASC
+                    LIMIT %s, %s
                 """
     
-    sqlValTuple = (languageID,)
+    sqlValTuple = (languageID, limit, limit+5)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
   
-    return render_template('index.html', result=result, languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return jsonify({'status': "1", 'data': result['data']}), 200
+
+
+@app.route('/add-slide', methods=['GET'])
+# @login_required
+def add_slide():
+    languageID = getLangID()
+    sqlQueryOrder = """SELECT *
+        FROM `home_slide`
+        LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+        WHERE `home_slide_relatives`.`Language_ID` = %s
+            AND `Start_Date` <= CURDATE()
+            AND `Exp_Date` >= CURDATE()
+            AND `Status` = 1
+        ORDER BY `Order`;
+        """
+
+    result = sqlSelect(sqlQueryOrder, (languageID,), True)
+    
+    sideBar = side_bar_stuff()
+    return render_template('add_slide.html', sideBar=sideBar, Order=result['length'], languageID=languageID, current_locale=get_locale())
+
+
+# add_product_category client-server transaction
+@app.route('/add_slide', methods=['POST'])
+# @login_required
+@validate_request
+def add_slide_post():
+    newCSRFtoken = generate_csrf()
+    languageID = getLangID()
+
+    title = request.form.get('title', "")
+    titleColor = request.form.get('titleColor', "")
+    subtitle = request.form.get('subtitle', "")
+    subtitleColor = request.form.get('subtitleColor', "")
+    
+    eventLink = request.form.get('eventLink')
+    if not eventLink:
+        answer = gettext('Event URL is required')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+    
+    if not is_valid_url(eventLink):
+        answer = gettext('Please enter a valid URL')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+
+    startDate = request.form.get('startDate')
+    expDate = request.form.get('expDate')
+
+    if not startDate or not expDate:
+        answer = gettext('Start Date and Expiration Date are required')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})   
+    
+    file = request.files.get('file')
+    if not file:
+        answer = gettext('Please upload an image')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})   
+
+    order = int(request.form.get('order'))
+    lastOrder = int(request.form.get('last_order'))
+    altText = request.form.get('altText', '')
+
+    currentLanguage = request.form.get('languageID')
+    userID = session['user_id']
+    
+    uploadDir = os.path.join(app.root_path, 'static', 'images', 'uploads', 'home_slides')
+    filename = fileUpload(file, uploadDir)
+
+    sqlInsertQuery = """
+        INSERT INTO `home_slide`
+        (`Title`, `Title_Color`, `Subtitle`, `Subtitle_Color`, `URL`, `IMG`, `Alt_Text`, `Start_Date`, `Exp_Date`, `Order`, `User_ID`, `Status`)
+        VALUES
+        (%s, %s, %s, %s, %s, %s, %s, %s ,%s, %s, %s, %s);
+    """
+    sqlValTuple = (title, titleColor, subtitle, subtitleColor, eventLink, filename, altText, startDate, expDate, order, userID, 1)
+    result = sqlInsert(sqlInsertQuery, sqlValTuple)
+
+    if result.get('inserted_id') is None:
+        answer = gettext('Something went wrong. Please try again!')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
+    
+    refKey = int(request.form.get('refKey', '0')) # if ref key is sent then use it as this is a translation slide, otherwise create a new one as this is a new slide
+    if refKey == 0:
+        sqlQueryRefKey = "SELECT `HS_Ref_Key` FROM `home_slide_relatives` WHERE `Language_ID` = %s Order BY `HS_Ref_Key` DESC;"
+        resultRefKey = sqlSelect(sqlQueryRefKey, (currentLanguage,), True)
+        if resultRefKey['length'] == 0:
+            refKey = 1
+        else:
+            refKey = resultRefKey['data'][0]['HS_Ref_Key'] + 1
+    
+    sqlQueryRelative = """
+        INSERT INTO `home_slide_relatives` (`HS_Ref_Key`, `HS_ID`, `Language_ID`) VALUES (%s, %s, %s);
+    """
+    sqlValTuple = (refKey, result.get('inserted_id'), currentLanguage)
+    resultRelative = sqlInsert(sqlQueryRelative, sqlValTuple)
+    
+    if resultRelative.get('inserted_id') is None:
+        answer = gettext('Something went wrong. Please try again!')
+        return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
+    
+    # If the new order is less than the last order, increment the order of slides between the new and last order
+    if order < lastOrder or order == 1 == lastOrder:
+        sqlQuery =  f"""
+                        UPDATE `home_slide`
+                        LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+                        SET `Order` = `Order` + 1
+                        WHERE `Order` BETWEEN %s AND %s
+                            AND `home_slide`.`ID` != %s
+                            AND `home_slide_relatives`.`Language_ID` = %s
+                    """
+        sqlValTuple = (order, lastOrder, result.get('inserted_id'), languageID)
+        resultUpdate = sqlUpdate(sqlQuery, sqlValTuple)
+        print(resultUpdate)
+        if resultUpdate['status'] == '-1':
+            answer = gettext('Something went wrong. Please try again! 3')
+            return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+        
+    return jsonify({'status': '1', 'newCSRFtoken': newCSRFtoken}), 200
+    
+
+
+@app.route('/slides', methods=['GET', 'POST'])
+# @login_required
+@validate_request
+def slides():
+    languageID = getLangID()
+    DefLangID = getDefLang()['id']
+    newCSRFtoken = generate_csrf()
+    
+    if request.method == 'POST':
+        if request.form.get('slide-status'):
+            slideStatus = request.form.get('slide-status')
+            if slideStatus == '1':
+                condition = " AND `Status` = 1 "
+            elif slideStatus == '0':
+                condition = " AND `Status` = 0 "
+            else:
+                condition = ""
+            
+            sqlQuery =  f"""
+                    SELECT 
+                        `home_slide`.`ID`,
+                        `IMG`,
+                        `Alt_Text`,
+                        `Title`,
+                        `Title_Color`,
+                        `Start_Date`,
+                        `Exp_Date`,
+                        `Subtitle`,
+                        `Subtitle_Color`,
+                        `URL`,
+                        `home_slide_relatives`.`HS_Ref_Key`
+                    FROM `home_slide`
+                        LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+                    WHERE `home_slide_relatives`.`Language_ID` = %s
+                        AND `Start_Date` <= CURDATE()
+                        AND `Exp_Date` >= CURDATE()
+                        {condition}
+                    ORDER BY `Order`;               
+                    """
+            sqlValTuple = (languageID,)
+            result = sqlSelect(sqlQuery, sqlValTuple, True)   
+
+            return jsonify({'status': '1', 'slideData': result, 'newCSRFtoken': newCSRFtoken})
+        
+        # if request.form.get('shTP') == '1':
+        #     sqlQuery =  """SELECT 
+        #                 `product`.`ID`,
+        #                 `product`.`Thumbnail`,
+        #                 `product`.`DatePublished`,
+        #                 `product`.`Product_Status`,
+        #                 `product_relatives`.`P_Ref_Key`,
+        #                 `product`.`Title`,
+        #                 `product`.`DateModified`,
+        #                 `product_category`.`Product_Category_Name`,
+        #                 `product`.`Url`
+        #             FROM `product` 
+        #                 LEFT JOIN `product_relatives` ON  `product_relatives`.`P_ID` = `product`.`ID`
+        #                 LEFT JOIN `product_category` ON `product_category`.`Product_Category_ID` = `product`.`Product_Category_ID`
+        #             WHERE `product_relatives`.`Language_ID` = %s
+        #                  AND not find_in_set(`product_relatives`.`P_Ref_Key`, (SELECT  IFNULL(GROUP_CONCAT(`product_relatives`.`P_Ref_Key`), "") FROM `product_relatives` WHERE `product_relatives`.`Language_ID` = %s))
+        #             ORDER BY `product`.`Order` ASC                 
+        #             """
+             
+        #     sqlValTuple = (DefLangID, languageID)
+        #     resultFilters = sqlSelect(sqlQuery, sqlValTuple, True)
+        #     return jsonify({'status': '1', 'prData': resultFilters, 'newCSRFtoken': newCSRFtoken})
+
+    else:        
+        sqlQuery =  """
+                    SELECT 
+                        `home_slide`.`ID`,
+                        `IMG`,
+                        `Alt_Text`,
+                        `Title`,
+                        `Title_Color`,
+                        `Start_Date`,
+                        `Exp_Date`,
+                        `Subtitle`,
+                        `Subtitle_Color`,
+                        `URL`,
+                        `home_slide_relatives`.`HS_Ref_Key`
+                    FROM `home_slide`
+                        LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
+                    WHERE `home_slide_relatives`.`Language_ID` = %s
+                        AND `Start_Date` <= CURDATE()
+                        AND `Exp_Date` >= CURDATE()
+                        AND `Status` = 1
+                    ORDER BY `Order`;               
+                    """
+        sqlValTuple = (languageID,)
+        result = sqlSelect(sqlQuery, sqlValTuple, True)
+        sideBar = side_bar_stuff()
+        
+        if DefLangID == languageID:
+            translated = False
+        else:
+            translated = True
+
+        return render_template('slides.html', result=result, mainCurrency=MAIN_CURRENCY, translated=translated, languageID=languageID, DefLangID=DefLangID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
+
+
+
 
 @app.route('/about')
 @validate_request
@@ -884,10 +1369,6 @@ def checkout():
         
         # Get Promo Code ID
         promoID, affiliateID = [None, None]
-        # print('AAAAAAAAAAAAAAAAAAAA')
-        # print(data['promo'])
-        # print(type(data['promo']))
-        # print('AAAAAAAAAAAAAAAAAAAA')
         if data['promo'] != '':
             promodict = get_promo_code_id_affiliateID(data['promo'])
             if len(promodict) > 0:
@@ -908,17 +1389,12 @@ def checkout():
         # insert data into table buffer
         # This also checks if specified amount of product exists
         buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID)
-        # print('AAAAAAAAAAAAAAAAAAAAAAA')
-        # print(buffer)
-        # print('AAAAAAAAAAAAAAAAAAAAAAA')
         if buffer['status'] == "0":
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!') + 'sdsds', 'newCSRFtoken': newCSRFtoken})
         
         if buffer['status'] == "2":
             return jsonify({'status': "0", 'answer': gettext("Invalid Promo Code"), 'newCSRFtoken': newCSRFtoken})
         
-        # print(buffer['answer'])
-        # print('totalPrice is ', buffer['totalPrice'])
 
         amount = buffer['totalPrice']
         
@@ -2461,8 +2937,6 @@ def upload_slides():
                 if file_size > max_file_size:
                     answer = '<<' +filename + '>>' + gettext('image size is more than 5MB')
                     return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
-                print(i)
-                print(request.files.get(fileName))
                 i = i + 1
                 fileName = 'file_' + str(i)
             # End of checking the image size
@@ -4411,7 +4885,6 @@ def products():
                     """
              
             sqlValTuple = (DefLangID, languageID)
-            print(sqlValTuple)
             resultFilters = sqlSelect(sqlQuery, sqlValTuple, True)
             return jsonify({'status': '1', 'prData': resultFilters, 'newCSRFtoken': newCSRFtoken})
 
@@ -4550,8 +5023,6 @@ def store():
                     ;               
                     """
         
-        print(sqlQuery)
-        print(sqlValTuple)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
 
         response = {'status': '1', 'answer': result['data'], 'length': result['length'], 'newCSRFtoken': newCSRFtoken}
@@ -5037,9 +5508,6 @@ def corporate_emails(filters):
         
         result = sqlSelect(sqlQuery, sqlValTuple, True)
 
-        print(sqlQuery)
-        print(result)
-        
         numRows = totalNumRows('corporate_emails', where+eStatus+emailInWhere, sqlValTuple)        
 
         sideBar = side_bar_stuff()
@@ -5141,7 +5609,6 @@ def affiliate_transfers(page):
                     LIMIT {rowsToSelect}, {int(PAGINATION)};
                     """
         
-        print(sqlQuery)
         sqlValTuple = (session['user_id'],)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
 
@@ -5190,7 +5657,6 @@ def transfer_funds(stuffID=0):
         if insertedID is None:
             return jsonify({'status': "0", 'answer': result['answer'], 'newCSRFtoken': newCSRFtoken}) 
 
-        # print('Content After', content)
         content = request.form.get('content', '').strip()
         if content != '<p><br></p>':
             # submit_product_text(content, insertedID)
@@ -6492,10 +6958,8 @@ def edit_promo():
                     productRevardOption = int(product.get('revard_option'))
 
                 if row['discount'] != int(product['discount']) or row['discount_status'] != int(product['discount_status']) or row['revard_value'] != productRevard or row['revard_type'] != productRevardOption:
-                    # print(f"row['discount'] is {row['discount']} and product['discount'] is {product['discount']}")
                     sqlValTuple = (int(product['discount']), int(product['discount_status']), productRevard, productRevardOption, promoID, row['ptID'])
                     updateResult = sqlUpdate(sqlQueryUpdate, sqlValTuple)
-                    # print(updateResult['answer'])
                 products.remove(product)
                 resultOldData['data'].remove(row)
 
@@ -6668,7 +7132,6 @@ def get_promo_discounts():
     for row in result['data']:
         for r in products:
             if row['ptID'] == r['ptID']:
-                # print(f"row['Price'] is {type(row['Price'])} and r['quantity'] is {type(r['quantity'])} AND row['discount'] is {type(row['discount'])}")
                 discountPrice = discountPrice + (row['Price'] * int(r['quantity']) * row['discount'] / 100)
 
     return jsonify({'status': "1", 'data': result['data'], 'discountPrice': discountPrice, 'totalPrice': totalPrice, 'newCSRFtoken': newCSRFtoken})
@@ -6796,7 +7259,6 @@ def index(myLinks):
                     langueges = supported_langs()
 
                     for langdata in resultL['data']:              
-                        print(langdata[0])          
                         for lang in langueges:
                             if lang['Language_ID'] == langdata[0]:
                                 supportedLangsData.append(lang)
@@ -7154,12 +7616,9 @@ def get_chart_data():
                 ORDER BY `value` DESC
                 {LIMIT};
             """
-            print(sqlQuery)
-            print(protoTuple)
             sqlValTuple = tuple(protoTuple)
             result = sqlSelect(sqlQuery, sqlValTuple, True)
             chartData['data'] = result['data']
-            print(result)
 
             chartData['limit'] = limit
 

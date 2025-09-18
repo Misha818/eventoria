@@ -94,32 +94,32 @@
 let currentSlide = 0;
 
 function showSlide(index) {
-const slides = document.querySelectorAll('.pc_slide');
-const slidesToShow = 2;
-const totalSlides = slides.length;
+    const slides = document.querySelectorAll('.pc_slide');
+    const slidesToShow = 2;
+    const totalSlides = slides.length;
 
-// Calculate the max index we can go to
-const maxIndex = Math.ceil(totalSlides / slidesToShow) - 1;
+    // Calculate the max index we can go to
+    const maxIndex = Math.ceil(totalSlides / slidesToShow) - 1;
 
-// Wrap around if necessary
-if (index > maxIndex) {
-    currentSlide = 0;
-} else if (index < 0) {
-    currentSlide = maxIndex;
-} else {
-    currentSlide = index;
-}
+    // Wrap around if necessary
+    if (index > maxIndex) {
+        currentSlide = 0;
+    } else if (index < 0) {
+        currentSlide = maxIndex;
+    } else {
+        currentSlide = index;
+    }
 
-// Calculate offset
-const offset = -currentSlide * 100;
+    // Calculate offset
+    const offset = -currentSlide * 100;
 
-// Apply transform
-document.querySelector('.pc_slides').style.transform = `translateX(${offset}%)`;
+    // Apply transform
+    document.querySelector('.pc_slides').style.transform = `translateX(${offset}%)`;
 
-// Update active class
-slides.forEach((slide, idx) => {
-    slide.classList.toggle('active', Math.floor(idx / slidesToShow) === currentSlide);
-});
+    // Update active class
+    slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', Math.floor(idx / slidesToShow) === currentSlide);
+    });
 }
 
 function moveSlide(direction) {
@@ -129,39 +129,39 @@ function moveSlide(direction) {
 document.addEventListener('DOMContentLoaded', () => {
     showSlide(currentSlide);
 
-// Add click event listener to each image
-const slides = document.querySelectorAll('.pc_slide');
-slides.forEach(slide => {
-    slide.addEventListener('click', () => {
-        // If the slide is already selected, deselect it
-        if (slide.classList.contains('selected')) {
-            slide.classList.remove('selected');
-            // Clear the hidden input's value
-            document.getElementById('img_value').value = '';
-            document.getElementById('imageState').value = '0';
-            document.getElementById("myDropzone").style.display = "flex";
-        } else {
-            // Deselect all slides
-            slides.forEach(s => s.classList.remove('selected'));
-            
-            // Select the clicked slide
-            slide.classList.add('selected');
-            
-            // Extract file name and type from img tag
-            const img = slide.querySelector('img');
-            const imgSrc = img.src.split('\\').pop().split('/').pop(); // Extract file name
-            const imgType = imgSrc.split('.').pop(); // Extract file type
-            const imgValue = `${imgSrc} (${imgType})`;
+    // Add click event listener to each image
+    const slides = document.querySelectorAll('.pc_slide');
+    slides.forEach(slide => {
+        slide.addEventListener('click', () => {
+            // If the slide is already selected, deselect it
+            if (slide.classList.contains('selected')) {
+                slide.classList.remove('selected');
+                // Clear the hidden input's value
+                document.getElementById('img_value').value = '';
+                document.getElementById('imageState').value = '0';
+                document.getElementById("myDropzone").style.display = "flex";
+            } else {
+                // Deselect all slides
+                slides.forEach(s => s.classList.remove('selected'));
+                
+                // Select the clicked slide
+                slide.classList.add('selected');
+                
+                // Extract file name and type from img tag
+                const img = slide.querySelector('img');
+                const imgSrc = img.src.split('\\').pop().split('/').pop(); // Extract file name
+                const imgType = imgSrc.split('.').pop(); // Extract file type
+                const imgValue = `${imgSrc} (${imgType})`;
 
-            let trimmedImageName = imgValue.split(' ')[0].trim();
-            
-            // Update the hidden input's value
-            document.getElementById('img_value').value = trimmedImageName;
-            document.getElementById('imageState').value = '1';
-            document.getElementById("myDropzone").style.display = "none";
-        }
+                let trimmedImageName = imgValue.split(' ')[0].trim();
+                
+                // Update the hidden input's value
+                document.getElementById('img_value').value = trimmedImageName;
+                document.getElementById('imageState').value = '1';
+                document.getElementById("myDropzone").style.display = "none";
+            }
+        });
     });
-});
 });
 </script>
 <!-- Script for Dropzone (image upload) -->
@@ -379,9 +379,9 @@ function openImageEditorModal(imageUrl, callback) {
         };
 
         // Event delegation to handle clicks on dynamically added .dz-preview elements
-        document.querySelector('.containerS').addEventListener('dblclick', function(event) {
+        // document.querySelector('.containerS').addEventListener('dblclick', function(event) {
             
-        });
+        // });
     }
 }
 

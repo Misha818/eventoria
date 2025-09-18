@@ -1,11 +1,12 @@
 from flask import Flask, session, redirect, jsonify, request, g, abort
-from mmb_db import get_db
+from eventoria_db import get_db
 from dotenv import load_dotenv
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from werkzeug.utils import secure_filename
 from functools import wraps
 from bs4 import BeautifulSoup
 from datetime import datetime, date
+from urllib.parse import urlparse
 import logging
 import mysql.connector
 from mysql.connector import pooling, Error
@@ -465,7 +466,7 @@ def checkForRedundantFiles(fileName, colonName, tableName):
     sqlValTuple = (fileName,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
-    if result['length'] == 1:
+    if result['length'] > 0:
         return True
     else:
         return False     
@@ -1730,6 +1731,15 @@ def send_confirmation_email(pdID, trackOrderUrl):
     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
 
     return True if resp.status_code == 200 else False
+
+
+def is_valid_url(url: str) -> bool:
+    try:
+        result = urlparse(url)
+        # A valid URL needs at least scheme and netloc
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
 
 # Usage
 # msg_id = send_email_mailgun()
