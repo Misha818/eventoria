@@ -1226,9 +1226,6 @@ def insertPUpdateP(pdID, paymentData):
     result = sqlSelect(sqlQuery, (pdID,), True)
     if result['length'] == 0:
 
-        # print('FFFFFFFFFFFFFFFFFFFFFFFFFFFF')
-        # print(result['error'])
-        # print('FFFFFFFFFFFFFFFFFFFFFFFFFFFF')
         return {'status': '0', 'answer': result['error']}
     
     promoID, promo, affiliateID = [None, None, None]

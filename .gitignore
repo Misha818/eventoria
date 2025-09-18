@@ -11,11 +11,11 @@ venv/
 
 # Misc
 ToDo.txt
-
+meta-tags-scretch.txt
 gunicorn.txt
 nginx-conf.txt
 
 /static/images/uploads/
 /static/images/
 
-Project Purpose and Context.docx
+ToDo.txt
