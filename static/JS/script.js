@@ -118,6 +118,8 @@ if (mobileMenuToggle && navMenu) {
     });
 }
 
+
+
 // Language selector
 const languageSelector = document.getElementById('language-selector');
 const languageButton = document.getElementById('language-button');
@@ -185,6 +187,7 @@ const observerOptions = {
     threshold: 0
 };
 
+// Create the observer to watch sections and update nav links with active class
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -261,6 +264,9 @@ document.getElementById('contact-form').addEventListener('submit', function (e) 
     setTimeout(() => {
         document.getElementById('success-message').style.display = 'none';
     }, 5000);
+
+
+
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -359,13 +365,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Define what happens on successful data submission
             xhr.onload = function () {
+                csrfToken = JSON.parse(xhr.responseText).csrfToken;
                 if (xhr.status === 200) {
                     let response = JSON.parse(xhr.responseText);
 
                     if (response.status === '1') {
                         // Slide content data
 
-                        console.log(response.data);
                         totalImages = response.data.length;
                         slideData = response.data
                         // slideData = [
@@ -476,7 +482,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             };
             let imageSrc =  window.location.origin + '/static/images/uploads/home_slides/' + image;
-            console.log(imageSrc);
             img.src = imageSrc;
             // Add image to the slideshow container
 
@@ -500,6 +505,113 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     initializeSlideshow();
+
+    const services = [{
+        "name": "get-activities",
+        "target": "activities-grid",
+        "RefKey": 1
+    }]
+    const learnMoreText = document.getElementById('learn-more').value;
+    const applyNowText = document.getElementById('apply-now').value;
+    function get_services(services, start, limit) {
+        services.forEach(service => {
+            let formData = new FormData();
+            formData.append('RefKey', service.RefKey); 
+            formData.append('start', start); 
+            formData.append('limit', limit);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', `/` + service.name);
+            xhr.setRequestHeader('X-CSRFToken', csrfToken); 
+            xhr.onload = function () {
+                csrfToken = JSON.parse(xhr.responseText).csrfToken;
+                if (xhr.status === 200) {
+                    let response = JSON.parse(xhr.responseText);
+                    if (response.status === '1') {
+                        let targetDiv = document.getElementById(service.target);
+                        if (service.target == 'activities-grid') {
+                            let cards = "";
+                            response.data.forEach(activity => {    
+                                const card = document.createElement('div');
+                                card.className = "activity-card";
+                                
+                                // Create the content container
+                                const content = document.createElement("div");
+                                content.className = "activity-content";
+                                
+                                // Title
+                                const title = document.createElement("h3");
+                                title.className = "activity-title";
+                                title.textContent = activity.Title;
+                                
+                                // Description
+                                const desc = document.createElement("p");
+                                desc.className = "activity-description";
+                                desc.textContent = activity.Description;
+                                
+                                // Buttons container
+                                const btnContainer = document.createElement("div");
+                                btnContainer.className = "activity-buttons";
+                                
+                                // Buttons
+                                const learnMore = document.createElement("a");
+                                learnMore.href = activity.Url;
+                                learnMore.className = "btn-text";
+                                learnMore.textContent = learnMoreText;
+                                
+                                const applyNow = document.createElement("a");
+                                applyNow.href = "#";
+                                applyNow.className = "btn-text";
+                                applyNow.textContent = applyNowText;
+                                
+                                // Append buttons
+                                btnContainer.appendChild(learnMore);
+                                btnContainer.appendChild(applyNow);
+                                
+                                // Put together content
+                                content.appendChild(title);
+                                content.appendChild(desc);
+                                content.appendChild(btnContainer);
+                                
+                                // Image
+                                const img = document.createElement("img");
+                                img.src = window.origin + "/static/images/pr_thumbnails/" + activity.Thumbnail;
+                                img.alt = activity.AltText;
+                                img.style.width = "100%";
+                                
+                                // Put everything in the card
+                                card.appendChild(content);
+                                card.appendChild(img);
+
+                                targetDiv.append(card);
+                            });
+                        }
+                        
+                    }
+                    
+                } else {
+                    // Handle error response
+                    console.error('Error adding category:', xhr.responseText);
+                }
+            };
+            xhr.send(formData);
+        });
+    }
+
+    get_services(services, 0, 4);
+
+    document.querySelectorAll('.language-option').forEach(function (opt) {
+        opt.addEventListener('click', function () {
+
+        let refKey = '';
+        if (document.getElementById('RefKey')) {
+            refKey = document.getElementById('RefKey').value;
+        }
+        window.location.href = '/setlang?lang=' + this.getAttribute('data-lang') + '&RefKey=' + refKey;
+
+        });
+    });
+;
 
 
 });

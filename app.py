@@ -598,7 +598,7 @@ def home():
     languageID = getLangID()
     # result = sqlSelect(sqlQuery, sqlValTuple, True)
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', result=[], languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs(), ensure_ascii=False), MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 @app.route('/get_home_slides', methods=["POST"])
 @validate_request
@@ -625,7 +625,7 @@ def get_home_slides():
 
     result = sqlSelect(sqlQueryOrder, (languageID,), True)
     
-    return jsonify({'status': "1", 'data': result['data']}), 200
+    return jsonify({'status': "1", 'data': result['data'], 'csrfToken': generate_csrf()}), 200
   
 @app.route('/edit-slide/<HS_Ref_Key>', methods=['GET', 'POST'])
 @validate_request
@@ -7664,6 +7664,52 @@ def get_category_ar():
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 2')})
 
     return jsonify({'status': "1", 'data': result['data'][0]})
+
+@app.route("/get-activities", methods=["POST"])
+def get_activitis():    
+    newCSRFtoken = generate_csrf()
+    languageID = getLangID()
+    if request.form.get('languageID'):
+        if int(request.form.get('languageID')) in getSupportedLangIDs():
+            languageID = int(request.form.get('languageID'))
+
+    if not request.form.get('RefKey') or not request.form.get('start') or not request.form.get('limit'):
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
+    
+    RefKey = request.form.get('RefKey')
+    start = request.form.get('start')
+    limit = request.form.get('limit')
+
+    sqlQuery = """
+                SELECT 
+                    `product`.`ID`,
+                    `product`.`Title`,
+                    `product`.`shortDescription` AS `Description`,
+                    `product`.`Url`,
+                    `product`.`Thumbnail`,
+                    `product`.`AltText`
+                FROM `product` 
+                LEFT JOIN `product_relatives`
+                    ON  `product_relatives`.`P_ID` = `product`.`ID`
+                LEFT JOIN `product_category`
+                    ON  `product`.`Product_Category_ID` = `product_category`.`Product_Category_ID`
+                LEFT JOIN `product_c_relatives`
+                    ON  `product_c_relatives`.`PC_ID` = `product_category`.`Product_Category_ID`
+                WHERE `product_relatives`.`Language_ID` = %s
+                    AND `product`.`Product_Status` = 2
+                    AND `product_c_relatives`.`PC_Ref_Key` = %s
+                    AND `product_c_relatives`.`Language_ID` = %s
+                ORDER BY `product`.`Order` ASC
+                LIMIT %s, %s
+            """
+    sqlValTuple = (languageID, RefKey, languageID, int(start), int(limit))
+    result = sqlSelect(sqlQuery, sqlValTuple, True)
+    print(result)
+    if result['length'] == 0:
+        return jsonify({'status': "0", 'answer': gettext('Nothing to show'), 'newCSRFtoken': newCSRFtoken})
+
+    return jsonify({'status': "1", 'data': result['data'], 'newCSRFtoken': newCSRFtoken})
+
 
 
 if __name__ == '__main__':

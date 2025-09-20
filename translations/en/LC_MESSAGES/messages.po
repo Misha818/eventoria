@@ -2471,7 +2471,7 @@ msgid "John Snow"
 msgstr ""
 
 #: templates/public.html:147
-msgid "You message"
+msgid "Your message"
 msgstr ""
 
 #: templates/public.html:162

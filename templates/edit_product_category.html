@@ -80,8 +80,10 @@
     <input type="text" id="category-name" placeholder="{{ _('Product Category Name') }}" value="{{ content.name }}" style="padding: 15px; width: 100%">
     <div style="display: flex; gap: 5px; align-items: center;">
         <p style="width: 100%">{{ _('Aspect Ratio') }}</p>
-        <input type="text" id="xRatio" value="{{ content.xRatio }}" style="width: 100%;" placeholder="X">
-        <input type="text" id="yRatio" value="{{ content.yRatio }}" style="width: 100%;" placeholder="Y">
+        {% set xRatio = content.xRatio if content.xRatio is not none else '' %}
+        {% set yRatio = content.yRatio if content.yRatio is not none else '' %}
+        <input type="text" id="xRatio" value="{{ xRatio }}" style="width: 100%;" placeholder="X">
+        <input type="text" id="yRatio" value="{{ yRatio }}" style="width: 100%;" placeholder="Y">
     </div>
     
     {% if sps.length > 0 %}

@@ -2284,6 +2284,9 @@ msgstr "Քաղաք, Նահանգ, 12345"
 msgid "Subscribe to us!"
 msgstr "Բաժանորդագրվեք մեզ։"
 
+msgid "Subscribe"
+msgstr "Բաժանորդագրվել"
+
 #: templates/public.html:123
 msgid "Be the first to know about discounts and promotions."
 msgstr "Եղեք առաջինը, ով կիմանա զեղչերի և ակցիաների մասին։"
@@ -2296,8 +2299,16 @@ msgstr "Խնդրում ենք մուտքագրել վավեր էլ. փոստի �
 msgid "Your email:"
 msgstr "Ձեր Էլ. փոստը"
 
+msgid "Your Email"
+msgstr "Ձեր Էլ. փոստը"
+
+
+
 #: templates/public.html:140
 msgid "Your name:"
+msgstr "Ձեր անունը"
+
+msgid "Your Name"
 msgstr "Ձեր անունը"
 
 #: templates/public.html:140
@@ -2305,7 +2316,7 @@ msgid "John Snow"
 msgstr "Պողոս Պողոսյան"
 
 #: templates/public.html:147
-msgid "You message"
+msgid "Your message"
 msgstr "Ձեր հաղորդագրությունը"
 
 #: templates/public.html:162

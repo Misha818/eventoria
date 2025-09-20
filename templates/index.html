@@ -28,39 +28,23 @@
             <nav class="nav" id="nav">
                 <ul class="nav-menu" id="nav-menu">
                     <li class="nav-item">
-                        <a href="#events" class="nav-link">Events</a>
+                        <a href="#events" class="nav-link">{{ _('Events') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#activities" class="nav-link">Activities</a>
+                        <a href="#activities" class="nav-link">{{ _('Activities') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#collaboration" class="nav-link">Collaboration</a>
+                        <a href="#collaboration" class="nav-link">{{ _('Collaboration') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#about" class="nav-link">About</a>
+                        <a href="#about" class="nav-link">{{ _('About') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#contact" class="nav-link">Contact</a>
+                        <a href="#contacts" class="nav-link">{{ _('Contacts') }}</a>
                     </li>
                     <li class="nav-item language-selector" id="language-selector">
-                        <button class="language-button" id="language-button">
-                            <span>English</span>
-                            <span>▼</span>
-                        </button>
-                        <div class="language-dropdown" id="language-dropdown">
-                            <div class="language-option" data-lang="en">
-                                <!-- <span>🇺🇸</span> -->
-                                <span>English</span>
-                            </div>
-                            <div class="language-option" data-lang="am">
-                                <!-- <span>🇦🇲</span> -->
-                                <span>Հայերեն</span>
-                            </div>
-                            <div class="language-option" data-lang="ru">
-                                <!-- <span>🇷🇺</span> -->
-                                <span>Русский</span>
-                            </div>
-                        </div>
+
+
                     </li>
                 </ul>
             </nav>
@@ -71,12 +55,15 @@
         </div>
     </header>
 
+    <input type="hidden" id="learn-more" value="{{ _('Learn More') }}">
+    <input type="hidden" id="apply-now" value="{{ _('Apply Now') }}">
+
     <!-- Hero Section with Slideshow -->
     <section class="hero" id="events">
         <!-- Loading Spinner (placed inside hero section) -->
         <div class="slide-loader" id="slide-loader">
             <div class="spinner"></div>
-            <p>Loading...</p>
+            <p>{{ _('Loading...') }}</p>
         </div>
         <div class="slideshow-container">
             <!-- <img class="slide" src="{{ url_for('static', filename='img/slides/1.png') }}">
@@ -114,8 +101,8 @@
             <h1 class="hero-title"></h1>
             <p class="hero-subtitle"></p>
             <div class="hero-buttons">
-                <a href="#activities" class="btn btn-primary">Apply Now</a>
-                <a href="#about" class="btn btn-outline">Learn More</a>
+                <a href="#activities" class="btn btn-primary">{{ _('Apply Now') }}</a>
+                <a href="#about" class="btn btn-outline">{{ _('More') }}</a>
             </div>
         </div>
         <!-- 
@@ -145,7 +132,8 @@
                     collaborative projects designed to inspire and educate.</p>
             </div> -->
 
-            <div class="activities-grid">
+            <div class="activities-grid" id="activities-grid">
+                <!-- 
                 <div class="activity-card">
                     <div class="activity-content">
                         <h3 class="activity-title">Professional Workshops</h3>
@@ -159,45 +147,7 @@
                     <img src="{{ url_for('static', filename='img/cards/summer-music-festival.jpg') }}"
                         style="width: 100%">
                 </div>
-
-                <div class="activity-card">
-                    <div class="activity-content">
-                        <h3 class="activity-title">Music Events</h3>
-                        <p class="activity-description">Experience live performances, music workshops, and collaborative
-                            sessions with talented artists and musicians.</p>
-                        <div class="activity-buttons">
-                            <a href="#" class="btn-text">Learn More</a>
-                            <a href="#" class="btn-text">Apply Now</a>
-                        </div>
-                    </div>
-                    <img src="{{ url_for('static', filename='img/cards/summer-post.jpg') }}" style="width: 100%">
-                </div>
-
-                <div class="activity-card">
-                    <div class="activity-content">
-                        <h3 class="activity-title">Team Collaboration</h3>
-                        <p class="activity-description">Build meaningful connections through team-building activities
-                            and collaborative projects that foster innovation.</p>
-                        <div class="activity-buttons">
-                            <a href="#" class="btn-text">Learn More</a>
-                            <a href="#" class="btn-text">Apply Now</a>
-                        </div>
-                    </div>
-                    <img src="{{ url_for('static', filename='img/cards/2.png') }}" style="width: 100%">
-                </div>
-
-                <div class="activity-card">
-                    <div class="activity-content">
-                        <h3 class="activity-title">Skills Development</h3>
-                        <p class="activity-description">Structured learning programs focused on professional development
-                            and personal growth in various fields.</p>
-                        <div class="activity-buttons">
-                            <a href="#" class="btn-text">Learn More</a>
-                            <a href="#" class="btn-text">Apply Now</a>
-                        </div>
-                    </div>
-                    <img src="{{ url_for('static', filename='img/cards/1.png') }}" style="width: 100%">
-                </div>
+                -->
             </div>
         </div>
     </section>
@@ -245,10 +195,8 @@
     <!-- Contacts Section -->
     <section class="section contacts" id="contacts">
         <div class="container">
-            <h2 class="section-title" style="color: #000; max-width: 750px; margin: 0 auto 1rem auto;">Please feel free
-                to submit a message or contact us through
-                any of the methods
-                below.</h2>
+            <h2 class="section-title" style="color: #000; max-width: 750px; margin: 0 auto 1rem auto;">
+                {{ _('Please feel free to submit a message or contact us via any of the methods below') }}.</h2>
             <div class="about-content">
                 <!-- <div class="about-text">
                     <h2 class="section-title">About Eventoria</h2>
@@ -264,31 +212,31 @@
                     <!-- <p class="section-subtitle">Get in touch with us</p> -->
 
                     <div class="success-message" id="success-message">
-                        Thank you for your message! We'll get back to you soon.
+                        {{ _('Thank you for your message! We will get back to you soon.') }}
                     </div>
 
                     <form id="contact-form">
                         <div class="form-group">
-                            <label for="name">Your Name</label>
+                            <label for="name">{{ _('Your Name') }}</label>
                             <input type="text" id="name" name="name" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Your Email</label>
+                            <label for="email">{{ _('Your Email') }}</label>
                             <input type="email" id="email" name="email" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="subject">Subject</label>
+                            <label for="subject">{{ _('Subject') }}</label>
                             <input type="text" id="subject" name="subject" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Message</label>
+                            <label for="message">{{ _('Your message') }}</label>
                             <textarea id="message" name="message" required></textarea>
                         </div>
 
-                        <button type="submit" class="submit-btn">Submit</button>
+                        <button type="submit" class="submit-btn">{{ _('Submit') }}</button>
                     </form>
                 </div>
 
@@ -316,24 +264,26 @@
                         <div class="feature feature-contacts">
                             <div class="feature-icon fa fa-instagram" style="background: #E1306C;"></div>
                             <div class="feature-content-contacts">
-                                <h3>Subscribe to our Instagram to ...</h3>
+                                <h3>Follow us on Instagramm</h3>
                             </div>
                         </div>
                     </a>
-                    <a href="https://wa.me/">
-                        <div class="feature feature-contacts">
-                            <div class="feature-icon fa fa-whatsapp" style="background: #25D366;"></div>
-                            <div class="feature-content-contacts">
-                                <h3>Subscribe to our WhatsApp to ...</h3>
-                            </div>
-                        </div>
-                    </a>
+
                     <a href="https://linkedin.com">
 
                         <div class="feature feature-contacts">
-                            <div class="feature-icon fa fa-linkedin" style="background: #bb0000;"></div>
+                            <div class="feature-icon fa fa-linkedin" style="background: #0A66C2;"></div>
                             <div class="feature-content-contacts">
                                 <h3>Subscribe to our linkedin to ...</h3>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="mailto:info@eventoria.am">
+                        <div class="feature feature-contacts">
+                            <div class="feature-icon fa fa-envelope" style="background: #e1d7cc;"></div>
+                            <div class="feature-content-contacts">
+                                <h3>{{ _('Clcik to send an email to') }} info@eventoria.am</h3>
                             </div>
                         </div>
                     </a>
@@ -343,15 +293,15 @@
                         <p class="section-subtitle">Subscribe to us to ....</p>
 
                         <div class="success-message" id="success-subscribe">
-                            Thank you for your message! We'll get back to you soon.
+                            {{ _('You have subscribed successfully!') }}
                         </div>
                         <form id="subscribe-form">
                             <div class="form-group">
-                                <label for="email">Your Email</label>
+                                <label for="email">{{ _('Your Email') }}</label>
                                 <input type="email" id="email" name="email" required>
                             </div>
 
-                            <button type="submit" class="subscribe-btn">Subscribe</button>
+                            <button type="submit" class="subscribe-btn">{{ _('Subscribe') }}</button>
                         </form>
                     </div>
                 </div>
@@ -443,6 +393,45 @@
         </div>
     </footer>
     <script type="text/javascript">
-        const csrfToken = "{{ csrf_token() }}";
+        let csrfToken = "{{ csrf_token() }}";
+        let supported_langs = JSON.parse('{{ supported_langs | safe }}');
+        let languageID = "{{ languageID }}";
+        let current_locale = "{{ current_locale }}";
+
+        const container = document.getElementById("language-selector");
+
+        const active = supported_langs.find(l => l.Prefix === current_locale) || supported_langs[0];
+
+        // Button
+        const btn = document.createElement("button");
+        btn.className = "language-button";
+        btn.id = "language-button";
+        btn.type = "button";
+        const label = document.createElement("span");
+        label.textContent = active.Language;
+        const caret = document.createElement("span");
+        caret.textContent = "▼";
+        btn.append(label, caret);
+
+        // Dropdown (exclude active)
+        const dropdown = document.createElement("div");
+        dropdown.className = "language-dropdown";
+        dropdown.id = "language-dropdown";
+
+        supported_langs
+            .filter(l => l.Prefix !== active.Prefix)
+            .forEach(l => {
+            const opt = document.createElement("div");
+            opt.className = "language-option";
+            opt.dataset.lang = l.Prefix;
+
+            const name = document.createElement("span");
+            name.textContent = l.Language;
+
+            opt.appendChild(name);
+            dropdown.appendChild(opt);
+            });
+
+        container.append(btn, dropdown);
     </script>
     <script type="text/javascript" src="{{ url_for('static', filename='JS/script.js') }}"></script>
