@@ -324,7 +324,7 @@ def submit_reach_text(html_content, productID):
 
 
 # Add product category database action
-def add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, newCSRFtoken):
+def add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, xRatio, yRatio, newCSRFtoken):
     
     # Check whether Category Name exists
     sqlQuery = "SELECT `Product_Category_ID` FROM `product_category` WHERE `Product_Category_Name` = %s;"
@@ -341,9 +341,9 @@ def add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, newCSRFtoke
         unique_filename = fileUpload(file, 'images/pc_uploads')
 
     # Insert the content into the MySQL database
-    sqlQuery = "INSERT INTO `product_category` (`Product_Category_Name`, `Product_Category_Images`, `AltText`, `User_ID`, `Product_Category_Status`, `spsID`) VALUES (%s, %s, %s, %s, %s,%s)"
+    sqlQuery = "INSERT INTO `product_category` (`Product_Category_Name`, `Product_Category_Images`, `AltText`, `User_ID`, `Product_Category_Status`, `spsID`, `xRatio`, `yRatio`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     userID = getUserID()
-    sqlValuesTuple =  (categoryName, unique_filename, AltText, userID, 1, spsID)
+    sqlValuesTuple =  (categoryName, unique_filename, AltText, userID, 1, spsID, xRatio, yRatio)
     result = sqlInsert(sqlQuery, sqlValuesTuple)
     insertedID = result['inserted_id']
         
@@ -368,51 +368,6 @@ def add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, newCSRFtoke
     return jsonify({'status': '1', 'answer': answer, 'location': 'add-product-category'})
 
 
-# Add product category database action
-def add_a_c_sql(categoryName, file, AltText, currentLanguage, newCSRFtoken):
-    
-    # Check whether Category Name exists
-    sqlQuery = "SELECT `Article_Category_ID` FROM `article_category` WHERE `Article_Category_Name` = %s;"
-    sqlValuesTuple = (categoryName,)
-    result = sqlSelect(sqlQuery, sqlValuesTuple, True)
-    
-    if result['length'] > 0:
-        answer = gettext('Category Exists!')
-        return jsonify({'status': '3', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) # categoryName Exists 
-    
-    # Save the file
-    unique_filename = ''
-    if file:
-        unique_filename = fileUpload(file, 'images/ac_uploads')
-
-    # Insert the content into the MySQL database
-    sqlQuery = "INSERT INTO `article_category` (`Article_Category_Name`, `Article_Category_Images`, `AltText`, `User_ID`, `Article_Category_Status`) VALUES (%s, %s, %s, %s, '1')"
-    userID = getUserID()
-    sqlValuesTuple =  (categoryName, unique_filename, AltText, userID)
-    result = sqlInsert(sqlQuery, sqlValuesTuple)
-    insertedID = result['inserted_id']
-        
-    # Get the highest AC_Ref_Key value
-    sqlQueryLatestRel_ID = "SELECT `AC_Ref_Key` FROM `article_c_relatives` ORDER BY `AC_REF_KEY` DESC LIMIT 1"
-    result = sqlSelect(sqlQueryLatestRel_ID, False, True)
-
-    
-    NewRef_KEY = 1
-    if result['length'] > 0:
-        NewRef_KEY = result['data'][0]['AC_Ref_Key'] + 1
-
-    langID = currentLanguage
-
-    # Insert into article_c_relatives
-    sqlQueryRel = "INSERT INTO `article_c_relatives` (`AC_Ref_Key`, `AC_ID`, `Language_ID`, `User_ID`) VALUES (%s, %s, %s, %s)"
-    sqlRelValuesTuple = (NewRef_KEY, insertedID, langID, userID)
-    resultRel = sqlInsert(sqlQueryRel, sqlRelValuesTuple)
-    
-    answer = resultRel['answer']
-    
-    return jsonify({'status': '1', 'answer': answer, 'location': 'add-product-category'})
-
-
 # Edit product category database action
 def edit_p_c_sql(categoryName, file, AltText, pc_id, image, categoryStatus, relImage):
     
@@ -428,25 +383,6 @@ def edit_p_c_sql(categoryName, file, AltText, pc_id, image, categoryStatus, relI
 
     # Save the file
     unique_filename = fileUpload(file, 'images/pc_uploads')  
-
-    # if len(relImage) > 0:
-    #     unique_filename = relImage
-    # else:
-    #     if file != None and image != '1':
-    #         upload_to = os.path.join(static_folder_path, 'images/pc_uploads')
-    #         filename = file.filename
-    #         file_path = os.path.join(upload_to, filename)
-            
-    #         # Check if the file exists and create a unique filename if it does
-    #         if os.path.exists(file_path):
-    #             unique_filename = f"{uuid.uuid4().hex}_{filename}"
-    #             file_path = os.path.join(upload_to, unique_filename)
-    #         else:
-    #             unique_filename = filename
-
-    #         file.save(file_path)
-
-
 
     # STegh es haskaci es inch if u else a!!!!!!!!!
     if image == '1':
@@ -491,10 +427,6 @@ def edit_p_c_view(pc_ref_key):
         content = {'content': False}
         return content
     
-    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAa')
-    print(rCheck)
-    # return
-
     langID = getLangID()
     
     # This checks if there is a registered product category in corresponding language
@@ -551,6 +483,8 @@ def edit_p_c_view(pc_ref_key):
                     'name': myName, 
                     'image': image1, 
                     'AltText': AltText, 
+                    'xRatio': result1['data'][0]['xRatio'], 
+                    'yRatio': result1['data'][0]['yRatio'], 
                     'status': result1['data'][0].get('Product_Category_Status'), 
                     'spsID': result1['data'][0].get('spsID'), 
                     'pc_id': result1['data'][0].get('Product_Category_ID'),
@@ -576,6 +510,8 @@ def edit_p_c_view(pc_ref_key):
             'name': myName, 
             'image': myImage, 
             'AltText': AltText, 
+            'xRatio': result['data'][0]['xRatio'], 
+            'yRatio': result['data'][0]['yRatio'], 
             'spsID': result['data'][0].get('spsID'), 
             'status': result['data'][0].get('Product_Category_Status'), 
             'pc_id': result['data'][0].get('Product_Category_ID'),

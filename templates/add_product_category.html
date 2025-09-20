@@ -45,6 +45,11 @@
         
         
         <input type="text" id="category-name" placeholder="{{ _('Product Category Name') }}" style="padding: 15px; width: 100%;">
+        <div style="display: flex; gap: 5px; align-items: center;">
+             <p style="width: 100%">{{ _('Aspect Ratio') }}</p>
+            <input type="text" id="xRatio" value="1" style="width: 100%;" placeholder="X">
+            <input type="text" id="yRatio" value="1" style="width: 100%;" placeholder="Y">
+        </div>
         {% if sps.length > 0 %}
         <select name="smsName" id="spsName" class="styled-select">
             <option value="">{{ _('Choose subproduct situation name') }}</option>
@@ -320,7 +325,8 @@
         let languageID = document.getElementById('language-id').value;
         let categoryName = document.getElementById('category-name').value;
         let spsID = document.getElementById('spsName').value;
-        
+        let xRatio = document.getElementById('xRatio').value;
+        let yRatio = document.getElementById('yRatio').value;
         
         // Create a new FormData object
         formData.append('languageID', languageID);
@@ -328,8 +334,9 @@
         formData.append('spsID', spsID);
         formData.append('file', file);
         formData.append('AltText', altText);
+        formData.append('xRatio', xRatio);
+        formData.append('yRatio', yRatio);
         
-
         // Create a new XMLHttpRequest object
         let xhr = new XMLHttpRequest();
 

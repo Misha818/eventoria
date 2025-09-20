@@ -896,7 +896,6 @@ def add_slide():
     return render_template('add_slide.html', sideBar=sideBar, Order=result['length'], languageID=languageID, current_locale=get_locale())
 
 
-# add_product_category client-server transaction
 @app.route('/add_slide', methods=['POST'])
 # @login_required
 @validate_request
@@ -1224,11 +1223,18 @@ def other_products():
 def pr_thumbnail(RefKey):
     languageID = getLangID()
     sqlQuery = f"""
-                    SELECT `thumbnail`, `AltText` FROM `product` 
+                    SELECT 
+                        `product`.`thumbnail`, 
+                        `product`.`AltText`, 
+                        `product_category`.`xRatio`, 
+                        `product_category`.`yRatio` 
+                    FROM `product`
                     LEFT JOIN `product_relatives`
-                      ON  `product_relatives`.`P_ID` = `product`.`ID`
+                        ON  `product_relatives`.`P_ID` = `product`.`ID`
+                    LEFT JOIN `product_category`
+                        ON  `product_category`.`Product_Category_ID` = `product`.`Product_Category_ID`
                     WHERE `product_relatives`.`P_Ref_Key` = %s
-                    AND  `product_relatives`.`Language_ID` = %s
+                        AND  `product_relatives`.`Language_ID` = %s
                 """ 
     
     sqlValTuple = (RefKey, languageID)
@@ -2780,7 +2786,6 @@ def pd(RefKey):
     defaultLangDict = getDefLang()
     prData = ''
    
-   
     if 'new' in RefKey.lower():      
         productTemplate = 'add_product.html'
 
@@ -3305,6 +3310,8 @@ def add_p_c():
     categoryName = request.form.get('categoryName')
     spsID = request.form.get('spsID')
     AltText = request.form.get('AltText')
+    xRatio = request.form.get('xRatio', 1)
+    yRatio = request.form.get('yRatio', 1)
     file = request.files.get('file')
     currentLanguage = request.form.get('languageID')
 
@@ -3317,7 +3324,7 @@ def add_p_c():
     else:
         spsID = None
     
-    return add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, newCSRFtoken)
+    return add_p_c_sql(categoryName, file, AltText, currentLanguage, spsID, xRatio, yRatio, newCSRFtoken)
 
 
 # Render the edit_product_category.html template
@@ -3359,6 +3366,9 @@ def edit_p_c():
 
     languageID = request.form.get('languageID').strip()
     RefKey = request.form.get('RefKey').strip()
+    xRatio = request.form.get('xRatio', 1)
+    yRatio = request.form.get('yRatio', 1)
+
     altText = ''
     if request.form.get('AltText'):
         altText = request.form.get('AltText').strip()
@@ -3403,7 +3413,7 @@ def edit_p_c():
     sqlImage = "`Product_Category_Images` = %s,"
     if state['status'] == 0:
         sqlImage = ""
-        sqlQueryVal = (altText, categoryName, categoryStatus, spsID, productCategoryID)
+        sqlQueryVal = (altText, categoryName, categoryStatus, spsID, xRatio, yRatio, productCategoryID)
     if state['status'] == 1:
         # Get Image name
         if getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID):
@@ -3412,7 +3422,7 @@ def edit_p_c():
             if checkForRedundantFiles(imageName, 'Product_Category_Images', 'product_category'):
                 removeRedundantFiles(imageName, 'images/pc_uploads')
 
-        sqlQueryVal = (state['file'], altText, categoryName, categoryStatus, spsID, productCategoryID)
+        sqlQueryVal = (state['file'], altText, categoryName, categoryStatus, spsID, xRatio, yRatio, productCategoryID)
     if state['status'] == 2:    
         # Get Image name
         if getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID):
@@ -3424,7 +3434,7 @@ def edit_p_c():
         file = request.files.get('file')
 
         unique_filename = fileUpload(file, 'images/pc_uploads')
-        sqlQueryVal = (unique_filename, altText, categoryName, categoryStatus, spsID, productCategoryID)
+        sqlQueryVal = (unique_filename, altText, categoryName, categoryStatus, spsID, xRatio, yRatio, productCategoryID)
     
     # Stegh es !!!
     sqlQuery   = f"""   
@@ -3434,7 +3444,9 @@ def edit_p_c():
                         `AltText` = %s,
                         `Product_Category_Name` = %s,
                         `Product_Category_Status` = %s,
-                        `spsID` = %s
+                        `spsID` = %s,
+                        `xRatio` = %s,
+                        `yRatio` = %s
                     WHERE `Product_Category_ID` = %s;
                  """
 
@@ -7637,6 +7649,21 @@ def get_chart_data():
         pass
 
     return jsonify({'status': "1", 'chartData': chartData, 'answer': gettext('Done!'), 'newCSRFtoken': newCSRFtoken})
+
+@app.route("/get-category-ar", methods=["POST"])
+def get_category_ar():
+    categoryID = request.form.get('categoryID')
+    if not categoryID:
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 1')})
+    
+    sqlQuery = "SELECT `xRatio`, `yRatio` FROM `product_category` WHERE `Product_Category_ID` = %s;"
+    sqlValTuple = (int(categoryID),)
+    result = sqlSelect(sqlQuery, sqlValTuple, True)
+
+    if result['length'] == 0:
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 2')})
+
+    return jsonify({'status': "1", 'data': result['data'][0]})
 
 
 if __name__ == '__main__':

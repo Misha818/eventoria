@@ -99,6 +99,8 @@ CREATE TABLE `product_category` (
     `AltText` VARCHAR(255),
     `User_ID` INT,
     `spsID` INT,
+    `xRatio` INT,
+    `yRatio` INT,
     `Product_Category_Status` INT,
     PRIMARY KEY (`Product_Category_ID`)
 ) ENGINE=InnoDB;

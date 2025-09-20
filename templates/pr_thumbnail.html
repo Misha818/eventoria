@@ -34,7 +34,6 @@
 {% block content %}
 
     <div class="containerS">
-
         <div id="mistakes"></div>
         <div class="overlay" id="overlay"></div>
         
@@ -343,7 +342,7 @@ function openImageEditorModal(imageUrl, callback) {
         let imageToEdit = document.getElementById('imageToEdit');
 
         cropper = new Cropper(imageToEdit, {
-            aspectRatio: 1 / 1,  // Set the aspect ratio to 1:1
+            aspectRatio: {{ content.data[0]['xRatio'] }} / {{ content.data[0]['yRatio'] }},  // Set the aspect ratio to 1:1
             viewMode: 1,
             ready: function () {
                 // Get the Cropper instance
