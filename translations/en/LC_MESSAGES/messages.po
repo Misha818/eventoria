@@ -315,7 +315,7 @@ msgstr "Teammate Signup"
 
 #: app.py:3511 app.py:5187 sysadmin.py:1574 sysadmin.py:1579 sysadmin.py:1602
 msgid "company"
-msgstr "Mammy's Bread"
+msgstr "Eventoria"
 
 #: app.py:3512
 #, fuzzy

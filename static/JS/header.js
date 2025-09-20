@@ -135,55 +135,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    function basket() {
-        let Cart = cookie.get('Cart', false);
-        let notification = document.querySelector('.notification');
-        const aTag = notification.parentNode.parentNode;
-        if (Cart === false) {
-            notification.innerHtml = '';
-            notification.style.display = 'none';
-            aTag.href = window.location.origin + '/cart';
-        } else {
+    // function basket() {
+    //     let Cart = cookie.get('Cart', false);
+    //     let notification = document.querySelector('.notification');
+    //     const aTag = notification.parentNode.parentNode;
+    //     if (Cart === false) {
+    //         notification.innerHtml = '';
+    //         notification.style.display = 'none';
+    //         aTag.href = window.location.origin + '/cart';
+    //     } else {
 
-            get_cart_content(Cart).then(response => {
-                let prData = response.content.result.data;
+    //         get_cart_content(Cart).then(response => {
+    //             let prData = response.content.result.data;
 
-                let arr = Cart.split('&');
-                let cartCount = 0;
+    //             let arr = Cart.split('&');
+    //             let cartCount = 0;
 
-                arr.forEach(item => {
-                    let itemArr = item.split('-');
+    //             arr.forEach(item => {
+    //                 let itemArr = item.split('-');
 
-                    let ptIDCookie = parseInt(itemArr[0]);
-                    let countCookie = parseInt(itemArr[1]);
+    //                 let ptIDCookie = parseInt(itemArr[0]);
+    //                 let countCookie = parseInt(itemArr[1]);
 
-                    prData.forEach(row => {
-                        if (parseInt(row['ptID']) === ptIDCookie) {               
-                            let amount = countCookie;
-                            if (countCookie > parseInt(row['quantity'])) {
-                                amount = parseInt(row['quantity'])
-                            }
-                            cartCount = cartCount + amount;
-                        }
-                    });
+    //                 prData.forEach(row => {
+    //                     if (parseInt(row['ptID']) === ptIDCookie) {               
+    //                         let amount = countCookie;
+    //                         if (countCookie > parseInt(row['quantity'])) {
+    //                             amount = parseInt(row['quantity'])
+    //                         }
+    //                         cartCount = cartCount + amount;
+    //                     }
+    //                 });
 
-                });
+    //             });
 
-                document.querySelector('.basket').src = document.getElementById('full-basket').value;
+    //             document.querySelector('.basket').src = document.getElementById('full-basket').value;
 
 
-                notification.textContent = cartCount.toString();
-                notification.style.display = 'block';
+    //             notification.textContent = cartCount.toString();
+    //             notification.style.display = 'block';
     
-                aTag.href = window.location.origin + '/cart/' + Cart;
+    //             aTag.href = window.location.origin + '/cart/' + Cart;
 
-            }).catch(error => {
-                console.error(error);
-            });
+    //         }).catch(error => {
+    //             console.error(error);
+    //         });
             
-        }
+    //     }
 
-    }
+    // }
 
     function addToQuantity(clickedBotton, num) {
         const container = clickedBotton.closest('.cart-container');
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Set new Cookies   
             cookie.set('Cart', newCookie, { expires: 7, path: '/' })  
-            basket();
+            // basket();
             const inBasket = document.getElementById('inBasketText').value;
 
             clickedBotton.childNodes.forEach(node => {
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    basket();
+    // basket();
 
     // Check if product type exists in specified quantity
     // Returns bool    

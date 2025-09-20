@@ -287,7 +287,7 @@ msgstr "Թիմակցի գրանցում"
 
 #: app.py:3511 app.py:5187 sysadmin.py:1574 sysadmin.py:1579 sysadmin.py:1602
 msgid "company"
-msgstr "Մայրիկի Հացը"
+msgstr "Իվենտորիա"
 
 #: app.py:3512
 msgid "Click here to sign up"

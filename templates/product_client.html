@@ -17,7 +17,7 @@
         }
 
         .card-content {
-            font-family: 'Kurland', cursive, Georgia, 'Times New Roman', Times, serif;
+            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
     </style>
@@ -77,7 +77,7 @@
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
-
+    let csrfToken = `{{ csrf_token() }}`;
     prID = "{{ prData.Product_ID|safe }}";
 
     let formData = new FormData();
@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement("div");
             card.className = "card";
             card.style.borderRadius = '15px';
-            card.style.backgroundColor = '#fdf6ec';
-            card.style.fontFamily = "cursive, 'Kurland', Georgia, Times New Roman, Times, serif;";
+            card.style.backgroundColor = '#f3f4f5';
+            card.style.fontFamily = "Georgia, Times New Roman, Times, serif;";
             // card.style.fontFamily = 'cursive';
 
             // Create card layout

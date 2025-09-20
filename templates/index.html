@@ -55,8 +55,8 @@
         </div>
     </header>
 
-    <input type="hidden" id="learn-more" value="{{ _('Learn More') }}">
-    <input type="hidden" id="apply-now" value="{{ _('Apply Now') }}">
+    <input type="hidden" id="learn-more" value="{{ _('More') }}">
+    <input type="hidden" id="apply-now" value="{{ _('Apply') }}">
 
     <!-- Hero Section with Slideshow -->
     <section class="hero" id="events">
@@ -101,7 +101,7 @@
             <h1 class="hero-title"></h1>
             <p class="hero-subtitle"></p>
             <div class="hero-buttons">
-                <a href="#activities" class="btn btn-primary">{{ _('Apply Now') }}</a>
+                <a href="#activities" class="btn btn-primary">{{ _('Apply') }}</a>
                 <a href="#about" class="btn btn-outline">{{ _('More') }}</a>
             </div>
         </div>
@@ -394,7 +394,7 @@
     </footer>
     <script type="text/javascript">
         let csrfToken = "{{ csrf_token() }}";
-        let supported_langs = JSON.parse('{{ supported_langs | safe }}');
+        let supported_langs = JSON.parse(`{{ supported_langs | safe }}`);
         let languageID = "{{ languageID }}";
         let current_locale = "{{ current_locale }}";
 

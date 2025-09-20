@@ -57,35 +57,15 @@
 
       <!-- Header Section -->
       <header class="header_public">
-        <div class="custom-language-select change-language">
-          <!-- <div class="selected-option" data-value="hy">
-            <img src="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/flags/4x3/am.svg" alt="Armenia" class="lang-flag">
-          </div>
-           -->
 
-           {{ ns.selectedOption | safe }}
-
-          <div class="options">
-            {{ ns.options | safe }}
-
-          </div>
-        </div>
-
-        <div class="mobile-menu">
-          <img src="{{ url_for('static', filename='images/icons/mobile-menu.png') }}" style="width: 50px;">
-        </div>
-        <div class="logo-container">
-          <a href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='images/logo.png')}}" alt='{{ _("Eventoria Logo") }}' class="logo_public" />
-          </a>
-        </div>
-        <a href="{{ url_for('cart') }}" id="basket-url"> 
-          <div class="icon-wrapper">
-            <img src="{{ url_for('static', filename='images/icons/empty-basket.png') }}" class="basket">
-              <!-- <i class="fa-solid fa-cart-arrow-down"></i> -->
-              <span class="notification">0</span>
-          </div>
+        <a href="{{ url_for('home') }}" class="logo-container">
+          <img src="{{ url_for('static', filename='images/logo.png')}}" alt='{{ _("Eventoria Logo") }}' class="logo_public" />
+          <div>{{ _('company') }}</div>
         </a>
+
+        <div class="mobile-menu">☰</div>
+        <div class="lang-container"></div>
+        
       </header>
       
       <script type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
@@ -562,81 +542,132 @@
           this.style.color = '#000';
         });
 
-        let mobileNavSelect = document.querySelector('.custom-language-select').cloneNode(true);
+        // let mobileNavSelect = document.querySelector('.custom-language-select').cloneNode(true);
 
-        mobileNavSelect.className = "change-language-menu";
+        // mobileNavSelect.className = "change-language-menu";
         // mobileNavSelect.addEventListener("change", function() {
         //   window.location.href = '/setlang?lang=' + this.value;
         // });
 
         // Add an event listener for the change language menu
-        mobileNavSelect.addEventListener("change", function() {
-          let refKey = '';
-          if (document.getElementById('RefKey')) {
-            refKey = document.getElementById('RefKey').value;
-          }
-          window.location.href = '/setlang?lang=' + this.value + '&RefKey=' + refKey;
+        // mobileNavSelect.addEventListener("change", function() {
+        //   let refKey = '';
+        //   if (document.getElementById('RefKey')) {
+        //     refKey = document.getElementById('RefKey').value;
+        //   }
+        //   window.location.href = '/setlang?lang=' + this.value + '&RefKey=' + refKey;
 
-        });
+        // });
 
-        if (document.querySelector('.mobile-nav-content')) {
-          document.querySelector('.mobile-nav-content').append(mobileNavSelect);
-        }
+        // if (document.querySelector('.mobile-nav-content')) {
+        //   document.querySelector('.mobile-nav-content').append(mobileNavSelect);
+        // }
 
 
-        document.querySelector('.selected-option').addEventListener('click', function () {
-          this.parentNode.classList.toggle('open');
-        });
-        document.querySelectorAll('.option-lang').forEach(function (opt) {
-          opt.addEventListener('click', function () {
+        // document.querySelector('.selected-option').addEventListener('click', function () {
+        //   this.parentNode.classList.toggle('open');
+        // });
+        // document.querySelectorAll('.option-lang').forEach(function (opt) {
+        //   opt.addEventListener('click', function () {
 
-            let refKey = '';
-            if (document.getElementById('RefKey')) {
-              refKey = document.getElementById('RefKey').value;
-            }
-            // console.log('/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey)
-            window.location.href = '/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey;
+        //     let refKey = '';
+        //     if (document.getElementById('RefKey')) {
+        //       refKey = document.getElementById('RefKey').value;
+        //     }
+        //     // console.log('/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey)
+        //     window.location.href = '/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey;
 
-          });
-        });
+        //   });
+        // });
 
         // document.querySelector('.change-language-menu').addEventListener('click', function () {
-          document.querySelector('.change-language-menu .options').style.position = 'unset';
-          document.querySelector('.change-language-menu .options').style.padding = 'unset';
-          document.querySelector('.change-language-menu .options').style.background = 'unset';
-          document.querySelectorAll('.change-language-menu img').forEach(function (img) {
-            img.style.width = '42px';
-            img.style.height = '32px';
-          });
-
-          let x = 0;
-          document.querySelector('.change-language-menu .selected-option').addEventListener('click', function () {
-            let mobileOptions = document.querySelector('.change-language-menu .options');
-            if (x == 0) {
-              mobileOptions.style.display = 'block';
-              x = 1;
-            } else {
-              mobileOptions.style.display = 'none';
-              x = 0;
-            }
-            
-          });
-
-
-          // document.querySelectorAll('.change-language-menu .option-lang').forEach(function (opt) {
-          //   opt.addEventListener('click', function () {
-              
-          //     let refKey = '';
-          //     if (document.getElementById('RefKey')) {
-          //       refKey = document.getElementById('RefKey').value;
-          //     }
-          //     // console.log('/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey)
-          //     window.location.href = '/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey;
-              
-          //   });
+          // document.querySelector('.change-language-menu .options').style.position = 'unset';
+          // document.querySelector('.change-language-menu .options').style.padding = 'unset';
+          // document.querySelector('.change-language-menu .options').style.background = 'unset';
+          // document.querySelectorAll('.change-language-menu img').forEach(function (img) {
+          //   img.style.width = '42px';
+          //   img.style.height = '32px';
           // });
-          
-        // });
+
+          // let x = 0;
+          // document.querySelector('.change-language-menu .selected-option').addEventListener('click', function () {
+          //   let mobileOptions = document.querySelector('.change-language-menu .options');
+          //   if (x == 0) {
+          //     mobileOptions.style.display = 'block';
+          //     x = 1;
+          //   } else {
+          //     mobileOptions.style.display = 'none';
+          //     x = 0;
+          //   }
+            
+          // });
+
+
+        let supported_langs = JSON.parse('{{ jsonifiedSupportedLangsData | safe }}');
+        let current_locale = "{{ current_locale }}";
+
+        const container = document.querySelector(".lang-container");
+
+        const active = supported_langs.find(l => l.Prefix === current_locale) || supported_langs[0];
+
+        // Button
+        const btn = document.createElement("button");
+        btn.className = "language-button";
+        btn.id = "language-button";
+        btn.type = "button";
+        const label = document.createElement("span");
+        label.textContent = active.Language;
+        const caret = document.createElement("span");
+        caret.textContent = "▼";
+        btn.append(label, caret);
+
+        // Dropdown (exclude active)
+        const dropdown = document.createElement("div");
+        dropdown.className = "language-dropdown";
+        dropdown.id = "language-dropdown";
+
+        supported_langs
+            .filter(l => l.Prefix !== active.Prefix)
+            .forEach(l => {
+            const opt = document.createElement("div");
+            opt.className = "language-option";
+            opt.dataset.lang = l.Prefix;
+
+            const name = document.createElement("span");
+            name.textContent = l.Language;
+
+            opt.appendChild(name);
+            dropdown.appendChild(opt);
+            });
+
+        container.append(btn, dropdown);
+
+
+        const languageButton = document.getElementById('language-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const languageOptions = document.querySelectorAll('.language-option');
+
+        if (languageButton && languageDropdown) {
+            languageButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                languageDropdown.classList.remove('active');
+            });
+
+            languageOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const flag = option.querySelector('span:first-child').textContent;
+                    // const code = option.dataset.lang.toUpperCase();
+                    languageButton.querySelector('span:first-child').textContent = `${flag}`;
+                    languageDropdown.classList.remove('active');
+                });
+            });
+        }
 
 
 

@@ -281,7 +281,7 @@ msgstr "Регистрация коллеги"
 
 #: app.py:3511 app.py:5187 sysadmin.py:1574 sysadmin.py:1579 sysadmin.py:1602
 msgid "company"
-msgstr "Мамин хлеб"
+msgstr "Ивентория"
 
 #: app.py:3512
 #, fuzzy

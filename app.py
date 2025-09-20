@@ -52,6 +52,10 @@ def inject_supportedLangsData():
     return {'supportedLangsData': supportedLangsData}
 
 @app.context_processor
+def inject_jsonified_supportedLangsData():
+    return {'jsonifiedSupportedLangsData': json.dumps(supported_langs(), ensure_ascii=False)}
+
+@app.context_processor
 def inject_defLangPrefix():
     return {'defLangPrefix': getDefLang()['Prefix']}
 
