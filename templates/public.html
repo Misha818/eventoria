@@ -66,6 +66,7 @@
         <div class="mobile-menu">☰</div>
         <div class="lang-container"></div>
         
+        <span class="notification" style="display: none;">0</span>
       </header>
       
       <script type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
@@ -322,8 +323,6 @@
         const mobileMenuButton = document.querySelector('.mobile-menu');
         const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
         const mobileMenuCloseButton = document.querySelector('.mobile-menu-close');
-
-        console.log(mobileMenuButton)
 
         // Open the overlay when the hamburger is clicked
         mobileMenuButton.addEventListener('click', () => {
@@ -606,7 +605,7 @@
         let supported_langs = JSON.parse('{{ jsonifiedSupportedLangsData | safe }}');
         let current_locale = "{{ current_locale }}";
 
-        const container = document.querySelector(".lang-container");
+        const langContainer = document.querySelector(".lang-container");
 
         const active = supported_langs.find(l => l.Prefix === current_locale) || supported_langs[0];
 
@@ -640,7 +639,7 @@
             dropdown.appendChild(opt);
             });
 
-        container.append(btn, dropdown);
+        langContainer.append(btn, dropdown);
 
 
         const languageButton = document.getElementById('language-button');

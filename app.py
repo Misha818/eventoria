@@ -4,7 +4,7 @@ from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from products import email_text, submit_notes_text, get_pr_order, slidesToEdit, checkCategoryName, checkProductCategoryName, get_RefKey_LangID_by_link, get_article_category_images, get_product_category_images, edit_p_h, submit_reach_text, submit_product_text, add_p_c_sql, edit_p_c_view, edit_a_c_view, edit_p_c_sql, get_product_categories, get_ar_thumbnail_images, get_pr_thumbnail_images, add_product, productDetails, constructPrData, add_product_lang
-from sysadmin import is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
+from sysadmin import get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
@@ -1276,8 +1276,14 @@ def buy_now(surl):
     newCSRFtoken = generate_csrf()
     mainCurrency = MAIN_CURRENCY
     key, val = surl.split('-')
+    # actually ptID referrs for RefKey: it is not ptID in reality but RefKey
     prDataGlobal = {'ptID': int(key), 'quantity': int(val) }
-    return render_template('buy-now.html', prDataGlobal=prDataGlobal, mainCurrency=mainCurrency, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
+
+    payment_methods = get_pt_payment_methods(int(key))
+    if payment_methods['length'] == 0:
+        payment_methods = get_payment_methods('`ID`, `method`')
+
+    return render_template('buy-now.html', prDataGlobal=prDataGlobal, paymentMethods=payment_methods, mainCurrency=mainCurrency, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
     
 
 @app.route('/checkout', methods=['GET', 'POST'])
@@ -1291,14 +1297,14 @@ def checkout():
         mainCurrency = MAIN_CURRENCY
         return render_template('checkout.html', mainCurrency=mainCurrency, languageID=languageID, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
     
-    # 1. Lock some tables, unlock at the end
-    # 2. check data validity
-    # 3. client detection by phone number or registration 
+    # 1. Lock some tables, unlock at the end : hav not done this 
+    # 2. Check data validity
+    # 3. Client detection by phone number or registration 
     # 4. Calculate Total price to be purchased
-    # 5. insert additional data into  payment_details table and get inserted id
-    # 6. insert data into table buffer_store
+    # 5. Insert additional data into  payment_details table and get inserted id
+    # 6. Insert data into table buffer_store
     # 7. Send data to bank api
-    # 8. recive answer from api 
+    # 8. Recive answer from api 
     # 9. if answer == 1
         # insert data into purchase_history
     # else -- update table quantity 
@@ -1327,29 +1333,35 @@ def checkout():
             answer = gettext('The phone numbers do not match')
             return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})
         
+        if not data.get('email'):
+            answer = gettext('Please enter a valid email address!')
+            return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+
         if data.get('email') != '' and data.get('email') is not None:
             emailPattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
             # Check if the email matches the pattern
             if not re.match(emailPattern, data['email']):
                 answer = gettext('Invalid email format')
                 return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+            
+        pmData = get_payment_methods('`ID`, `method`', False)
+        allowedPaymentMethods = [str(x[0]) for x in pmData]
 
-        paymentMethod = False
+        paymentMethod, priceState = [False, False]
         for key, value in data.items():
-            if key in ['credit', 'debit', 'paypal']:
-                if value == True:
-                    paymentMethod = key
+            print(key, '=>', value)
+            if key == "payment_methods" and value in allowedPaymentMethods:
+                paymentMethod = value
             if key != 'email' and key != 'promo' and key != 'ptData' and list != type(value) != bool and value.strip() == '':
                 answer = gettext('Invalid value for ') + key
                 return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
         if len(data['ptData']) == 0:
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
-        
-        if paymentMethod == False:
-            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
         # End of Validation
-
+        
+        if paymentMethod == False and priceState == True or paymentMethod and priceState == False:
+            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
 
         # client detection || registration by phone number
         # returns {'clientID': clientID, 'contactID': contactID}
@@ -1365,18 +1377,6 @@ def checkout():
             notesID = result['inserted_id']
         # END of client detection || registration by phone number
 
-        # Calculate Total price to be purchased. This also checks promo code's validity 
-        # And 
-        # priceARR = calculate_price_promo(data['ptData'], data['promo'])
-        # if priceARR['status'] == "0":
-        #     answer = gettext(priceARR['answer'])
-        #     return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})
-        # if priceARR['status'] == "2":
-        #     return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})            
-        # if priceARR['status'] == "1":
-        #     amount = priceARR['answer']
-        # END of Calculate Total price to be purchased
-        
         # Get Promo Code ID
         promoID, affiliateID = [None, None]
         if data['promo'] != '':
@@ -1393,17 +1393,19 @@ def checkout():
             return jsonify({'status': "0", 'answer': resultPD['answer'], 'newCSRFtoken': newCSRFtoken})
 
     
-        pdID = resultPD['inserted_id'] 
-        # pdID = 1 
+        pdID = resultPD['inserted_id']
 
         # insert data into table buffer
         # This also checks if specified amount of product exists
-        buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID)
+        buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID, paymentMethod, priceState)
         if buffer['status'] == "0":
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!') + 'sdsds', 'newCSRFtoken': newCSRFtoken})
         
         if buffer['status'] == "2":
             return jsonify({'status': "0", 'answer': gettext("Invalid Promo Code"), 'newCSRFtoken': newCSRFtoken})
+        
+        if buffer['status'] == "3":
+            return jsonify({'status': "0", 'answer': buffer['answer'], 'newCSRFtoken': newCSRFtoken})
         
 
         amount = buffer['totalPrice']
@@ -2398,8 +2400,10 @@ def add_price(prID_RefKey):
     sqlValTuple = (languageID, prID)
     resultSpecifications = sqlSelect(sqlQuery, sqlValTuple, True)
     
+    payment_methods = get_payment_methods('`ID`, `method`')
+
     sideBar = side_bar_stuff()
-    return render_template('add-price.html', prData=prData, sps=resultSPS, specifications=resultSpecifications, PT_Ref_Key=PT_Ref_Key, sideBar=sideBar, mainCurrency=mainCurrency, current_locale=get_locale())
+    return render_template('add-price.html', prData=prData, paymentMethods=payment_methods, sps=resultSPS, specifications=resultSpecifications, PT_Ref_Key=PT_Ref_Key, sideBar=sideBar, mainCurrency=mainCurrency, current_locale=get_locale())
 
 
 # Edit price view
@@ -2427,6 +2431,7 @@ def edit_price(ptID):
                             `product_type`.`ID`,
                             `product_type`.`Title`,
                             `product_type`.`Price`,
+                            `product_type`.`payment_methods`,
                             `product_relatives`.`P_Ref_Key`,        
                             `product_type`.`spsID`,
                             `product_type`.`Order` AS `SubPrOrder`,
@@ -2528,7 +2533,11 @@ def edit_price(ptID):
     sqlValTuple = (languageID, 1)
     spsResult = sqlSelect(sqlQuery, sqlValTuple, True)
     
-    return render_template('edit-price.html', sideBar=sideBar, mainResult=mainResult, sps=spsResult, resultSPSS=resultSPSS, languageID=languageID, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
+    payment_methods = get_payment_methods('`ID`, `method`')
+    active_methods = []
+    if mainResult['data'][0]['payment_methods'] != '':
+        active_methods = mainResult['data'][0]['payment_methods'].split(',')
+    return render_template('edit-price.html', sideBar=sideBar, mainResult=mainResult, sps=spsResult, resultSPSS=resultSPSS, paymentMethods=payment_methods, activeMethods=active_methods, languageID=languageID, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
 
 
 # Edit price action
@@ -2567,12 +2576,12 @@ def editprice():
 
 
 
-    if not request.form.get('price') or len(request.form.get('price').strip())  == 0:
+    if not request.form.get('price'):
         answer = gettext('Please specify the price!')
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
   
-    if float(request.form.get('price')) <= 0:
-        answer = gettext('The price should be higher then 0!')
+    if float(request.form.get('price')) < 0:
+        answer = gettext('The price should be 0 or higher!')
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
   
     if request.form.get('fileStatus') == '0':
@@ -2722,13 +2731,14 @@ def editprice():
     else:
         spsID = int(request.form.get('spsID'))
 
-
-    sqlUpdatePriceTitle = "UPDATE `product_type` SET `title` = %s, `price` = %s, `spsID` = %s WHERE `ID` = %s;"
-    sqlValTuple = (title, price, spsID, ptID)
+    paymentMethods = request.form.get('payment_methods', '')
+    
+    sqlUpdatePriceTitle = "UPDATE `product_type` SET `title` = %s, `price` = %s, `spsID` = %s, `payment_methods` = %s WHERE `ID` = %s;"
+    sqlValTuple = (title, price, spsID, paymentMethods, ptID)
     updateResult = sqlUpdate(sqlUpdatePriceTitle, sqlValTuple) 
     if updateResult['status'] == '-1':
-        answer = gettext('Something went wrong. Please try again!')
-        return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
+        answer = gettext('Something went wrong. Please try again! 1')
+        return jsonify({'status': '0', 'answer': updateResult['answer'], 'newCSRFtoken': newCSRFtoken}) 
     
     spsChecker = request.form.get('spsChecker')
     if spsChecker == '1':
@@ -2925,8 +2935,8 @@ def upload_slides():
             answer = gettext('At least one image should be uploaded')
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
 
-        if float(request.form.get('price')) <= 0:
-            answer = gettext('The price should be higher then 0!')
+        if float(request.form.get('price')) < 0:
+            answer = gettext('The price should be 0 or higher!')
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
         
         if request.form.get('fileStatus') is not None:
@@ -2997,8 +3007,13 @@ def upload_slides():
         else:
             order = 0
 
-        sqlInsertQuery = "INSERT INTO `product_type` (`Price`, `Title`, `Order`, `Product_ID`, `User_Id`, `spsID`, `Status`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        sqlInsertVals = (price, title, order, int(ProductID), session['user_id'], spsID, 1)
+        paymentMethods = ''
+        if request.form.get('payment_methods'):
+            paymentMethods = request.form.get('payment_methods')
+
+
+        sqlInsertQuery = "INSERT INTO `product_type` (`Price`, `Title`, `Order`, `Product_ID`, `User_Id`, `spsID`, `payment_methods`, `Status`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        sqlInsertVals = (price, title, order, int(ProductID), session['user_id'], spsID, paymentMethods, 1)
         insertedResult = sqlInsert(sqlInsertQuery, sqlInsertVals)
 
         PT_Ref_Key = request.form.get('PT_Ref_Key', '')
@@ -3031,7 +3046,7 @@ def upload_slides():
 
         else: 
             answer = gettext('Something went wrong. Please try again!')
-            return jsonify({'status': '0', 'answer': insertedResult['answer'], 'newCSRFtoken': newCSRFtoken})
+            return jsonify({'status': '0', 'answer': insertedResult['message'], 'newCSRFtoken': newCSRFtoken})
             
 
     else:
@@ -6469,22 +6484,21 @@ def get_pt_quantity():
             """
     
     result = sqlSelect(sqlQuary, sqlValTuple, True)
-    status, message = [0, '']
+    status, message = [1, '']
 
-    if result['data'][0]['maxQuantity'] is not None:
-        maxQuantity = result['data'][0]['maxQuantity']
-        if float(maxQuantity) >= quantity:
+    if result['length'] > 0:
+        if result['data'][0]['maxQuantity'] is not None:
+            maxQuantity = result['data'][0]['maxQuantity']
+            if float(maxQuantity) >= quantity:
+                if float(result['data'][0]['quantity']) >= quantity:
+                    result['price'] = quantity * float(result['data'][0]['Price'])
+            else:
+                message = gettext('The specified amount is unavailable.')        
+        else:
             if float(result['data'][0]['quantity']) >= quantity:
-                status = 1
                 result['price'] = quantity * float(result['data'][0]['Price'])
-        else:
-            message = gettext('The specified amount is unavailable.')        
-    else:
-        if float(result['data'][0]['quantity']) >= quantity:
-            status = 1
-            result['price'] = quantity * float(result['data'][0]['Price'])
-        else:
-            message = gettext('The specified amount is unavailable.')      
+            else:
+                message = gettext('The specified amount is unavailable.')      
 
     response = {'status': status, 'data': result, 'message': message,  'newCSRFtoken': newCSRFtoken}
     return jsonify(response)
@@ -7223,11 +7237,11 @@ def check_pt_quantity():
     return jsonify({'status': '1', 'newCSRFtoken': newCSRFtoken})
 
 
-@app.route('/<myLinks>')
+@app.route('/<path>')
 @validate_request
-def index(myLinks):
+def index(path):
     
-    content = get_RefKey_LangID_by_link(myLinks)
+    content = get_RefKey_LangID_by_link(path)
     slideShow = []
     supportedLangsData = []
     metaTags = ''

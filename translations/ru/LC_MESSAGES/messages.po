@@ -2334,7 +2334,7 @@ msgstr "Введите адрес электронной почты получа
 
 #: templates/slideshow.html:168 templates/slideshow.html:215
 msgid "left in stock"
-msgstr "осталось на складе"
+msgstr "осталось"
 
 #: templates/slideshow.html:176 templates/slideshow.html:223
 msgid "Add to cart"
@@ -2588,3 +2588,8 @@ msgstr "Сотрудник"
 #~ msgid "recipient"
 #~ msgstr "получатель"
 
+msgid "For+1"
+msgstr "для"
+
+msgid "person+1"
+msgstr "участников"

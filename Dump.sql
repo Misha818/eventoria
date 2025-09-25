@@ -37,6 +37,7 @@ CREATE TABLE `product_type` (
     `ID` INT AUTO_INCREMENT,
     `Price` FLOAT,
     `Title` VARCHAR(255),
+    `payment_methods` VARCHAR(255),
     `Description` TEXT,
     `Order` INT,
     `User_ID` INT,
@@ -367,6 +368,16 @@ CREATE TABLE `purchase_history` (
     PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB;
 ALTER TABLE `purchase_history` AUTO_INCREMENT = 1;
+
+
+DROP TABLE IF EXISTS `payment_methods`;
+CREATE TABLE `payment_methods` (
+    `ID` INT AUTO_INCREMENT,
+    `method` VARCHAR(255),
+    `Status` INT,
+    PRIMARY KEY (`ID`)
+) ENGINE=InnoDB;
+ALTER TABLE `payment_methods` AUTO_INCREMENT = 1;
 
 
 DROP TABLE IF EXISTS `payment_details`;
@@ -731,3 +742,9 @@ INSERT INTO `languages` (`Language`, `Prefix`) VALUES
 ('Português', 'pt'),
 ('Русский', 'ru')
 ;
+
+INSERT INTO `payment_methods` (`method`, `Status`) VALUES
+('Credit/Debit card', 1),
+('Idram', 1),
+('TellCell', 1),
+('Cash', 1);

@@ -85,15 +85,15 @@ body {
 <div class="container checkout-form">
   <main>
       <div class="row g-5">
-          <div class="col-md-5 col-lg-4 order-md-last">
-              <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <div class="col-md-5 col-lg-4 order-md-last" id="promo-container">
+              <!-- <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-primary">{{ _('Items in Cart') }}</span>
                 <span class="badge bg-primary rounded-pill" 
                       style="background-color: #fdf6ec !important;
                         color: #454d56;
                         box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.3);"
                 ></span>
-              </h4>
+              </h4> -->
               <ul class="list-group mb-3" id="checkout-basket" style="max-height: 78vh; overflow-y: auto;">
                 <!-- <li class="list-group-item d-flex justify-content-between lh-sm">
                   <div>
@@ -139,8 +139,8 @@ body {
                 </div>
               </div>
             </div>
-          <div class="col-md-7 col-lg-8">
-              <h4 class="mb-3">{{ _('Billing address') }}</h4>
+          <div class="col-md-7 col-lg-8" id="fill-data-container">
+              <!-- <h4 class="mb-3">{{ _('Billing address') }}</h4> -->
               <div id="mistakes"></div>
               <form class="needs-validation" novalidate>
                   <div class="row g-3">
@@ -175,62 +175,24 @@ body {
                       </div>
 
                       <div class="col-12">
-                          <label for="email" class="form-label">{{ _('Email') }} <span class="text-muted">( {{_('Optional')}} )</span></label>
-                          <input type="email" class="form-control" id="email">
+                          <label for="email" class="form-label">{{ _('Email') }}</label>
+                          <input type="email" class="form-control" id="email" required>
                           <div class="invalid-feedback"> {{ _('Please enter a valid email address!')}} </div>
                       </div>
                       
-                      <div class="col-12">
-                          <label for="address" class="form-label">{{ _('Address') }} *</label>
-                          <input type="text" class="form-control" id="address" required>
-                          <div class="invalid-feedback"> {{ _('Please enter your shipping address!')}} </div>
-                      </div>
+                  </div>
+                  
+                  <hr class="my-4 paymentElements">
+                  <h4 class="mb-3 paymentElements">{{ _('Payment')}}</h4>
+                  <select class="pay_method form-select paymentElements" id="payment_methods" aria-label="Default select example" style="margin-bottom: 10px;" required>
+                    <option value="">{{ _('Choose payment method') }}</option>
+                    {% for row in paymentMethods.data %}
+                    <option value="{{ row['ID'] }}">{{ row['method'] }}</option>
+                    {% endfor %}
+                  </select>
+                    
+                  <div class="row gy-3 paymentElements" id="payment_container">
 
-                      <div class="col-md-4">
-                          <label for="city" class="form-label">{{ _('City') }}</label>
-                          <select class="form-select" id="city" required disabled>
-                              <option value="">{{ _('Choose...') }}</option>
-                              <option selected>{{ _('Yerevan')}}</option>
-                          </select>
-                      </div>
-                  </div>
-                  <hr class="my-4">
-                  <h4 class="mb-3">{{ _('Payment')}}</h4>
-                  <div class="my-3">
-                      <div class="form-check">
-                          <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
-                          <label class="form-check-label" for="credit">{{ _('Credit card')}}</label>
-                      </div>
-                      <div class="form-check">
-                          <input id="debit" name="paymentMethod" type="radio" class="form-check-input" required>
-                          <label class="form-check-label" for="debit">{{ _('Debit card')}}</label>
-                      </div>
-                      <div class="form-check">
-                          <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" required>
-                          <label class="form-check-label" for="paypal">{{ _('PayPal')}}</label>
-                      </div>
-                  </div>
-                  <div class="row gy-3">
-                      <div class="col-md-6">
-                          <label for="cc-name" class="form-label">{{ _('Name on card')}} *</label>
-                          <input type="text" class="form-control" id="cc-name" required>
-                          <div class="invalid-feedback"> {{ _('Name on card is required.')}} </div>
-                      </div>
-                      <div class="col-md-6">
-                          <label for="cc-number" class="form-label">{{ _('Credit card number')}} *</label>
-                          <input type="number" class="form-control" id="cc-number" oninput="validateNumericInput(this)" inputmode="numeric"  required>
-                          <div class="invalid-feedback"> {{ _('Credit card number is required.')}} </div>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="cc-expiration" class="form-label">{{ _('Expiration')}} *</label>
-                          <input type="text" class="form-control" id="cc-expiration" required>
-                          <div class="invalid-feedback"> {{ _('Expiration date required.')}} </div>
-                      </div>
-                      <div class="col-md-3">
-                          <label for="cc-cvv" class="form-label">{{ _('CVV') }} *</label>
-                          <input type="text" class="form-control" id="cc-cvv" required>
-                          <div class="invalid-feedback"> {{ _('Security code required.')}} </div>
-                      </div>
                   </div>
                   <hr class="my-4">
                   <div  class="w-100 btn btn-primary btn-lg" 
@@ -394,36 +356,6 @@ if (addToCartButtons) {
                   const data = {
                     newShoppingCartModal: newShoppingCartModal.outerHTML
                   }
-
-                  // const basketElement = document.querySelector('#basket-url');
-                  // const destinationContainer = document.querySelector('.add-to-cart-modal-close');
-                  // if (basketElement && destinationContainer) {
-                  //   // Append the element to the new container
-                  //   destinationContainer.appendChild(basketElement);
-                  // }
-
-
-                  
-                    // function myLoader(color) {
-                    //     if (color === undefined) {
-                    //       color = 'crimson'
-                    //     }
-                    //     let loader = document.createElement('div'); // Create a div element for the loader
-                    //       loader.id = 'gear';
-                    //       loader.style.color = color;
-                    //       loader.style.fontSize = '20px';
-                    //       loader.style.display = 'inline-block';
-                    //       loader.textContent = '⚙';
-                    //       return loader;
-                    // }
-
-                    // function rotate(gearElement) {
-                    //   let angle = 0;
-                    //   setInterval(() => {
-                    //       angle = (angle + 5) % 360; 
-                    //       gearElement.style.transform = `rotate(${angle}deg)`;
-                    //   }, 50); 
-                    // }
 
                     let loader = myLoader('#FCC628');
                     let flag = false;
@@ -683,9 +615,9 @@ async function get_pt_quantity(ptID, quantity) {
             aTag.href = window.location.origin + '/cart';
         } else {
             // let oddCart = prDataGlobal.ptID + '-' + prDataGlobal.quantity
+            let payMethod = false;
             get_cart_content(Cart).then(response => {
                 let prData = response.content.result.data;
-
 
                 let arr = Cart.split('&');
                 let cartCount = 0;
@@ -697,8 +629,11 @@ async function get_pt_quantity(ptID, quantity) {
 
                     let ptIDCookie = parseInt(itemArr[0]);
                     let countCookie = parseInt(itemArr[1]);
-
+                    console.log(prData)
                     prData.forEach(row => {
+                        if (parseFloat(row.Price) > 0) {
+                          payMethod = true
+                        }
                         if (parseInt(row['ptID']) === ptIDCookie) {
                             let amount = countCookie;
                             // let maxAlowedQuantity = row['quantity'];
@@ -761,16 +696,35 @@ async function get_pt_quantity(ptID, quantity) {
                     document.getElementById('checkout-total-price').textContent = "{{ mainCurrency}}" + ' ' + totlaPrice;
 
                 });
-
-                document.querySelector('.badge').textContent = cartCount.toString();
+                if (document.querySelector('.badge')) {
+                  document.querySelector('.badge').textContent = cartCount.toString();
+                }
     
                 aTag.href = window.location.origin + '/cart/' + Cart;
+              if (payMethod == false) {
+                document.getElementById('fill-data-container').style.width = "100%";
+                
+                const container = document.getElementById('fill-data-container')
+                // create an element
+                const h1 = document.createElement('h1');
+                h1.textContent = prData[0].prTitle + ' ' + prData[0].prTitle + ' x ' + prDataGlobal.quantity;
+                
+                // insert before the first child
+                container.insertBefore(h1, container.firstChild);
 
-            }).catch(error => {
-                console.error(error);
-            });
+                // Remove redundant elements
+                document.getElementById('promo-container').remove();
+                document.querySelectorAll('.paymentElements').forEach(element => {
+                  element.remove();
+                });
+                
+              }   
+               
+          }).catch(error => {
+              console.error(error);
+          });
         
-        }
+      }
 
     }
     
@@ -1256,6 +1210,96 @@ async function get_pt_quantity(ptID, quantity) {
   });
 
 
+  function createCreditDebitPaymentFields() {
+    const container = document.getElementById("payment_container");
+    container.innerHTML = '';
+
+
+    // Template for each field
+    const fields = [
+      {
+        col: "col-md-6",
+        labelFor: "cc-name",
+        label: "Name on card *",
+        type: "text",
+        id: "cc-name",
+        invalid: "Name on card is required."
+      },
+      {
+        col: "col-md-6",
+        labelFor: "cc-number",
+        label: "Credit card number *",
+        type: "number",
+        id: "cc-number",
+        extraAttr: 'oninput="validateNumericInput(this)" inputmode="numeric"',
+        invalid: "Credit card number is required."
+      },
+      {
+        col: "col-md-3",
+        labelFor: "cc-expiration",
+        label: "Expiration *",
+        type: "text",
+        id: "cc-expiration",
+        invalid: "Expiration date required."
+      },
+      {
+        col: "col-md-3",
+        labelFor: "cc-cvv",
+        label: "CVV *",
+        type: "text",
+        id: "cc-cvv",
+        invalid: "Security code required."
+      }
+    ];
+
+    // Build and append each field
+    fields.forEach(f => {
+      const wrapper = document.createElement("div");
+      wrapper.className = f.col;
+
+      wrapper.innerHTML = `
+        <label for="${f.labelFor}" class="form-label">${f.label}</label>
+        <input type="${f.type}" class="form-control" id="${f.id}" ${f.extraAttr || ""} required>
+        <div class="invalid-feedback">${f.invalid}</div>
+      `;
+
+      container.appendChild(wrapper);
+  });
+}
+
+  function createIdramPaymentFields() {
+    return ''
+  }
+
+  function createTelCellPaymentFields() {
+    return ''
+  }
+
+  document.querySelector('#payment_methods').addEventListener("change", function() {
+    let peyMethodID = this.value;
+    if (peyMethodID == "") {
+      document.getElementById("payment_container").innerHTML = '';
+    } 
+
+    if (peyMethodID == "1") {
+      createCreditDebitPaymentFields();
+    }
+    
+    if (peyMethodID == "2") {
+      createIdramPaymentFields();
+    }
+    
+    if (peyMethodID == "3") {
+      createTelCellPaymentFields();
+    }
+
+  });
+
+
+// Example numeric validation
+function validateNumericInput(el) {
+  el.value = el.value.replace(/[^0-9]/g, '');
+}
 
 
 });
@@ -1467,7 +1511,7 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
     data['country-code'] = ccArr[1];
     data['ptData'] = [prDataGlobal];
     let promo = '';
-    if (document.querySelector('#promo').value) {
+    if (document.querySelector('#promo')) {
       promo = document.querySelector('#promo').value;
     }
     data['promo'] = promo;
@@ -1531,6 +1575,9 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
 
 
   });
+
+
+
 
 });
 

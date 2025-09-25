@@ -1324,7 +1324,7 @@ button[type="submit"] {
     display: inline-block;
     width: 140px;
     text-align: center;
-    background-color: #FCC628;
+    background: linear-gradient(135deg, #d4d8db, #bac0c5);
     color: #fff;
     text-decoration: none;
     padding: 10px 15px;
@@ -2331,6 +2331,10 @@ h2 {
   /* justify-content: center; */
 }
 
+.cart-container p {
+  margin-right: 5px!important;
+}
+
 
 .header-bar nav i {
   font-size: 1.4em;
@@ -2396,15 +2400,32 @@ h2 {
 }
 
 .quantity {
-  width: 50px;
-  padding: 8px;
+  width: 80px;
+  padding: 8px 28px 8px 10px; /* space on right for arrow */
   margin-right: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 38px;
   text-align: center;
-  -webkit-appearance: none; /* Chrome, Safari, Opera */
-  -moz-appearance: textfield; /* Firefox */
+  font-size: 14px;
+  appearance: none;            /* remove default arrow */
+  -webkit-appearance: none;    /* Safari/Chrome */
+  -moz-appearance: none;       /* Firefox */
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 1l5 5 5-5'/></svg>") no-repeat right 10px center;
+  background-size: 12px 8px;
+  cursor: pointer;
 }
+
+
+/* .quantity option:hover {
+  background-color: #f5f5f5;
+  color: #000;
+}
+
+.quantity option:checked {
+  background-color: #ff4d4d;
+  color: #fff;
+} */
+
 
 .quantity::-webkit-inner-spin-button,
 .quantity::-webkit-outer-spin-button {
@@ -2429,7 +2450,7 @@ h2 {
   border: 1px solid #fff;
   color: #fff;
   border-radius: 35px;
-  padding: 8px 16px;
+  padding: 5px 20px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -8678,4 +8699,61 @@ tr:nth-child(even) {
   margin: 0;
   min-width: 100%;               /* optional: at least as wide as button */
   z-index: 1000;
+}
+
+
+
+
+.payment_methods { 
+  position: relative; 
+  display: inline-block; 
+  margin-top: 10px;
+}
+
+.pm-toggle{
+  min-width: 220px; padding: 8px 34px 8px 12px;
+  border: 1px solid #ccc; border-radius: 8px; background:#fff; cursor:pointer;
+  line-height: 1.4; user-select: none; position: relative;
+}
+.pm-toggle::after{ /* down chevron */
+  content:""; position:absolute; right:10px; top:50%; transform:translateY(-50%);
+  border-width: 6px 5px 0 5px; border-style: solid; border-color:#666 transparent transparent transparent;
+}
+
+.pm-menu{
+  display:none; 
+  position:absolute; 
+  left:0; right:0; 
+  margin-top:6px;
+  background:#fff; 
+  border:1px solid #ccc; 
+  border-radius:8px; 
+  padding:8px; 
+  z-index:10;
+  list-style:none; 
+  max-height:220px; 
+  overflow:auto;
+}
+.payment_methods.open .pm-menu{ display:block; }
+.payment_methods.open .pm-toggle::after{
+  transform: translateY(-40%) rotate(180deg);
+}
+
+.pm-menu li{ padding:4px 6px; }
+.pm-menu label{ 
+  display:flex; 
+  gap:8px; 
+  cursor:pointer;
+}
+
+.pm-menu li { 
+  display: flex; 
+}
+
+.pm-menu li:hover { 
+  background-color: #f0f0f0;
+}
+
+.pm-menu label { 
+  align-items: center;       /* center checkbox & text vertically */
 }

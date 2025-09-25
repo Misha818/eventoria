@@ -2361,7 +2361,7 @@ msgstr "Մուտքագրեք հասցեատիրոջ էլ. փոստի հասցե�
 
 #: templates/slideshow.html:168 templates/slideshow.html:215
 msgid "left in stock"
-msgstr "մնացել է պահեստում"
+msgstr "տեղ է մնացել"
 
 #: templates/slideshow.html:176 templates/slideshow.html:223
 msgid "Add to cart"
@@ -2590,3 +2590,8 @@ msgstr "ստացող"
 msgid "Affiliate Order Details"
 msgstr "Պատվերի մանրամասներ"
 
+msgid "For+1"
+msgstr ""
+
+msgid "person+1"
+msgstr "անձի համար"

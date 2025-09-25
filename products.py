@@ -1189,16 +1189,16 @@ def checkCategoryName(RefKey, languageID, categoryName):
         return False
     
 
-def get_RefKey_LangID_by_link(myLink):
+def get_RefKey_LangID_by_link(path):
 
     ptID, prUrl = ['', '']
-    if '&' in myLink:
-        arr = myLink.split('&')
+    if '&' in path:
+        arr = path.split('&')
         prUrl = arr[0]
         ptID = get_ptRefKey_by_title(arr[1]) # ptRefKey is used instead of ptID for multi-language purpose 
         
     else:
-        prUrl = myLink
+        prUrl = path
         
     sqlQuery = "SELECT `ID`, `Language_ID` FROM `product` WHERE `Url` = %s;"
     sqlValTuple = (prUrl,)
@@ -1223,9 +1223,9 @@ def get_RefKey_LangID_by_link(myLink):
     return content
 
 
-def get_ArticleID_LangID_by_link(myLink):
+def get_ArticleID_LangID_by_link(path):
     sqlQuery = "SELECT `ID`, `Language_ID` FROM `article` WHERE `Url` = %s;"
-    sqlValTuple = (myLink,)
+    sqlValTuple = (path,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
     if result['length'] == 0:

@@ -159,11 +159,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const seeDetails = document.createElement("a");
             seeDetails.href = "{{ url_for('home') }}" + product.Url;
             seeDetails.className = "btn_landing";
-            seeDetails.textContent = "{{ _('See Details') }}";
-            seeDetails.addEventListener('mouseover', () => {
-                seeDetails.style.color = 'white';
-            });
+            seeDetails.textContent = "{{ _('More') }}";
+
             cardButtons.appendChild(seeDetails);
+
+            // Create "Apply" button
+            const applyBtn = document.createElement("div");
+            applyBtn.className = "btn_landing";
+            applyBtn.textContent = "{{ _('Apply') }}";
+
+            cardButtons.appendChild(applyBtn);
 
             // Append the completed card to the container
             container.appendChild(card);

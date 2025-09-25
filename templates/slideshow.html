@@ -42,6 +42,8 @@
 <!-- Right Errow &#10095 -->
 <div class="product-container blocks" id="slides">
 
+  <input type="hidden" id="no-spot-left" value="{{ _('No spot left') }}">
+
   <div class="thumbnail-container">
     <button class="thumb-prev" style="{{ display }}" onclick="scrollThumbnails('left', false)">&#11165;</button>
     <div class="thumbnails-wrapper" style="{{ thumbnailsWrapperHeight }}">
@@ -161,28 +163,36 @@
               data-bs-content="<a href='{{ url_for('edit_price', ptID=subProducts[0]['ID']) }}  '>{{ _('Edit Price') }}</a> <a href='{{ url_for('add_to_store', ptID=subProducts[0]['ID']) }}' target='_BLANK'>{{ _('Add To Store') }}</a>"
                  
         >{{ resultSpss.data[0].ptTitle }}</h2>
-        <p class="price">{{ resultSpss.data[0].Price }} {{ mainCurrency }} </p>
+        <p class="price">
+          {% if resultSpss.data[0].Price == 0 %}
+            {{ _('Participation is free') }}
+          {% else %}
+            {{ resultSpss.data[0].Price }} {{ mainCurrency }} 
+          {% endif %}
+        
+        </p>
         <p class="inStock">
           {% if resultSpss.data[0].Quantity %}
-            {% if resultSpss.data[0].Quantity < 25 %}
+            {% if resultSpss.data[0].Quantity < 9 %}
               {{ resultSpss.data[0].Quantity }} {{ _('left in stock') }}
             {% endif %}
           {% endif %}
         </p>
         <div class="cart-container">
-          <input type="number" class="quantity" name="quantity" value="1" min="1">
-          <button class="add-to-cart-btn" value="{{ resultSpss.data[0].ptID }}">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            {{ _('Add to cart') }}
-          </button>
-          <!-- <button class="adding-to-cart">
-            <i class="fas fa-shopping-cart cart-icon"></i>
-            {{ _('Adding') }}
-          </button> -->
+        <button class="add-to-cart-btn" value="{{ resultSpss.data[0]['ptID'] }}" style="display: none;">
+          <i class="fas fa-shopping-cart cart-icon"></i>
+          {{ _('Add to cart') }}
+        </button>
           <button class="buy-btn" value="{{ resultSpss.data[0].ptID }}">
-            <i class="fas fa-credit-card cart-icon"></i>
-            {{ _('Buy now') }}
+            <!-- <i class="fas fa-credit-card cart-icon"></i> -->
+            {{ _('Apply') }}
           </button>
+          {% set purchaseQty = resultSpss.data[0].Quantity %}
+          <p>{{ _("For+1") }}</p>
+          <!-- <input type="number" class="quantity" name="quantity" value="1" min="1"> -->
+          <select class="quantity" name="quantity" id="select-quantity-{{ resultSpss.data[0].ptID }}">
+          </select>
+          <p>{{ _("person+1") }}</p>
         </div>
         
         {% set ns = namespace(flag = resultSpss.data[0].ptID) %}
@@ -208,24 +218,35 @@
                     data-bs-html="true" 
                     data-bs-content="<a href='{{ url_for('edit_price', ptID=ns.flag) }}  '>{{ _('Edit Price') }}</a> <a href='{{ url_for('add_to_store', ptID=ns.flag) }}' target='_BLANK'>{{ _('Add To Store') }}</a>"
               >{{ row['ptTitle'] }}</h2>
-              <p class="price">{{ row['Price'] }} {{ mainCurrency }} </p>
+              <p class="price">
+                {% if row.Price == 0 %}
+                  {{ _('Participation is free') }}
+                {% else %}
+                  {{ row['Price'] }} {{ mainCurrency }} 
+                {% endif %}
+              </p>
               <p class="inStock">
                 {% if row['Quantity'] %}
-                  {% if row['Quantity'] < 25 %}
+                  {% if row['Quantity'] < 9 %}
                     {{ row['Quantity'] }} {{ _('left in stock') }}
                   {% endif %}
                 {% endif %}
               </p>
               <div class="cart-container">
-                <input type="number" class="quantity" name="quantity" value="1" min="1">
-                <button class="add-to-cart-btn" value="{{ row['ptID'] }}">
+                <button class="add-to-cart-btn" value="{{ row['ptID'] }}" style="display: none;">
                   <i class="fas fa-shopping-cart cart-icon"></i>
                   {{ _('Add to cart') }}
                 </button>
                 <button class="buy-btn" value="{{ row['ptID'] }}">
-                  <i class="fas fa-credit-card cart-icon"></i>
-                  {{ _('Buy now') }}
+                  <!-- <i class="fas fa-credit-card cart-icon"></i> -->
+                  {{ _('Apply') }}
                 </button>
+                {% set purchaseQty = row['Quantity'] %}
+                <p>{{ _("For+1") }}</p>
+                <!-- <input type="number" class="quantity" name="quantity" value="1" min="1"> -->
+                <select class="quantity" name="quantity" id="select-quantity-{{ row['ptID'] }}">
+                </select>
+                <p>{{ _("person+1") }}</p>
               </div>
               {% if row['Text'] is not none %}
                 <p class="spss spss-view">

@@ -55,6 +55,44 @@
         <div class="dz-message dz-button">{{ _('Click here to upload files') }}</div>
     </div>
     
+{% set active = activeMethods | map('int') | list %}
+{% set ns = namespace(payments='') %}
+{% set ns = namespace(allActives='') %}
+
+{% for row in paymentMethods %}
+  {% if row.ID in active %}
+    {% set checked = ' checked' %}
+    {% set ns.allActives = ns.allActives ~ row.method + ', ' %}
+  {% else %}
+    {% set checked = '' %}
+  {% endif %}
+
+  {% set ns.payments = ns.payments
+     ~ '<li><label><input type="checkbox" value="' ~ row.ID ~ '"' ~ checked ~ '>'
+     ~ row.method ~ '</label></li>' %}
+{% endfor %}
+
+
+
+
+
+    <div class="payment_methods" id="pm1">
+    <div class="pm-toggle" role="combobox" aria-expanded="false" tabindex="0">
+    {% if ns.allActives == '' %}    
+        {{ _('Select payment methods') }}
+    {% else %}
+        {{ ns.allActives[:-2] }}    
+    {% endif %}    
+    
+    </div>
+
+    <ul class="pm-menu" aria-label="Payment methods">
+        {{ ns.payments|safe }}
+    </ul>
+    </div>
+
+    <p id="result"></p>
+
     {% if sps.length > 0 %}
     <select name="sps" id="spsID" class="styled-select" style="margin-top: 10px;">
         <option value="">{{ _('Choose product type specification') }}</option>
@@ -457,8 +495,53 @@
             spsChecker = 1;  // Update the checker on any input change
         });
 
+                
+        const selectPMs = document.querySelector('.pm-toggle').textContent;
+        const pm = document.getElementById('pm1');
+        const toggle = pm.querySelector('.pm-toggle');
+        const menu = pm.querySelector('.pm-menu');
+
+        function updateLabel() {
+            const checked = pm.querySelectorAll('input[type="checkbox"]:checked');
+            const names = Array.from(checked).map(cb => {
+                const label = cb.closest('label');
+                return label ? label.textContent.trim().replace(/\s+/g, ' ') : cb.value;
+            });
+            toggle.textContent = names.length ? names.join(', ') : 'Select payment methods';
+        }
+
+        // open/close
+        toggle.addEventListener('click', () => {
+        pm.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', pm.classList.contains('open'));
+        });
+        toggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+        if (e.key === 'Escape') { pm.classList.remove('open'); toggle.setAttribute('aria-expanded','false'); }
+        });
+
+        // close when clicking outside
+        document.addEventListener('click', (e) => {
+        if (!pm.contains(e.target)) {
+            pm.classList.remove('open');
+            toggle.setAttribute('aria-expanded','false');
+        }
+        });
+
+        // update label live
+        menu.addEventListener('change', updateLabel);
 
     });
+
+
+        function getSelectedIdsStr() {
+            const pm = document.getElementById('pm1');
+            return Array.from(pm.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value)
+                        .filter(Boolean)      // skip items without an value
+                        .join(',');
+        }
+
         // Handle the file upload when the button is clicked
         let uploadButton = document.getElementById("saveButton");
         let saving = document.getElementById("saving");
@@ -532,6 +615,11 @@
             let PtID = document.getElementById('ptID').value;
             let spsName = document.getElementById('spsID').value;
             let languageID = document.getElementById('language-id').value;
+
+            paymentMethods = getSelectedIdsStr();
+            if (paymentMethods.length > 0) {
+                formData.append('payment_methods', paymentMethods);
+            }
 
             // formData.append("languageID", languageID);
             // formData.append("ProductID", ProductID);

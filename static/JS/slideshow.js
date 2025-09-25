@@ -380,39 +380,9 @@
         imgElement.classList.add('selectedThumbnail');
     }
 
-
-// Prevent numbers less then 1 in .quantity input
 document.addEventListener("DOMContentLoaded", function() {
-
     
-    
-    const inputs = document.querySelectorAll(".quantity");
-
-    // inputs.forEach(input => {
-    //     input.addEventListener("input", () => {
-    //     if (input.value == "") {
-    //         input.value = 0;
-    //         return;
-    //     }    
-
-    //     let quantity = 0;
-    //     if (input.value !== "" && input.value < 1) {
-    //         input.value = 1;
-    //     } else {
-    //         quantity = input.value.replace(/^0+/, ''); // Remove leading zeros
-    //         input.value = quantity;
-
-    //     }
-
-    //     clickedBotton = input.parentNode.querySelector('.add-to-cart-btn');
-    //     ptID = clickedBotton.value;   
-    //     addToCart(ptID, quantity, clickedBotton);
-
-    //     console.log(quantity)
-        
-    //     });
-    // });
-
+    const quantities = document.querySelectorAll(`.quantity`);
     const hiddenPt = document.getElementById('hiddenPtID');
     
     if (hiddenPt) {
@@ -483,6 +453,91 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     
 
+    });
+
+    function get_max_prch_qty(ptID, callback) {
+
+        let formData = new FormData();
+        
+        // Create a new FormData object
+        formData.append('ptID', ptID);
+        formData.append('quantity', 1);
+        
+        // Create a new XMLHttpRequest object
+        let xhr = new XMLHttpRequest();
+        let data = [];
+        
+        // Configure the request
+        xhr.open('POST', '/get-pt-quantity');
+        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+        
+        // Define what happens on successful data submission
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                
+                if (response.status === 1) {
+                    // Handle empty product name
+                    callback(response.data);                  
+                } 
+            } else {
+                // Handle error response
+                console.error('Error adding category:', xhr.responseText);
+            }
+
+        };
+        
+        // Send the request with the FormData object
+        xhr.send(formData);
+    }
+    
+    const ptIDs = document.querySelectorAll('.buy-btn');
+
+    ptIDs.forEach(ptID => {
+        get_max_prch_qty(ptID.value, function(maxPrchQty) {
+
+            console.log(maxPrchQty)
+            select = document.getElementById('select-quantity-'+ptID.value)
+            if (maxPrchQty.length > 0) {
+                if (maxPrchQty.data[0].quantity > 0) {
+
+                    num = maxPrchQty.data[0].maxQuantity;
+                    if (maxPrchQty.data[0].maxQuantity > maxPrchQty.data[0].quantity) {
+                        num = maxPrchQty.data[0].quantity;
+                    }
+                    
+                    for (let i = 1; i <= num; i++) {
+                        let option = document.createElement("option");
+                        option.value = i;
+                        option.text = i;
+                        select.appendChild(option);
+                    }
+                } else {
+                    const cardContainer = select.parentNode
+                    cardContainer.innerHTML = document.getElementById('no-spot-left').value;
+                }
+            } else {
+                const cardContainer = select.parentNode
+                cardContainer.innerHTML = document.getElementById('no-spot-left').value;
+            }
+            
+        });
+    });
+        
+    quantities.forEach(quantity => {
+        quantity.addEventListener('change', function(e) {
+            let selectParentNode = this.parentNode;
+            let ptID = selectParentNode.querySelector('.buy-btn').value;
+            let selectedOption = this.value;
+            get_max_prch_qty(ptID, function(maxPrchQty) {
+                console.log(maxPrchQty.data[0].Price)
+                console.log(selectedOption)
+                newPrice = parseFloat(maxPrchQty.data[0].Price) * parseFloat(selectedOption)
+                
+                let priceContainer = selectParentNode.parentNode.querySelector('.price');
+                priceContainer.innerHTML = newPrice.toString() + '.0 ' + priceContainer.textContent.split(' ')[1]
+            });
+        });
     });
 
 });

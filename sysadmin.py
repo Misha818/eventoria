@@ -912,7 +912,7 @@ def clientID_contactID(data): # returns clientID from table `clients` and contac
         clientID = result['inserted_id']
 
         
-    if data['email']:
+    if data.get('email'):
         sqlQuery = "SELECT * FROM `emails` WHERE `email` = %s;"
         result = sqlSelect(sqlQuery, (data['email'].strip(),), True)
         if result['length'] > 0:
@@ -935,20 +935,20 @@ def clientID_contactID(data): # returns clientID from table `clients` and contac
         phoneID = result['inserted_id']
 
     sqlQueryAddress = "SELECT * FROM `addresses` WHERE `address` = %s;"
-    result = sqlSelect(sqlQuery, (data['address'].strip(),), True)
+    result = sqlSelect(sqlQuery, (data.get('address', '').strip(),), True)
     if result['length'] > 0:
         addressID = result['data'][0]['ID']
     else:
         sqlQueryInsert = "INSERT INTO `addresses` (`address`, `clientID`) VALUES (%s, %s);"
-        sqlQueryTuple = (data['address'].strip(), clientID)
+        sqlQueryTuple = (data.get('address', '').strip(), clientID)
         result = sqlInsert(sqlQueryInsert, sqlQueryTuple)
         addressID = result['inserted_id']
 
 
-    if data['email'] and emailID == None:
+    if data.get('email') and emailID == None:
         langID = getLangID()
         sqlQueryInsert = "INSERT INTO `emails` (`email`, `clientID`, `langID`) VALUES (%s, %s, %s);"
-        sqlQueryTuple = (data['email'].strip(), clientID, langID)
+        sqlQueryTuple = (data.get('email', '').strip(), clientID, langID)
         result = sqlInsert(sqlQueryInsert, sqlQueryTuple)
         emailID = result['inserted_id']
 
@@ -1067,9 +1067,26 @@ def calculate_price(products):
     return {'status': "1", 'answer': totalPrice}
 
 
-def insertIntoBuffer(data, pdID, smthWrong, languageID):
+def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceState):
     # IMPORTANT
     # Do not forget to take into consideration the max quantity as well
+        
+    if paymentMethod and priceState == True:
+        # Check credentials for credit/debit card
+        if paymentMethod == '1':
+            if not data['cc-name']:
+                return {'status': '3', 'amswer': gettext("Name on card is required.")}
+            if not data['cc-number']:
+                return {'status': '3', 'amswer': gettext("Credit card number is required.")}
+            if not data['cc-expiration']:
+                return {'status': '3', 'amswer': gettext("Expiration date required.")}
+            if not data['cc-cvv']:
+                return {'status': '3', 'amswer': gettext("Security code required.")}
+        
+
+    if paymentMethod == False and priceState == False: #checkout without paying
+        pass
+
     bufferQuantities = []
     bufferInsertRows = ''
     sqlUpdateQuantity = "UPDATE `quantity` SET `Quantity` = %s WHERE `ID` = %s;"
@@ -1725,7 +1742,26 @@ def send_confirmation_email(pdID, trackOrderUrl):
         "Content-Type": "application/json"
     }
     # resp = requests.post(smailUrl, headers=headers, json=data)
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+    # resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+
+    resp = jsonify({'status_code': None})
+    try:
+        resp = requests.post(
+            SMAIL_API,
+            headers=headers,
+            json=data,
+            timeout=(2, 5),
+            verify='/etc/ssl/certs/smail.crt'
+        )
+        resp.raise_for_status()  # raise if non-200 status
+    except requests.exceptions.ConnectTimeout:
+        print("Connection timed out while trying to connect to the server.")
+    except requests.exceptions.ReadTimeout:
+        print("Server did not send data in the allotted time.")
+    except requests.exceptions.Timeout:
+        print("Request timed out.")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
     return True if resp.status_code == 200 else False
 
@@ -1737,6 +1773,27 @@ def is_valid_url(url: str) -> bool:
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
+
+
+def get_payment_methods(columns, constructDict=True):
+    sqlQuery = f"SELECT {columns} FROM `payment_methods` WHERE `Status` = 1;"
+    result = sqlSelect(sqlQuery, (), constructDict)
+
+    return result
+
+def get_pt_payment_methods(ptRefKey):
+    sqlQuery = """
+            SELECT 
+                `payment_methods`.`ID`, 
+                `payment_methods`.`method` 
+            FROM `payment_methods` 
+                LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = %s
+                LEFT JOIN `product_type` ON `product_type`.`ID` = `product_type_relatives`.`PT_ID`
+            WHERE `payment_methods`.`Status` = 1 
+                AND find_in_set(`payment_methods`.`ID`, `product_type`.`payment_methods`);
+            """
+    result = sqlSelect(sqlQuery, (ptRefKey,), True)
+    return result
 
 # Usage
 # msg_id = send_email_mailgun()
