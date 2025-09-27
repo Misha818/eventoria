@@ -356,7 +356,7 @@ msgstr "Teammate Signup"
 
 #: app.py:3522 app.py:5191 sysadmin.py:1603 templates/public.html:171
 msgid "Your Company. All rights reserved."
-msgstr "Mammy's Bread. All rights reserved."
+msgstr "Eventoria LTD. All rights reserved."
 
 #: app.py:3539 app.py:5211
 #, fuzzy
@@ -633,9 +633,8 @@ msgid "item added to the cart"
 msgstr "Add to cart"
 
 #: app.py:6727 templates/index.html:14
-#, fuzzy
 msgid "site name"
-msgstr "Mammy's Bread"
+msgstr "Eventoria"
 
 #: app.py:6797 app.py:6859
 #, fuzzy
@@ -737,7 +736,7 @@ msgstr "Dear"
 
 #: sysadmin.py:1580 templates/confirmation-page.html:161
 msgid "Thank you for shopping with us. We are preparing your order now!"
-msgstr "thank you for shopping with us. We are preparing your order now!"
+msgstr "thanks for applying. Use the ticket’s download icon—or <Download all> button for multiple tickets."
 
 #: sysadmin.py:1581 templates/confirmation-page.html:185
 msgid "Delivery Information"
@@ -800,7 +799,7 @@ msgstr "Track Your Order"
 
 #: sysadmin.py:1600 sysadmin.py:1601 templates/confirmation-page.html:160
 msgid "Order Confirmed!"
-msgstr "Payment Confirmed!"
+msgstr "Nice! You’re officially applied"
 
 #: copy.html:154 templates/add-price.html:3 templates/product
 #: templates/product.html:314
@@ -2103,10 +2102,7 @@ msgstr "About"
 
 #: templates/index.html:144
 msgid "aboutText1"
-msgstr ""
-"Looking for 100% eco bread, prepared with maternal care and tenderness, "
-"from top premium ingredients? Are you a gourmet who seeks new taste "
-"adventures? Then you are in the right place!"
+msgstr "Eventoria is a specialized platform focused exclusively on organizing professional events, providing opportunities for business environment development, knowledge exchange, and the creation of valuable connections."
 
 #: templates/index.html:145
 msgid "show more"
@@ -2114,17 +2110,11 @@ msgstr "show more"
 
 #: templates/index.html:149
 msgid "aboutText2"
-msgstr ""
-"Delicious and healthy sourdough bites prepared in the traditional way, "
-"with recipes passed down through generation to generation, quality that "
-"encapsulates the taste and warmth of the past and perfection of modern "
-"innovations."
+msgstr "We are building a community where ideas turn into action, and connections open the door to new opportunities."
 
 #: templates/index.html:150
 msgid "aboutText3"
-msgstr ""
-"Our breads excel by offering both exceptional nutritional benefits and "
-"unparalleled flavor nuances."
+msgstr "As the first specialized platform in Armenia dedicated to the ecosystem of professional events, we believe that the right connections and knowledge can transform careers, businesses, and the future."
 
 #: templates/index.html:151
 msgid "aboutText4"
@@ -2377,6 +2367,9 @@ msgstr "Edit Product Type Title"
 #: templates/products.html:167 templates/store.html:199
 msgid "Title"
 msgstr "Title"
+
+msgid "Home Title"
+msgstr "Eventoria – Where Professionals Connect, Learn, and Grow."
 
 #: templates/products.html:177
 msgid "Published Date"

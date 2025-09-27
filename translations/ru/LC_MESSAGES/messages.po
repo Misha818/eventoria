@@ -322,7 +322,7 @@ msgstr "Регистрация коллеги"
 
 #: app.py:3522 app.py:5191 sysadmin.py:1603 templates/public.html:171
 msgid "Your Company. All rights reserved."
-msgstr "Ваша компания. Все права защищены."
+msgstr "Ивентория. Все права защищены."
 
 #: app.py:3539 app.py:5211
 msgid "Email sent successfully!"

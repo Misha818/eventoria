@@ -1008,7 +1008,7 @@ def slides():
         if request.form.get('slide-status'):
             slideStatus = request.form.get('slide-status')
             if slideStatus == '1':
-                condition = " AND `Status` = 1 "
+                condition = " AND `Status` = 1 AND `Start_Date` <= CURDATE() AND `Exp_Date` >= CURDATE() "
             elif slideStatus == '0':
                 condition = " AND `Status` = 0 "
             else:
@@ -1025,44 +1025,19 @@ def slides():
                         `Exp_Date`,
                         `Subtitle`,
                         `Subtitle_Color`,
+                        `Status`,
                         `URL`,
                         `home_slide_relatives`.`HS_Ref_Key`
                     FROM `home_slide`
                         LEFT JOIN `home_slide_relatives` ON `home_slide`.`ID` = `home_slide_relatives`.`HS_ID`
-                    WHERE `home_slide_relatives`.`Language_ID` = %s
-                        AND `Start_Date` <= CURDATE()
-                        AND `Exp_Date` >= CURDATE()
+                    WHERE `home_slide_relatives`.`Language_ID` = %s                        
                         {condition}
-                    ORDER BY `Order`;               
+                    ORDER BY `Status` DESC, `Order` ASC;               
                     """
             sqlValTuple = (languageID,)
             result = sqlSelect(sqlQuery, sqlValTuple, True)   
 
             return jsonify({'status': '1', 'slideData': result, 'newCSRFtoken': newCSRFtoken})
-        
-        # if request.form.get('shTP') == '1':
-        #     sqlQuery =  """SELECT 
-        #                 `product`.`ID`,
-        #                 `product`.`Thumbnail`,
-        #                 `product`.`DatePublished`,
-        #                 `product`.`Product_Status`,
-        #                 `product_relatives`.`P_Ref_Key`,
-        #                 `product`.`Title`,
-        #                 `product`.`DateModified`,
-        #                 `product_category`.`Product_Category_Name`,
-        #                 `product`.`Url`
-        #             FROM `product` 
-        #                 LEFT JOIN `product_relatives` ON  `product_relatives`.`P_ID` = `product`.`ID`
-        #                 LEFT JOIN `product_category` ON `product_category`.`Product_Category_ID` = `product`.`Product_Category_ID`
-        #             WHERE `product_relatives`.`Language_ID` = %s
-        #                  AND not find_in_set(`product_relatives`.`P_Ref_Key`, (SELECT  IFNULL(GROUP_CONCAT(`product_relatives`.`P_Ref_Key`), "") FROM `product_relatives` WHERE `product_relatives`.`Language_ID` = %s))
-        #             ORDER BY `product`.`Order` ASC                 
-        #             """
-             
-        #     sqlValTuple = (DefLangID, languageID)
-        #     resultFilters = sqlSelect(sqlQuery, sqlValTuple, True)
-        #     return jsonify({'status': '1', 'prData': resultFilters, 'newCSRFtoken': newCSRFtoken})
-
     else:        
         sqlQuery =  """
                     SELECT 
@@ -1480,6 +1455,7 @@ def confirmation_page(pdID):
         `product`.`Url`,
         `product`.`Title` AS `prTitle`,
         `product_type`.`Title` AS `ptTitle`,
+        `product_type`.`ID` AS `ptID`,
         `purchase_history`.`quantity`,
         `purchase_history`.`price`,
         `purchase_history`.`discount`
@@ -1502,7 +1478,23 @@ def confirmation_page(pdID):
     if result['length'] == 0:
         return render_template('error.html')
     
-    return render_template('confirmation-page.html', result=result['data'], pdUrl=pdUrl, mainCurrency = MAIN_CURRENCY, newCSRFtoken=newCSRFtoken,  current_locale=get_locale())
+    ptID = result['data'][0]['ptID']
+
+    sqlQueryPtDetails = f"""
+        SELECT 
+            `sub_product_specifications`.`Name` AS `Title`,
+            `product_type_details`.`Text` AS `Value`
+        FROM `sub_product_specification`
+        LEFT JOIN `sps_relatives` ON `sps_relatives`.`SPS_ID` = `sub_product_specification`.`ID` 
+        LEFT JOIN `sub_product_specifications` ON `sub_product_specifications`.`spsID` = `sub_product_specification`.`ID`
+        LEFT JOIN `product_type_details` ON `product_type_details`.`spssID` = `sub_product_specifications`.`ID`
+            WHERE `product_type_details`.`productTypeID` = %s AND `sps_relatives`.`Language_ID` = %s
+                AND `sub_product_specifications`.`Status` = 1
+        ORDER BY `sub_product_specifications`.`Order`;
+    """
+    resultPtDetails = sqlSelect(sqlQueryPtDetails, (ptID, languageID), True)
+
+    return render_template('confirmation-page.html', result=result['data'], resultPtDetails=resultPtDetails, pdUrl=pdUrl, mainCurrency = MAIN_CURRENCY, newCSRFtoken=newCSRFtoken,  current_locale=get_locale())
 
 
 @app.route('/orders/<filter>', methods=['Get'])
@@ -1844,6 +1836,60 @@ def stuff_affiliate_orders(filter):
     orderStatusList = get_order_status_list()
 
     return render_template('affiliate-orders.html', languageID=languageID, result=result, filters=filters, affID=filters['affiliate'], orderStatusList=orderStatusList, numRows=numRows, page=int(page), pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
+    
+
+@app.route('/ticket/<pdID>', methods=['GET'])
+# @login_required
+@validate_request
+def ticket(pdID):
+    newCSRFtoken = generate_csrf()
+    languageID = getLangID()
+    
+    sqlQuery = f"""
+    SELECT 
+        `payment_details`.`ID`,
+        `payment_details`.`payment_method`,
+        `payment_details`.`CMD`,
+        `payment_details`.`promo_code`,   
+        `payment_details`.`promo_code_id`,   
+        `payment_details`.`final_price`,   
+        `payment_details`.`timestamp`,   
+        `payment_details`.`Status`,   
+        `delivered`.`timestamp` AS `deliveryDate`,
+        `clients`.`FirstName`,
+        `clients`.`LastName`,
+        `phones`.`phone`,
+        `emails`.`email`,
+        `addresses`.`address`,    
+        `notes`.`note`,
+        `product`.`Title` AS `prTitle`,
+        `product_type`.`Title` AS `ptTitle`,
+        `purchase_history`.`quantity`,
+        `purchase_history`.`price`,
+        `purchase_history`.`discount`
+    FROM `payment_details` 
+            LEFT JOIN `delivered` ON `delivered`.`pdID` = `payment_details`.`ID`
+            LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
+            LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+            LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
+            LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
+            LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
+            LEFT JOIN `notes` ON `payment_details`.`notesID` = `notes`.`ID`
+            LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
+            LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = `purchase_history`.`ptRefKey` 
+            LEFT JOIN `product_type` ON `product_type`.`ID` = `product_type_relatives`.`PT_ID`
+            LEFT JOIN `product` ON `product`.`ID` = `product_type`.`product_ID`
+    WHERE `payment_details`.`ID` = (SELECT `pdID` FROM `pd_buffer` WHERE `Url` = %s)
+         AND `product_type_relatives`.`Language_ID` = %s
+    ORDER BY `product`.`Order`, `product_type`.`Order`
+    ;
+"""
+    result = sqlSelect(sqlQuery, (pdID, languageID), True)
+    if result['length'] == 0:
+        return render_template('error.html')
+    
+    sideBar = side_bar_stuff()
+    return render_template('ticket-details.html', sideBar=sideBar, result=result['data'], mainCurrency = MAIN_CURRENCY, newCSRFtoken=newCSRFtoken,  current_locale=get_locale())
     
 
 @app.route('/order-details/<pdID>', methods=['GET'])

@@ -327,7 +327,19 @@ window.addEventListener('load', () => {
   }
 
 
-  
+  function isExpired(expStr) {
+    if (!expStr) return false;
+    const exp = new Date(expStr);              // e.g. "Sat, 20 Sep 2025 00:00:00 GMT"
+    if (isNaN(exp)) return false;              // guard against bad values
+
+    // compare by calendar day (local time)
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    exp.setHours(0,0,0,0);
+
+    return exp < today;
+}
+
 
 
 
@@ -364,9 +376,12 @@ window.addEventListener('load', () => {
                     
                     let status = `{{ _('Active') }}`;
                     if (row['Status'] == 0) {
-                      status = `{{ _('Passed') }}`;
+                      status = `{{ _('Disabled') }}`;
                     }
-                    
+
+                    if (isExpired(row.Exp_Date)) {
+                      status += '/' + `{{ _('Expired') }}`;
+                    }
                     
                     let imgUrl = `{{ url_for('static', filename='images/uploads/home_slides/') }}`+ row.IMG;
                     newRows += `
@@ -858,8 +873,6 @@ function filter_products_by_title(input) {
 
     
   });
-
-
 
 }
 

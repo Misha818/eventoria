@@ -1281,20 +1281,32 @@ button[type="submit"] {
     
 
 .logo-container {
-    display: flex;
+    /* display: flex;
     align-items: center;
     text-decoration: none;
     color: #121212;
-    margin-left: 3%;
+    margin-left: 3%; */
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 3%; 
+    color: #000;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Kurland', cursive, Georgia, 'Times New Roman', Times, serif;
 }
 
 .logo-container div {
   font-size: 1.5rem;
   font-weight: 700;
+  text-decoration: none;
 }
   .logo_public {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
   }
   
   /* Hero Section Styles */
