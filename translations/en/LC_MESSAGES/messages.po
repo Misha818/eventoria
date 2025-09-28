@@ -1129,7 +1129,7 @@ msgstr "Expiration"
 #: templates/add_to_store.html:118 templates/add_to_store.html:119
 #: templates/edit_store.html:115 templates/edit_store.html:116
 msgid "Max allowed quantity to purchase"
-msgstr ""
+msgstr "Max allowed quantity for one purchase is"
 
 #: templates/add_to_store.html:298 templates/create-promo-code.html:1412
 #: templates/edit-promo-code.html:1443 templates/edit_store.html:304

@@ -8769,3 +8769,52 @@ tr:nth-child(even) {
 .pm-menu label { 
   align-items: center;       /* center checkbox & text vertically */
 }
+
+.client-contact {
+    border: 1px solid #121212;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 15px!important;
+}
+
+.add_remove {
+  display: flex;
+}
+
+.add_remove > div{
+  border: 1px solid #121212 !important;
+  margin-right: 5px;
+  inline-size:38px;
+  block-size:38px;
+  display:grid; place-items:center;
+  font:600 18px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+  user-select:none;
+  transition:background-color .12s ease, border-color .12s ease;
+}
+
+.add_remove > div:hover{
+  background:#f8fafc;
+  border-color:#d1d5db;
+}
+
+.add_remove > div:active{
+  background:#eef2ff;
+  border-color:var(--accent);
+}
+
+.add_remove > div:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px color-mix(in oklab, var(--accent) 35%, white);
+}
+
+.ticket-wrap {
+  margin-top: 15px;
+}
+
+#promo-container {
+  margin-top: 70px;
+}

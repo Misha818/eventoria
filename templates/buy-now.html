@@ -104,8 +104,8 @@ body {
                 </li> -->
               </ul>
                       
-              <div class="card p-2">
-                <ul class="list-group mb-3" style="gap: 2px">
+              <div class="card p-2" style="border: unset;     margin-top: 5px;">
+                <ul class="list-group" style="gap: 2px">
                   
                 <li class="list-group-item d-flex justify-content-between bg-light" id="promo-value-parent" style="display: none!important;">
                   <div class="text-success">
@@ -116,7 +116,7 @@ body {
                 </li>
 
 
-                  <li class="list-group-item d-flex justify-content-between" style="border-top-width: 1px; border-radius: inherit;">
+                  <li class="list-group-item d-flex justify-content-between" style="border-top-width: 1px; border-radius: inherit; display: none!important;">
                     <span>{{ _('Total') }} </span>
                     <strong id="checkout-total-price">{{ mainCurrency|safe }} 0</strong>
                   </li>
@@ -127,7 +127,7 @@ body {
                 </ul>
 
                 
-                <li class="list-group-item d-flex justify-content-between bg-light" id="invalid-promo" style="display: none!important; margin-bottom: 3px;">
+                <li class="list-group-item d-flex justify-content-between bg-light" id="invalid-promo" style="display: none!important; margin-bottom: 7px;">
                   <div class="text-success">
                     <h6 class="my-0" style="text-align: left; color: red;">{{ _('Invalid Promo Code') }}</h6>
                   </div>
@@ -140,50 +140,13 @@ body {
               </div>
             </div>
           <div class="col-md-7 col-lg-8" id="fill-data-container">
-              <!-- <h4 class="mb-3">{{ _('Billing address') }}</h4> -->
-              <div id="mistakes"></div>
-              <form class="needs-validation" novalidate>
-                  <div class="row g-3">
-                      <div class="col-sm-6">
-                          <label for="firstname" class="form-label">{{ _('First name') }} *</label>
-                          <input type="text" class="form-control" id="firstname" required>
-                          <div class="invalid-feedback"> {{_('Valid first name is required.')}} </div>
-                      </div>
-                      <div class="col-sm-6">
-                          <label for="lastname" class="form-label">{{_('Last name')}} *</label>
-                          <input type="text" class="form-control" id="lastname" required>
-                          <div class="invalid-feedback"> {{_('Valid last name is required.')}} </div>
-                      </div>
-                      
-                      <!-- Phone Number Section -->
-                      <div class="col-sm-6">
-                        <label for="phone" class="form-label">{{ _('Phone Number') }} *</label>
-                        <div class="input-group">
-                          <input type="text" id="phone" class="form-control my-phone-control" required>
-                            <div class="invalid-feedback" > {{ _('Please enter valid phone number!')}} </div>
-                        </div>
-                      </div>
-
-                      <!-- Confirm Phone Number Section -->
-                      <div class="col-sm-6">
-                        <label for="confirm-phone" class="form-label">{{ _('Confirm Phone Number') }} *</label>
-                        <div class="input-group">
-                          <input type="text" id="confirm-phone" class="form-control my-phone-control" required>
-                          <div class="invalid-feedback"> {{ _('Please enter valid phone number!')}} </div>
-                          <div class="invalid-feedback" id="match-control"> {{ _('Phone numbers do not match!')}} </div>
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                          <label for="email" class="form-label">{{ _('Email') }}</label>
-                          <input type="email" class="form-control" id="email" required>
-                          <div class="invalid-feedback"> {{ _('Please enter a valid email address!')}} </div>
-                      </div>
-                      
-                  </div>
+            <div id="mistakes"></div>
+            <form class="needs-validation" novalidate>
+              <span class="client-contacts">
+                  
+              </span>
                   
                   <hr class="my-4 paymentElements">
-                  <h4 class="mb-3 paymentElements">{{ _('Payment')}}</h4>
                   <select class="pay_method form-select paymentElements" id="payment_methods" aria-label="Default select example" style="margin-bottom: 10px;" required>
                     <option value="">{{ _('Choose payment method') }}</option>
                     {% for row in paymentMethods.data %}
@@ -218,7 +181,8 @@ body {
 
 let prDataGlobal = JSON.parse('{{ prDataGlobal | tojson | safe }}');
 
-    let prData = []
+let prData = []
+let ptQuantity;
     document.addEventListener('DOMContentLoaded', function() {
 
       oddBasket();
@@ -629,7 +593,6 @@ async function get_pt_quantity(ptID, quantity) {
 
                     let ptIDCookie = parseInt(itemArr[0]);
                     let countCookie = parseInt(itemArr[1]);
-                    console.log(prData)
                     prData.forEach(row => {
                         if (parseFloat(row.Price) > 0) {
                           payMethod = true
@@ -1056,6 +1019,183 @@ async function get_pt_quantity(ptID, quantity) {
     }
   
   document.addEventListener('DOMContentLoaded', function() {  
+
+  let totalQuantity = prDataGlobal.quantity;
+
+  const container = document.querySelector('.client-contacts');
+
+  // Template for one ticket block
+  const blockHTML = (n) => `
+    <h4 class="mb-3"><span>{{ _('Ticket') }} &#x2116;</span><span class="tkt-num" id="tkt_n_${n}">${n}</span></h4>
+    <div class="row g-3 client-contact" data-idx="${n}">
+      <div class="col-sm-6">
+        <label for="firstname_${n}" class="form-label">{{ _('First name') }} *</label>
+        <input type="text" class="form-control" id="firstname_${n}" required>
+        <div class="invalid-feedback">{{ _('Valid first name is required.') }}</div>
+      </div>
+
+      <div class="col-sm-6">
+        <label for="lastname_${n}" class="form-label">{{ _('Last name') }} *</label>
+        <input type="text" class="form-control" id="lastname_${n}" required>
+        <div class="invalid-feedback">{{ _('Valid last name is required.') }}</div>
+      </div>
+
+      <div class="col-sm-6">
+        <label for="phone_${n}" class="form-label">{{ _('Phone Number') }} *</label>
+        <div class="input-group">
+          <input type="number" id="phone_${n}" class="form-control my-phone-control" required>
+          <div class="invalid-feedback invalid-feedback-p">{{ _('Please enter valid phone number!') }}</div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <label for="confirm-phone_${n}" class="form-label">{{ _('Confirm Phone Number') }} *</label>
+        <div class="input-group">
+          <input type="number" id="confirm-phone_${n}" class="form-control my-phone-control" required>
+          <div class="invalid-feedback invalid-feedback-phone">{{ _('Please enter valid phone number!') }}</div>
+          <div class="invalid-feedback" id="match-control_${n}">{{ _('Phone numbers do not match!') }}</div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <label for="email_${n}" class="form-label">{{ _('Email') }}</label>
+        <input type="email" class="form-control" id="email_${n}" required>
+        <div class="invalid-feedback">{{ _('Please enter a valid email address!') }}</div>
+      </div>
+
+      <div class="add_remove" role="group" aria-label="Quantity">
+        <div class="tkt-remove" tabindex="0" aria-label="Remove">−</div>
+      </div>
+    </div>
+  `;
+
+  function addBlock(n) {
+    if (document.querySelector('.tkt-add')) {
+      document.querySelector('.tkt-add').remove();
+    }
+    const wrapper = document.createElement('div');
+    wrapper.className = 'ticket-wrap';
+    wrapper.innerHTML = blockHTML(n);
+    container.appendChild(wrapper);
+    
+    const list = document.querySelectorAll('.add_remove');
+    const last = list.length ? list[list.length - 1] : null;
+    if (last) {
+      const btn = document.createElement('div');
+      btn.className = 'tkt-add';
+      btn.tabIndex = 0;
+      btn.setAttribute('aria-label', 'Add');
+      btn.textContent = '+';           // en dash minus
+      last.appendChild(btn);
+    }
+  }
+
+  function reindex() {
+    const blocks = container.querySelectorAll('.client-contact');
+    blocks.forEach((blk, i) => {
+      const n = i + 1;
+      blk.dataset.idx = n;
+
+      // Update header number
+      const numSpan = blk.previousElementSibling?.matches('h4.mb-3') 
+        ? blk.previousElementSibling.querySelector('.tkt-num') 
+        : blk.querySelector('.tkt-num');
+      if (numSpan) { numSpan.id = `tkt_n_${n}`; numSpan.textContent = n; }
+
+      // Update IDs + labels
+      const pairs = [
+        ['firstname', 'First name'],
+        ['lastname',  'Last name'],
+        ['phone',     'Phone Number'],
+        ['confirm-phone','Confirm Phone Number'],
+        ['email',     'Email']
+      ];
+      pairs.forEach(([base]) => {
+        const input = blk.querySelector(`[id^="${base}_"]`);
+        const label = blk.querySelector(`label[for^="${base}_"]`);
+        if (input)  input.id  = `${base}_${n}`;
+        if (label)  label.setAttribute('for', `${base}_${n}`);
+      });
+    });
+  }
+
+  // Click handling for + / − (event delegation)
+  container.addEventListener('click', (e) => {
+    if (e.target.classList.contains('tkt-add')) {
+        get_pt_quantity(prDataGlobal.ptID, totalQuantity + 1)
+          .then(response => {
+            if (response.status === 1) {
+              if (response.data.data[0].maxQuantity >= totalQuantity + 1) {
+                totalQuantity = totalQuantity + 1;
+                addBlock(totalQuantity);
+
+                let old_quantity = document.querySelector('#product_0').textContent;
+                let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
+                document.querySelector('#product_0').textContent = new_quantity;
+                document.querySelector('.text-muted').textContent = totalQuantity * response.data.data[0].Price;
+              } else {
+                alert(`{{ _('Max allowed quantity to purchase') }} ${response.data.data[0].maxQuantity}`)
+              }
+            } 
+          }) 
+          .catch(error => console.error(error));
+
+      return;
+    }
+    if (e.target.classList.contains('tkt-remove')) {
+      const block = e.target.closest('.ticket-wrap');
+      if (!block) return;
+      // Don’t remove the last remaining block
+      if (container.querySelectorAll('.client-contact').length > 1) {
+        block.remove();
+        reindex();
+        totalQuantity = totalQuantity - 1;
+        let old_quantity = document.querySelector('#product_0').textContent;
+        let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
+        document.querySelector('#product_0').textContent = new_quantity;
+        document.querySelector('.text-muted').textContent = totalQuantity * ptQuantity.Price;
+      }
+
+      if (!document.querySelector('.tkt-add')) {
+        const list = document.querySelectorAll('.add_remove');
+        const last = list.length ? list[list.length - 1] : null;
+        if (last) {
+          const btn = document.createElement('div');
+          btn.className = 'tkt-add';
+          btn.tabIndex = 0;
+          btn.setAttribute('aria-label', 'Add');
+          btn.textContent = '+';           // en dash minus
+          last.appendChild(btn);
+        }
+      }
+       
+    }
+  });
+
+  get_pt_quantity(prDataGlobal.ptID, prDataGlobal.quantity)
+    .then(response => {
+      if (response.status === 1) {
+        ptQuantity = response.data.data[0]; 
+        if (response.data.data[0].maxQuantity >= totalQuantity) {
+          for(let i = 0; i < prDataGlobal.quantity; i++) {
+            addBlock(i+1);
+          }
+        } else {
+          alert(`{{ _('Max allowed quantity to purchase') }} ${totalQuantity - 1}`)
+          for(let i = 0; i < totalQuantity - 1; i++) {
+            addBlock(i+1);
+          }
+        }
+      } 
+    }) 
+    .catch(error => console.error(error));
+
+
+  // const tktRemove = `<div class="tkt-add" tabindex="0" aria-label="Add">+</div>`;
+  
+
+    // constract_client_contacts(prDataGlobal.quantity)
+
     function headerScroll() {
           let scrollTo = "{{ scrollTo }}";  
           if (scrollTo) {
@@ -1336,47 +1476,128 @@ function validateNumericInput(input) {
 } 
 
 $(document).ready(function() {
-  phone_validation();
-  function phone_validation() {
-
+  let mistakes =  document.querySelector('#mistakes');
+  
+  
+  function contacts_validation(flag) {
+        
     const phones = document.querySelectorAll('.my-phone-control');
     if (phones) {
-      
-      phones.forEach(phone => {
-        phone.addEventListener('input', function() {
-          if (isValidPhoneString(phone.value) === false) {
-            phone.parentNode.parentNode.querySelector('.invalid-feedback').style.display = 'block'
-            phone.style.borderColor = 'red'
-          } else {
-            phone.parentNode.parentNode.querySelector('.invalid-feedback').style.display = 'none'
-            phone.style.borderColor = '#212529'
-          }
+      for (let i =0; i < phones.length / 2; i++) {
+        let state = handleInput(i + 1);
+        if (state === false) {
+          flag = false;
+        }
+      }
+    }
+    return flag;
+  }    
 
-          if (phones[0].value != phones[1].value) {
-            document.querySelector('#match-control').style.display = 'block';
-            document.querySelector('#phone').style.borderColor = 'red';
-            document.querySelector('#confirm-phone').style.borderColor = 'red';
-          } else {
-            document.querySelector('#match-control').style.display = 'none';
-            document.querySelector('#phone').style.borderColor = '#212529';
-            document.querySelector('#confirm-phone').style.borderColor = '#212529';
-          }
-        });
-      });
-      
+  function handleInput(num) {
+    let flag = true;
+    let firstname =  document.querySelector('#firstname_' + num);
+    let lastname =  document.querySelector('#lastname_' + num);
+    let phone =  document.querySelector('#phone_' + num);
+    let confirmPhone =  document.querySelector('#confirm-phone_' + num);
+    let email =  document.querySelector('#email_' + num);
+    let matchControl =  document.querySelector('#match-control_' + num);
+
+    if (firstname.value === '') {
+      mistakes.style.display = 'block';
+      firstname.parentNode.querySelector('.invalid-feedback').style.display = 'block'
+      firstname.style.borderColor = 'red'
+      flag = false;
+    } else {
+      mistakes.style.display = 'none';
+      firstname.parentNode.querySelector('.invalid-feedback').style.display = 'none'
+      firstname.style.borderColor = '#212529';
     }
     
-  } 
-  
+    if (lastname.value === '') {
+      mistakes.style.display = 'block';
+      lastname.parentNode.querySelector('.invalid-feedback').style.display = 'block'
+      lastname.style.borderColor = 'red'
+      flag = false;
+    } else {
+      mistakes.style.display = 'none';
+      lastname.parentNode.querySelector('.invalid-feedback').style.display = 'none'
+      lastname.style.borderColor = '#212529';
+    }
+    
+    if (isValidPhoneString(phone.value) === false || phone.value === '') {
+      phone.parentNode.querySelector('.invalid-feedback-p').style.display = 'block'
+      phone.style.borderColor = 'red'
+      flag = false;
+      // return flag;
+    } else {
+      // flag = true;
+      mistakes.style.display = 'none';
+      phone.parentNode.querySelector('.invalid-feedback-p').style.display = 'none'
+      phone.style.borderColor = '#212529';
+    }
+
+    if (confirmPhone.value === '') {
+      mistakes.style.display = 'block';
+      confirmPhone.parentNode.querySelector('.invalid-feedback-phone').style.display = 'block';
+      confirmPhone.style.borderColor = 'red'
+      flag = false;
+    } else {
+      mistakes.style.display = 'none';
+      confirmPhone.parentNode.querySelector('.invalid-feedback-phone').style.display = 'none'
+      confirmPhone.style.borderColor = '#212529';
+    }
+    console.log(phone.value)
+    console.log(confirmPhone.value)
+    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAA')
+    if (phone.value != confirmPhone.value) {
+      mistakes.style.display = 'block';
+      matchControl.style.display = 'block';
+      phone.style.borderColor = 'red';
+      confirmPhone.style.borderColor = 'red';
+      flag = false;
+    } else {
+      mistakes.style.display = 'none';
+      matchControl.style.display = 'none';
+      phone.style.borderColor = '#212529';
+      confirmPhone.style.borderColor = '#212529';
+    }
+
+    console.log('Email Email Email Email Email')
+    console.log(isValidEmail(email))
+    if (email.value === '') {
+      mistakes.style.display = 'block';
+      email.parentNode.querySelector('.invalid-feedback').style.display = 'block';
+      email.style.borderColor = 'red';
+      flag = false;
+    } else {
+      email.style.borderColor = '#212529';
+      mistakes.style.display = 'none';
+      email.parentNode.querySelector('.invalid-feedback').style.display = 'none'
+      email.style.borderColor = '#212529';
+    }
+
+    return flag;
+
+  }
+
 
 function isValidPhoneString(str) {
-  // The regex explanation:
-  // ^            : start of string
-  // [0-9()+\-]   : allowed characters: digits, parentheses, plus, hyphen (hyphen is escaped)
-  // +            : one or more of the allowed characters
-  // $            : end of string
-  const regex = /^[0-9()+\-]+$/;
+  //   ^ → start of string
+  // \+? → optional + (at the beginning only)
+  // [0-9]+ → one or more digits
+  // $ → end of string
+  const regex = /^\+?[0-9]+$/;
   return regex.test(str);
+}
+
+function isValidEmail(email) {
+  if (typeof email !== 'string') return false;
+  const value = email.trim();
+
+  const re =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  return re.test(value);
 }
 
 
@@ -1402,6 +1623,8 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
     loaderBtn.classList.toggle('hidden');    
     rotate(gearElement);
 
+  let flag = true;  
+  flag = contacts_validation(flag);
 
   let forms = document.querySelectorAll('.needs-validation')
   Array.prototype.slice.call(forms).forEach(function (form) {
@@ -1411,86 +1634,27 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
           mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
           mistakes.style.display = 'block';
           mistakes.scrollIntoView({ behavior: 'smooth' });
+          flag = false;
       }
       form.classList.add('was-validated')
   })
 
+  if (!flag) {
+    mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
+    mistakes.style.display = 'block';
+    mistakes.scrollIntoView({ behavior: 'smooth' });
 
+    clickedButton.classList.toggle('hidden');    
+    loaderBtn.classList.toggle('hidden');    
+    gearElement.remove();
 
-  const phones = document.querySelectorAll('.my-phone-control');
-  let flag = true;
-    if (phones) {
-      phones.forEach(phone => {
-          if (isValidPhoneString(phone.value) === false) {
-            phone.parentNode.parentNode.querySelector('.invalid-feedback').style.display = 'block';
-            phone.style.setProperty("border-color", "red", "important");
-            flag = false;
-          } else {
-            phone.parentNode.parentNode.querySelector('.invalid-feedback').style.display = 'none';
-            phone.style.setProperty("border-color", "#212529", "important");
-          }
-          
-      });
-      if (phones[0].value == '' && phones[1].value == '') {
-        clickedButton.classList.toggle('hidden');    
-        loaderBtn.classList.toggle('hidden');    
-        gearElement.remove();
-
-        return;
-      } else {
-
-        if (phones[0].value != phones[1].value) {
-          document.querySelector('#match-control').style.display = 'block';
-          document.querySelector('#phone').style.borderColor = 'red';
-          document.querySelector('#confirm-phone').style.borderColor = 'red';
-          flag = false
-        } else {
-          document.querySelector('#match-control').style.display = 'none';
-          document.querySelector('#phone').style.borderColor = '#212529';
-          document.querySelector('#confirm-phone').style.borderColor = '#212529';
-        }
-        
-      }
-    }
-
-    
-    
-    if (flag === false) {
-      mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
-      mistakes.style.display = 'block';
-      mistakes.scrollIntoView({ behavior: 'smooth' });
-
-      clickedButton.classList.toggle('hidden');    
-      loaderBtn.classList.toggle('hidden');    
-      gearElement.remove();
-
-      return;
-    }
-
-
-    let countryCodes = document.querySelectorAll('.selected-flag');
-    if (countryCodes) {
-      // countryCodes.forEach(countryCode => {
-      // });
-      if (countryCodes[0].getAttribute('title') != countryCodes[1].getAttribute('title')) {
-        mistakes.textContent = "{{ _('Country codes of phone numbers do not match!') }}";
-        mistakes.style.display = 'block';
-        mistakes.scrollIntoView({ behavior: 'smooth' });
-
-        clickedButton.classList.toggle('hidden');    
-        loaderBtn.classList.toggle('hidden');    
-        gearElement.remove();
-
-        return;
-      }
-        
-    }
-
+    return;
+  }
 
     // Collect all input and select elements
     let form = document.querySelector('form');
-    var elements = form.querySelectorAll('input, select');
-    var data = {};
+    let elements = form.querySelectorAll('input, select');
+    let data = {};
 
     // Iterate over each element and store its id and value (if it has an id)
     elements.forEach(function(el) {
@@ -1506,15 +1670,38 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
         }
       }
     });
-
-    ccArr = countryCodes[0].getAttribute('title').split('+');
-    data['country-code'] = ccArr[1];
+    
+    // ccArr = countryCodes[0].getAttribute('title').split('+');
+    // data['country-code'] = ccArr[1];
     data['ptData'] = [prDataGlobal];
     let promo = '';
     if (document.querySelector('#promo')) {
       promo = document.querySelector('#promo').value;
     }
     data['promo'] = promo;
+
+
+    const contacts = document.querySelectorAll('.client-contact');
+    if (contacts) {
+      contactList = []
+      contacts.forEach((contact, index) => {
+        let dict = {};
+        let firstName = contact.querySelector('#firstname_' + (index+1)).value;
+        let lastname = contact.querySelector('#lastname_' + (index+1)).value;
+        let phone = contact.querySelector('#phone_' + (index+1)).value;
+        let confirmPhone = contact.querySelector('#confirm-phone_' + (index+1)).value;
+        let email = contact.querySelector('#email_' + (index+1)).value;
+
+        dict['firstName'] = firstName;
+        dict['lastname'] = lastname;
+        dict['phone'] = phone;
+        dict['confirm_phone'] = confirmPhone;
+        dict['email'] = email;
+        contactList.push(dict)
+      });
+      console.log(contactList)
+      console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+    }
     
     let formData = new FormData();
 
