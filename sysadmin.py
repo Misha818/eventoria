@@ -923,7 +923,7 @@ def clientID_contactID(data): # returns clientID from table `clients` and contac
 
     # Remove all parentheses, hyphens, spaces and 0 at the beggining
     phone = re.sub(r'[()\-\s]', '', phone)
-    phone = data['country-code'] + re.sub(r'^0', '', phone)
+    phone = re.sub(r'^0', '', phone)
 
     sqlQuery = "SELECT * FROM `phones` WHERE `phone` = %s;"
     result = sqlSelect(sqlQuery, (phone.strip(),), True)
@@ -934,33 +934,21 @@ def clientID_contactID(data): # returns clientID from table `clients` and contac
         result = sqlInsert(sqlInsertPhone, (phone, clientID))
         phoneID = result['inserted_id']
 
-    sqlQueryAddress = "SELECT * FROM `addresses` WHERE `address` = %s;"
-    result = sqlSelect(sqlQuery, (data.get('address', '').strip(),), True)
-    if result['length'] > 0:
-        addressID = result['data'][0]['ID']
-    else:
-        sqlQueryInsert = "INSERT INTO `addresses` (`address`, `clientID`) VALUES (%s, %s);"
-        sqlQueryTuple = (data.get('address', '').strip(), clientID)
-        result = sqlInsert(sqlQueryInsert, sqlQueryTuple)
-        addressID = result['inserted_id']
-
-
     if data.get('email') and emailID == None:
-        langID = getLangID()
-        sqlQueryInsert = "INSERT INTO `emails` (`email`, `clientID`, `langID`) VALUES (%s, %s, %s);"
-        sqlQueryTuple = (data.get('email', '').strip(), clientID, langID)
+        sqlQueryInsert = "INSERT INTO `emails` (`email`, `clientID`) VALUES (%s, %s);"
+        sqlQueryTuple = (data['email'].strip(), clientID)
         result = sqlInsert(sqlQueryInsert, sqlQueryTuple)
         emailID = result['inserted_id']
 
     
-    sqlQueryContacts = "SELECT * FROM `client_contacts` WHERE `emailID` = %s AND `phoneID` = %s AND `addressID` = %s;"
-    sqlValTuple = (emailID, phoneID, addressID)
+    sqlQueryContacts = "SELECT * FROM `client_contacts` WHERE `emailID` = %s AND `phoneID` = %s"
+    sqlValTuple = (emailID, phoneID)
     result = sqlSelect(sqlQueryContacts, sqlValTuple, True)
     if result['length'] > 0:
         contactID = result['data'][0]['ID']
     else:
-        sqlQueryInsert = "INSERT INTO `client_contacts` (`emailID`, `phoneID`, `addressID`) VALUES (%s, %s, %s);"
-        sqlValTuple = (emailID, phoneID, addressID)
+        sqlQueryInsert = "INSERT INTO `client_contacts` (`emailID`, `phoneID`) VALUES (%s, %s);"
+        sqlValTuple = (emailID, phoneID)
         result = sqlInsert(sqlQueryInsert, sqlValTuple)
         contactID = result['inserted_id']
 
@@ -1154,7 +1142,8 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
     totalPrice = 0
     for row in data['ptData']:
         # print(f'showing row of ptData {row}')
-        QUANTITY = row['quantity']
+        # QUANTITY = row['quantity']
+        QUANTITY = len(data['contact_list'])
         for r in result['data']:
             if QUANTITY == 0:
                 break

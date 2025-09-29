@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     // Buy now
-    let buyNowBtns = document.getElementsByClassName('buy-btn');
+    let buyNowBtns = document.querySelectorAll('.buy-btn');
     for (let i = 0; i < buyNowBtns.length; i++) {
         buyNowBtns[i].onclick = function() {
             const quantity = buyNowBtns[i].parentNode.querySelector('.quantity').value;

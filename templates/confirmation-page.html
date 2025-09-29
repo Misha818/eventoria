@@ -136,6 +136,7 @@
                 box-shadow: unset!important;
                 padding-left: 15px !important;
                 padding-right: 15px !important;
+                width: 370px;
             }
 
             .summary-total {
@@ -350,13 +351,13 @@
         const nameTxt = `{{ _('Name') }}`;
         const eventTxt = `{{ _('Event') }}`;
 
-        const quantity = result[0].quantity;
+        const quantity = result.length;
         let tickets = [];
         let i = 0;
         while(i < quantity) {
             let item = {};
-            item[nameTxt] = result[0].FirstName + ' ' + result[0].LastName;
-            item[eventTxt] = result[0].prTitle + ' ' + result[0].ptTitle;
+            item[nameTxt] = result[i].FirstName + ' ' + result[i].LastName;
+            item[eventTxt] = result[i].prTitle + ' ' + result[i].ptTitle;
             tktDetails.forEach(row => {
                 item[row.Title] = row.Value;
             });
@@ -434,7 +435,7 @@
     `;
 
     // Combine the table and the total summary
-    document.getElementById('products').innerHTML = tableHTML + totalHTML;
+    // document.getElementById('products').innerHTML = tableHTML + totalHTML;
 
     // const result = {{ result | tojson }};
     // let product = '';
@@ -510,9 +511,9 @@ function formatInternationalNumber(phoneNumber) {
     }
 }
 
-let phone = formatInternationalNumber(result[0].phone);
+// let phone = formatInternationalNumber(result[0].phone);
 
-document.getElementById('phone').innerHTML = "📞 " + phone;
+// document.getElementById('phone').innerHTML = "📞 " + phone;
 
 // Examples:
 // console.log(formatInternationalNumber("37433151580"));  // +374 (33) 151-580 (Armenia)

@@ -55,9 +55,8 @@ msgid "Something went wrong. Please try again!"
 msgstr "Something went wrong."
 
 #: app.py:806
-#, fuzzy
 msgid "The phone numbers do not match"
-msgstr "Phone numbers do not match!"
+msgstr "The Phone numbers do not match!"
 
 #: app.py:813 app.py:1650 app.py:1686 app.py:3119 app.py:3458 app.py:3586
 #: app.py:5152 app.py:6807 app.py:6882

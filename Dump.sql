@@ -563,6 +563,19 @@ CREATE TABLE `client_contacts` (
 ALTER TABLE `client_contacts` AUTO_INCREMENT = 1;
 
 
+DROP TABLE IF EXISTS `event_clients`;
+CREATE TABLE `event_clients` (
+    `ID` INT AUTO_INCREMENT,
+    `payment_details_id` INT, 
+    `notesID` Text, 
+    `clientID` INT, 
+    `contactID` INT, 
+    `Status` INT,
+    PRIMARY KEY (`ID`)
+) ENGINE=InnoDB;
+ALTER TABLE `event_clients` AUTO_INCREMENT = 1;
+
+
 DROP TABLE IF EXISTS `pd_buffer`;
 CREATE TABLE `pd_buffer` (
     `ID` INT AUTO_INCREMENT,

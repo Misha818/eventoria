@@ -1049,9 +1049,9 @@ async function get_pt_quantity(ptID, quantity) {
       </div>
 
       <div class="col-sm-6">
-        <label for="confirm-phone_${n}" class="form-label">{{ _('Confirm Phone Number') }} *</label>
+        <label for="confirm_phone_${n}" class="form-label">{{ _('Confirm Phone Number') }} *</label>
         <div class="input-group">
-          <input type="number" id="confirm-phone_${n}" class="form-control my-phone-control" required>
+          <input type="number" id="confirm_phone_${n}" class="form-control my-phone-control" required>
           <div class="invalid-feedback invalid-feedback-phone">{{ _('Please enter valid phone number!') }}</div>
           <div class="invalid-feedback" id="match-control_${n}">{{ _('Phone numbers do not match!') }}</div>
         </div>
@@ -1498,7 +1498,7 @@ $(document).ready(function() {
     let firstname =  document.querySelector('#firstname_' + num);
     let lastname =  document.querySelector('#lastname_' + num);
     let phone =  document.querySelector('#phone_' + num);
-    let confirmPhone =  document.querySelector('#confirm-phone_' + num);
+    let confirmPhone =  document.querySelector('#confirm_phone_' + num);
     let email =  document.querySelector('#email_' + num);
     let matchControl =  document.querySelector('#match-control_' + num);
 
@@ -1546,9 +1546,7 @@ $(document).ready(function() {
       confirmPhone.parentNode.querySelector('.invalid-feedback-phone').style.display = 'none'
       confirmPhone.style.borderColor = '#212529';
     }
-    console.log(phone.value)
-    console.log(confirmPhone.value)
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAA')
+
     if (phone.value != confirmPhone.value) {
       mistakes.style.display = 'block';
       matchControl.style.display = 'block';
@@ -1562,9 +1560,7 @@ $(document).ready(function() {
       confirmPhone.style.borderColor = '#212529';
     }
 
-    console.log('Email Email Email Email Email')
-    console.log(isValidEmail(email))
-    if (email.value === '') {
+    if (email.value === '' || !isValidEmail(email.value)) {
       mistakes.style.display = 'block';
       email.parentNode.querySelector('.invalid-feedback').style.display = 'block';
       email.style.borderColor = 'red';
@@ -1575,7 +1571,6 @@ $(document).ready(function() {
       email.parentNode.querySelector('.invalid-feedback').style.display = 'none'
       email.style.borderColor = '#212529';
     }
-
     return flag;
 
   }
@@ -1594,16 +1589,19 @@ function isValidEmail(email) {
   if (typeof email !== 'string') return false;
   const value = email.trim();
 
-  const re =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-
+  const re = /^[\w\.-]+@[\w\.-]+\.\w+$/;
   return re.test(value);
 }
 
 
 document.querySelector('.btn-primary').addEventListener('click', function(event) {
+  event.preventDefault();          // stop native submit
+  event.stopPropagation();
+
   let mistakes = document.querySelector('#mistakes');
   mistakes.style.display = 'none';
+  let data = {};
+
 
   const clickedButton = event.target;
   const loaderBtn = document.querySelector('.checkoutLoader');
@@ -1625,52 +1623,8 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
 
   let flag = true;  
   flag = contacts_validation(flag);
-
-  let forms = document.querySelectorAll('.needs-validation')
-  Array.prototype.slice.call(forms).forEach(function (form) {
-      if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-          mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
-          mistakes.style.display = 'block';
-          mistakes.scrollIntoView({ behavior: 'smooth' });
-          flag = false;
-      }
-      form.classList.add('was-validated')
-  })
-
-  if (!flag) {
-    mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
-    mistakes.style.display = 'block';
-    mistakes.scrollIntoView({ behavior: 'smooth' });
-
-    clickedButton.classList.toggle('hidden');    
-    loaderBtn.classList.toggle('hidden');    
-    gearElement.remove();
-
-    return;
-  }
-
-    // Collect all input and select elements
-    let form = document.querySelector('form');
-    let elements = form.querySelectorAll('input, select');
-    let data = {};
-
-    // Iterate over each element and store its id and value (if it has an id)
-    elements.forEach(function(el) {
-      if (el.id) {
-        if (el.type === 'radio') {
-          if (el.checked === true) {
-            data[el.id] = true;
-          } else {
-            data[el.id] = false;
-          }
-        } else {
-          data[el.id] = el.value;
-        }
-      }
-    });
-    
+  console.log('AAAAAAAAAAAAAAAAAAA')    
+  console.log(flag)    
     // ccArr = countryCodes[0].getAttribute('title').split('+');
     // data['country-code'] = ccArr[1];
     data['ptData'] = [prDataGlobal];
@@ -1689,84 +1643,164 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
         let firstName = contact.querySelector('#firstname_' + (index+1)).value;
         let lastname = contact.querySelector('#lastname_' + (index+1)).value;
         let phone = contact.querySelector('#phone_' + (index+1)).value;
-        let confirmPhone = contact.querySelector('#confirm-phone_' + (index+1)).value;
+        let confirmPhone = contact.querySelector('#confirm_phone_' + (index+1)).value;
         let email = contact.querySelector('#email_' + (index+1)).value;
 
-        dict['firstName'] = firstName;
+        dict['firstname'] = firstName;
         dict['lastname'] = lastname;
         dict['phone'] = phone;
         dict['confirm_phone'] = confirmPhone;
         dict['email'] = email;
         contactList.push(dict)
       });
-      console.log(contactList)
-      console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
     }
-    
-    let formData = new FormData();
 
-    formData.append('data', JSON.stringify(data));
+    if (ptQuantity.Price > 0) {
+      paymentMethod = document.getElementById('payment_methods');
+      if (paymentMethod.value) {
+        data['payment_method'] = paymentMethod.value;
+        paymentMethod.style.borderColor = '#212529';
+          // Collect all input and select elements
+          let form = document.querySelector('#payment_container');
+          let elements = form.querySelectorAll('input, select');
 
-    // Create a new XMLHttpRequest object
-    let xhr = new XMLHttpRequest();
-    
-    // Configure the request
-    xhr.open('POST', '/checkout');                   
-    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+          // Iterate over each element and store its id and value (if it has an id)
+          elements.forEach(function(el) {
+            if (el.id) {
+              if (el.type === 'radio') {
+                if (el.checked === true) {
+                  data[el.id] = true;
+                } else {
+                  data[el.id] = false;
+                }
+              } else {
+                if (!el.value) {
+                  el.style.borderColor = 'red';
+                  flag = false;
+                } else {
+                  el.style.borderColor = '#212529';
+                  data[el.id] = el.value;
+                }
+              }
+            }
+          });
+      } else {
+        paymentMethod.style.borderColor = 'red';
+        flag = false;
+      }
+    }
 
-    // Define what happens on successful data submission
-    xhr.onload = function () {
+  
+      if (flag === false) {
+        mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
+        mistakes.style.display = 'block';
+        mistakes.scrollIntoView({ behavior: 'smooth' });
+
+        clickedButton.classList.toggle('hidden');    
+        loaderBtn.classList.toggle('hidden');    
+        gearElement.remove();
+
+        return;
+      }
+
+       
+      data['contact_list'] = contactList;
+        
+      
+      let formData = new FormData();
+      console.log(data)
+
+      formData.append('data', JSON.stringify(data));
+      
+      // Create a new XMLHttpRequest object
+      let xhr = new XMLHttpRequest();
+      
+      // Configure the request
+      xhr.open('POST', '/checkout');                   
+      xhr.setRequestHeader('X-CSRFToken', csrfToken);
+      
+      // Define what happens on successful data submission
+      xhr.onload = function () {
         if (xhr.status === 200) {
             let response = JSON.parse(xhr.responseText);
-          if (response.status === "0") {
-            mistakes.textContent = response.answer;
+            let elements = "<p>{{ _('Please improve all field marked in red') }}</p>"
+          if (response.status === "-1") {
+            if (response.answer.includes('\n')) {
+              let answerArr = response.answer.split('\n');
+              answerArr.forEach(answer => {
+                if (answer != ' ') {
+                  elements += `<p>- ${answer}</p>`;
+                }
+              });
+
+            } 
+            mistakes.innerHTML = elements;
+            
             mistakes.style.display = 'block';
             mistakes.scrollIntoView({ behavior: 'smooth' });
-
+            const keyList = response.keyList;
+            console.log(keyList)
+            keyList.forEach(key => {
+              console.log(key)
+              document.getElementById(key).style.borderColor = 'red';
+            });
+            
             clickedButton.classList.toggle('hidden');    
             loaderBtn.classList.toggle('hidden');    
             gearElement.remove();
 
             return;
           }
-
+          
+          if (response.status === "0") {
+            mistakes.textContent = response.answer;
+            mistakes.style.display = 'block';
+            mistakes.scrollIntoView({ behavior: 'smooth' });
+            
+            clickedButton.classList.toggle('hidden');    
+            loaderBtn.classList.toggle('hidden');    
+            gearElement.remove();
+            
+            return;
+          }
+          
           if (response.status === "1") {
-
+            
             let Cart = cookie.get('Cart', false);
             
             cookie.remove('Cart', { path: '/' });
             // Construct the base URL
             const cpageURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/confirmation-page/${response.pdID}`;
             window.location.href = cpageURL;
-
-           
+            
           }
-
-
-                
+           
+          
+          
+          
         } else {
-            // Handle error response
+          // Handle error response
             console.error('Error adding category:', xhr.responseText);
-
+            
             clickedButton.classList.toggle('hidden');    
             loaderBtn.classList.toggle('hidden');    
             gearElement.remove();
-        }
+          }
+          
+        };
+        
+        // Send the request with the FormData object
+        xhr.send(formData);
 
-    };
-
-    // Send the request with the FormData object
-    xhr.send(formData);
-
-
-
-
-  });
+        
+        
+        
+      });
+      
+    });
 
 
 
-
-});
 
 </script>
 

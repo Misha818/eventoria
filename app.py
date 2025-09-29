@@ -1304,21 +1304,42 @@ def checkout():
 
         # check data validity 
 
-        if data['confirm-phone'] != data['phone']:
-            answer = gettext('The phone numbers do not match')
-            return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+        if not data['contact_list'] or len(data['ptData']) == 0:
+            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
         
-        if not data.get('email'):
-            answer = gettext('Please enter a valid email address!')
-            return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+        # Check contacts validity from contactList
+        emailPattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        i = 1
+        contactsFlag = True
+        keyList = []
+        answer = ''
+        for row in data['contact_list']:
+            for key, val in row.items():
+                if not val:
+                    contactsFlag= False
+                    keyList.append(key + '_' + str(i))
 
-        if data.get('email') != '' and data.get('email') is not None:
-            emailPattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-            # Check if the email matches the pattern
-            if not re.match(emailPattern, data['email']):
-                answer = gettext('Invalid email format')
-                return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
-            
+                if key == 'phone':
+                    if row['phone'] != row['confirm_phone']:
+                        flag = False
+                        keyList.append('phone_' + str(i))
+                        keyList.append('confirm_phone_' + str(i))
+                        answer = answer + gettext('The phone numbers do not match.') + '\n '
+
+                if key == 'email':
+                    # Check if the email matches the pattern
+                    if not re.match(emailPattern, val):
+                        answer = answer + gettext('Invalid email format') + '\n '
+                        keyList.append('email_' + str(i))
+                        flag = False
+            i = i + 1
+
+
+        if contactsFlag == False:
+            return jsonify({'status': "-1", 'keyList': keyList, 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
+
+        # checking payment availbility and methods
+
         pmData = get_payment_methods('`ID`, `method`', False)
         allowedPaymentMethods = [str(x[0]) for x in pmData]
 
@@ -1331,25 +1352,31 @@ def checkout():
                 answer = gettext('Invalid value for ') + key
                 return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
-        if len(data['ptData']) == 0:
-            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
-        # End of Validation
         
         if paymentMethod == False and priceState == True or paymentMethod and priceState == False:
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
+        
+        
+        # End of checking payment availbility and methods
+        # End of Validation
 
         # client detection || registration by phone number
         # returns {'clientID': clientID, 'contactID': contactID}
-        ccIDs = clientID_contactID(data)
-        clientID = ccIDs['clientID']
-        contactID = ccIDs['contactID']
-        note = data.get('note')
-        notesID = None
-        if note is not None:
-            sqlQuery = "INSERT INTO `notes` (`note`, `type`, `addressee_type`, `add_user_id`) VALUES (%s, %s, %s, %s);"
-            sqlValTuple = (note, 3, 2, clientID)
-            result = sqlInsert(sqlQuery, sqlValTuple)
-            notesID = result['inserted_id']
+        client_contacts = []
+        for row in data['contact_list']:
+            items = {}
+            ccIDs = clientID_contactID(row)
+            items['clientID'] = ccIDs['clientID']
+            items['contactID'] = ccIDs['contactID']
+            client_contacts.append(items)
+
+        # note = data.get('note')
+        # notesID = None
+        # if note is not None:
+        #     sqlQuery = "INSERT INTO `notes` (`note`, `type`, `addressee_type`, `add_user_id`) VALUES (%s, %s, %s, %s);"
+        #     sqlValTuple = (note, 3, 2, contactID)
+        #     result = sqlInsert(sqlQuery, sqlValTuple)
+        #     notesID = result['inserted_id']
         # END of client detection || registration by phone number
 
         # Get Promo Code ID
@@ -1361,15 +1388,28 @@ def checkout():
                 affiliateID = promodict['affiliateID']
             
         # insert additional data into  payment_details table and get inserted id
-        sqlQueryPD = "INSERT INTO `payment_details` (`promo_code_id`, `promo_code`, `affiliateID`, `notesID`, `clientID`, `contactID`, `Status`) VALUES (%s, %s, %s, %s, %s, %s, %s);"
-        sqlValTuplePD = (promoID, data['promo'], affiliateID, notesID, clientID, contactID, 1)
+        # sqlQueryPD = "INSERT INTO `payment_details` (`promo_code_id`, `promo_code`, `affiliateID`, `notesID`, `clientID`, `contactID`, `Status`) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+        sqlQueryPD = "INSERT INTO `payment_details` (`promo_code_id`, `promo_code`, `affiliateID`, `Status`) VALUES (%s, %s, %s, %s);"
+        sqlValTuplePD = (promoID, data['promo'], affiliateID,  1)
         resultPD = sqlInsert(sqlQueryPD, sqlValTuplePD)
         if resultPD['status'] == 0:
-            return jsonify({'status': "0", 'answer': resultPD['answer'], 'newCSRFtoken': newCSRFtoken})
+            return jsonify({'status': "0", 'answer': resultPD[0]['answer'], 'newCSRFtoken': newCSRFtoken})
 
     
         pdID = resultPD['inserted_id']
 
+        value_rows = ''
+        sqlValList = []
+        for row in client_contacts:
+            value_rows = value_rows + "(%s, %s, %s, %s),"
+            sqlValList = sqlValList + [pdID, row['clientID'], row['contactID'], 1]
+
+        value_rows = value_rows[:-1]
+        sqlValTuple = tuple(sqlValList)
+        sqlQueryClients = f"INSERT INTO `event_clients` (`payment_details_id`, `clientID`, `contactID`, `Status`) VALUES {value_rows};"
+
+        resultInsert = sqlInsert(sqlQueryClients, sqlValTuple)
+        
         # insert data into table buffer
         # This also checks if specified amount of product exists
         buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID, paymentMethod, priceState)
@@ -1382,7 +1422,6 @@ def checkout():
         if buffer['status'] == "3":
             return jsonify({'status': "0", 'answer': buffer['answer'], 'newCSRFtoken': newCSRFtoken})
         
-
         amount = buffer['totalPrice']
         
         # Send data to bank api
@@ -1460,8 +1499,9 @@ def confirmation_page(pdID):
         `purchase_history`.`price`,
         `purchase_history`.`discount`
     FROM `payment_details` 
-            LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-            LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+            LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+            LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+            LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
             LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
             LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
             LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
@@ -1469,7 +1509,6 @@ def confirmation_page(pdID):
             LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
             LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = `purchase_history`.`ptRefKey` 
             LEFT JOIN `product_type` ON `product_type`.`ID` = `product_type_relatives`.`PT_ID`
-            -- LEFT JOIN `product_type` ON ``.`ptID` = `product_type`.`ID`
             LEFT JOIN `product` ON `product`.`ID` = `product_type`.`product_ID`
     WHERE `payment_details`.`ID` = %s AND `product_type_relatives`.`Language_ID` = %s
     ORDER BY `product`.`Order`, `product_type`.`Order`;
@@ -1856,6 +1895,7 @@ def ticket(pdID):
         `payment_details`.`timestamp`,   
         `payment_details`.`Status`,   
         `delivered`.`timestamp` AS `deliveryDate`,
+        `event_clients`.`ID` AS `ecID`,
         `clients`.`FirstName`,
         `clients`.`LastName`,
         `phones`.`phone`,
@@ -1869,8 +1909,9 @@ def ticket(pdID):
         `purchase_history`.`discount`
     FROM `payment_details` 
             LEFT JOIN `delivered` ON `delivered`.`pdID` = `payment_details`.`ID`
-            LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-            LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+            LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+            LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+            LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
             LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
             LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
             LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
@@ -2147,6 +2188,7 @@ def get_order_details():
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
     
     pdID = request.form.get('orderID')
+    eventClientsID = request.form.get('ecID')
 
     sqlQuery = f"""
                     SELECT 
@@ -2160,18 +2202,18 @@ def get_order_details():
                         `addresses`.`address`,
                         `emails`.`email`
                     FROM `payment_details` 
-                        LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                        LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                        LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+                        LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+                        LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
                         LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
                         LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
                         LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
                         LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
-                    WHERE `payment_details`.`ID` = %s
-                        GROUP BY `payment_details`.`ID`
-                        ORDER BY `payment_details`.`ID` DESC
+                    WHERE `payment_details`.`ID` = %s AND `event_clients`.`ID` = %s
+                        -- ORDER BY `payment_details`.`ID` DESC
                     ;
                 """
-    result = sqlSelect(sqlQuery, (pdID,), True)
+    result = sqlSelect(sqlQuery, (pdID, eventClientsID), True)
     orderStatusList = get_order_status_list()
 
     return jsonify({'status': "1", 'data': result['data'], "statusList": orderStatusList, "newCSRFtoken": newCSRFtoken})
@@ -2246,7 +2288,7 @@ def edit_ce():
 @validate_request
 def edit_order_details():
     newCSRFtoken = generate_csrf()
-    if not request.form.get('orderID') or not request.form.get('firstname') or not request.form.get('lastname') or not request.form.get('phone') or not request.form.get('address') or not request.form.get('status'):
+    if not request.form.get('orderID') or not request.form.get('ecID') or not request.form.get('firstname') or not request.form.get('lastname') or not request.form.get('phone') or not request.form.get('status'):
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
     phone = request.form.get('phone')
@@ -2265,22 +2307,11 @@ def edit_order_details():
 
 
     pdID = request.form.get('orderID')
+    ecID = request.form.get('ecID')
     firstname = request.form.get('firstname')
     lastname = request.form.get('lastname')
     address = request.form.get('address')
     status = request.form.get('status')    
-
-    sqlQuery = "SELECT * FROM `emails` WHERE `email` = %s;"
-    sqlValTuple = (Email,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-    if result['length'] == 0:
-        langID = getLangdata(session['lang'])['ID']
-        sqlQuery = "INSERT INTO `emails` (`email`, `langID`) VALUES (%s, %s);"
-        sqlValTuple = (Email, langID)
-        result = sqlInsert(sqlQuery, sqlValTuple)
-        emailID = result['inserted_id']
-    else:
-        emailID = result['data'][0]['ID']
 
     sqlQuery = "SELECT * FROM `clients` WHERE `FirstName` = %s AND `LastName` = %s;"
     sqlValTuple = (firstname, lastname)
@@ -2293,6 +2324,18 @@ def edit_order_details():
     else:
         clientID = result['data'][0]['ID']
 
+    sqlQuery = "SELECT * FROM `emails` WHERE `email` = %s;"
+    sqlValTuple = (Email,)
+    result = sqlSelect(sqlQuery, sqlValTuple, True)
+    if result['length'] == 0:
+        sqlQuery = "INSERT INTO `emails` (`email`, `clientID`) VALUES (%s, %s);"
+        sqlValTuple = (Email, clientID)
+        result = sqlInsert(sqlQuery, sqlValTuple)
+        emailID = result['inserted_id']
+    else:
+        emailID = result['data'][0]['ID']
+
+
     sqlQuery = "SELECT * FROM `phones` WHERE `phone` = %s;"
     sqlValTuple = (phone,)  
     result = sqlSelect(sqlQuery, sqlValTuple, True)
@@ -2304,33 +2347,34 @@ def edit_order_details():
     else:
         phoneID = result['data'][0]['ID']
     
-    sqlQuery = "SELECT * FROM `addresses` WHERE `address` = %s;"
-    sqlValTuple = (address,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-    if result['length'] == 0:
-        sqlQuery = "INSERT INTO `addresses` (`address`) VALUES (%s);"
+    addressID = None
+    if address:
+        sqlQuery = "SELECT * FROM `addresses` WHERE `address` = %s;"
         sqlValTuple = (address,)
-        result = sqlInsert(sqlQuery, sqlValTuple)
-        addressID = result['inserted_id']
-    else:
-        addressID = result['data'][0]['ID']
+        result = sqlSelect(sqlQuery, sqlValTuple, True)
+        if result['length'] == 0:
+            sqlQuery = "INSERT INTO `addresses` (`address`) VALUES (%s);"
+            sqlValTuple = (address,)
+            result = sqlInsert(sqlQuery, sqlValTuple)
+            addressID = result['inserted_id']
+        else:
+            addressID = result['data'][0]['ID']
 
-    sqlQuery = "SELECT `clientID`, `contactID`, `Status` FROM `payment_details` WHERE `ID` = %s;"
-    result = sqlSelect(sqlQuery, (pdID,), True)
+    sqlQuery = "SELECT `clientID`, `contactID`, `Status` FROM `event_clients` WHERE `ID` = %s;"
+    result = sqlSelect(sqlQuery, (ecID,), True)
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-    clientID = result['data'][0]['clientID']
     contactID = result['data'][0]['contactID']
     Status = result['data'][0]['Status']
 
-    sqlQuery = "UPDATE `clients` SET `FirstName` = %s, `LastName` = %s WHERE `ID` = %s;"
-    sqlValTuple = (firstname, lastname, clientID)
+    sqlQuery = "UPDATE `client_contacts` SET `phoneID` = %s, `emailID` = %s, `addressID` = %s WHERE `ID` = %s;"
+    sqlValTuple = (phoneID, emailID, addressID, contactID)
     result = sqlUpdate(sqlQuery, sqlValTuple)
     if result['status'] == '-1':
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-    
-    sqlQuery = "UPDATE `client_contacts` SET `phoneID` = %s, `emailID` = %s, `addressID` = %s WHERE `ID` = %s;"
-    sqlValTuple = (phoneID, emailID, addressID, contactID)
+  
+    sqlQuery = "UPDATE `event_clients` SET `clientID` = %s WHERE `ID` = %s;"
+    sqlValTuple = (clientID, ecID)
     result = sqlUpdate(sqlQuery, sqlValTuple)
     if result['status'] == '-1':
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
@@ -2356,6 +2400,7 @@ def edit_order_details():
                 if result['status'] == '-1':
                     return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
+    
     return jsonify({'status': "1", "newCSRFtoken": generate_csrf()})
 
 
