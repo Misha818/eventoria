@@ -160,14 +160,16 @@ body {
                   <hr class="my-4">
                   <div  class="w-100 btn btn-primary btn-lg" 
                         style="background-color: white;
-                        color: #FCC628;
-                        border-color: #FCC628;"
+                        color: #fc2828ba;
+                        border-color: #fc2828ba;
+                        border-radius: 100px;
+                        margin-bottom: 15px;"
                   >{{ _('Continue')}}
                 </div>
                 <div  class="w-100 btn btn-lg hidden checkoutLoader" 
                       style=" background-color: white;
-                              color: #FCC628;
-                              border-color: #FCC628;" 
+                              color: #fc2828ba;
+                              border-color: #fc2828ba;" 
                 ></div>
 
 
@@ -664,21 +666,27 @@ async function get_pt_quantity(ptID, quantity) {
                 }
     
                 aTag.href = window.location.origin + '/cart/' + Cart;
-              if (payMethod == false) {
                 document.getElementById('fill-data-container').style.width = "100%";
                 
                 const container = document.getElementById('fill-data-container')
                 // create an element
                 const h1 = document.createElement('h1');
-                h1.textContent = prData[0].prTitle + ' ' + prData[0].prTitle + ' x ' + prDataGlobal.quantity;
+                h1.textContent = prData[0].prTitle + ' ' + prData[0].prTitle;
                 
                 // insert before the first child
                 container.insertBefore(h1, container.firstChild);
-
+                
+                if (payMethod == false) {
                 // Remove redundant elements
-                document.getElementById('promo-container').remove();
+                // document.getElementById('promo-container').remove();
+                // document.querySelectorAll('.paymentElements').forEach(element => {
+                //   element.remove();
+                // });
+                
+                // Hide redundant elements
+                document.getElementById('promo-container').style.display = 'none';
                 document.querySelectorAll('.paymentElements').forEach(element => {
-                  element.remove();
+                  element.style.display = 'none';
                 });
                 
               }   
@@ -1128,10 +1136,9 @@ async function get_pt_quantity(ptID, quantity) {
               if (response.data.data[0].maxQuantity >= totalQuantity + 1) {
                 totalQuantity = totalQuantity + 1;
                 addBlock(totalQuantity);
-
-                let old_quantity = document.querySelector('#product_0').textContent;
+                let old_quantity = document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent;
                 let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
-                document.querySelector('#product_0').textContent = new_quantity;
+                document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent = new_quantity;
                 document.querySelector('.text-muted').textContent = totalQuantity * response.data.data[0].Price;
               } else {
                 alert(`{{ _('Max allowed quantity to purchase') }} ${response.data.data[0].maxQuantity}`)
@@ -1150,9 +1157,9 @@ async function get_pt_quantity(ptID, quantity) {
         block.remove();
         reindex();
         totalQuantity = totalQuantity - 1;
-        let old_quantity = document.querySelector('#product_0').textContent;
+        let old_quantity = document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent;
         let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
-        document.querySelector('#product_0').textContent = new_quantity;
+        document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent = new_quantity;
         document.querySelector('.text-muted').textContent = totalQuantity * ptQuantity.Price;
       }
 

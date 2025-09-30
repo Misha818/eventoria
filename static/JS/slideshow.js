@@ -528,7 +528,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 newPrice = parseFloat(maxPrchQty.data[0].Price) * parseFloat(selectedOption)
                 
                 let priceContainer = selectParentNode.parentNode.querySelector('.price');
-                priceContainer.innerHTML = newPrice.toString() + '.0 ' + priceContainer.textContent.split(' ')[1]
+                if (newPrice !== 0) {
+                    priceContainer.innerHTML = newPrice.toString() + '.0 ' + priceContainer.textContent.split(' ')[1]
+                }
             });
         });
     });

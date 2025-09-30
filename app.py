@@ -1070,27 +1070,7 @@ def slides():
             translated = True
 
         return render_template('slides.html', result=result, mainCurrency=MAIN_CURRENCY, translated=translated, languageID=languageID, DefLangID=DefLangID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
-
-
-
-
-@app.route('/about')
-@validate_request
-def about():
-    languageID = getLangID()
-    sqlQuery =  f"""SELECT * FROM `product` 
-                    LEFT JOIN `product_relatives`
-                      ON  `product_relatives`.`P_ID` = `product`.`ID`
-                    WHERE `product_relatives`.`Language_ID` = %s
-                    AND `Product_Status` = 2
-                    ORDER BY `product`.`Order` ASC
-                """
     
-    sqlValTuple = (languageID,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-
-    return render_template('index.html', result=result, scrollTo='about', current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
-
 
 @app.route('/contacts')
 @validate_request
@@ -1102,6 +1082,39 @@ def contacts():
     # result = sqlSelect(sqlQuery, sqlValTuple, True)
     newCSRFtoken = generate_csrf()
     return render_template('index.html', scrollTo='contacts', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+
+
+@app.route('/events')
+@validate_request
+def events():
+    if session.get('lang') == None:
+        setlang()
+        
+    languageID = getLangID()
+    newCSRFtoken = generate_csrf()
+    return render_template('index.html', scrollTo='events', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+
+
+@app.route('/activities')
+@validate_request
+def activities():
+    if session.get('lang') == None:
+        setlang()
+        
+    languageID = getLangID()
+    newCSRFtoken = generate_csrf()
+    return render_template('index.html', scrollTo='activities', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+
+
+@app.route('/about')
+@validate_request
+def about():
+    if session.get('lang') == None:
+        setlang()
+        
+    languageID = getLangID()
+    newCSRFtoken = generate_csrf()
+    return render_template('index.html', scrollTo='about', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/favorites')

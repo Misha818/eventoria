@@ -1580,6 +1580,7 @@ h2 {
       -webkit-appearance: none;
       -moz-appearance: none;
       border: 0px;
+      display: none;
     }
       
       
@@ -8243,7 +8244,7 @@ tr:nth-child(even) {
   left: -100%; /* Start off-screen to the left */
   width: 100%;
   height: 100%;
-  background: #f7ead9; /* Warm wheat-like background */
+  background: #e1d7cc; /* Warm wheat-like background */
   transition: left 0.4s ease;
   z-index: 1000;
 }
@@ -8516,7 +8517,8 @@ tr:nth-child(even) {
 }
 
 .mobile-nav-content a {
-  font-family: cursive, 'Kurland', Georgia, 'Times New Roman', Times, serif;
+  /* font-family: cursive, 'Kurland', Georgia, 'Times New Roman', Times, serif; */
+  font-family: 'Open Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
   
@@ -8630,8 +8632,8 @@ tr:nth-child(even) {
   display: block;
 }
 .lang-flag {
-  width: 32px;
-  height: 24px;
+  width: 42px;
+  height: 32px;
   display: block;
   border-radius: 50%;
 }

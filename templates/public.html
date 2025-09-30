@@ -65,6 +65,15 @@
 
         <div class="mobile-menu">☰</div>
         <div class="lang-container"></div>
+        <div class="custom-language-select change-language">
+
+           {{ ns.selectedOption | safe }}
+
+          <div class="options" style="position: unset;padding: unset;background: unset;">
+            {{ ns.options | safe }}
+
+          </div>
+        </div>
         
         <span class="notification" style="display: none;">0</span>
       </header>
@@ -168,8 +177,9 @@
         <ul class="mobile-nav-links">
           <li><a href="{{ url_for('home') }}">{{ _('Home') }}</a></li>
           <!-- <li><a href="{{ url_for('favorites') }}">{{ _('Favorites') }}</a></li> -->
-          <li><a href="{{ url_for('products_client') }}">{{ _('Products') }}</a></li>
-          <li><a href="{{ url_for('about') }}">{{ _('Our History') }}</a></li>
+          <li><a href="{{ url_for('events') }}">{{ _('Events') }}</a></li>
+          <li><a href="{{ url_for('activities') }}">{{ _('Activities') }}</a></li>
+          <li><a href="{{ url_for('about') }}">{{ _('About') }}</a></li>
           <li><a href="{{ url_for('contacts') }}">{{ _('Contacts') }}</a></li>
         </ul>
 
@@ -548,65 +558,73 @@
         });
 
 
-        // let mobileNavSelect = document.querySelector('.custom-language-select').cloneNode(true);
+        let mobileNavSelect = document.querySelector('.custom-language-select').cloneNode(true);
+        mobileNavSelect.className = "change-language-menu";
 
-        // mobileNavSelect.className = "change-language-menu";
         // mobileNavSelect.addEventListener("change", function() {
         //   window.location.href = '/setlang?lang=' + this.value;
         // });
 
         // Add an event listener for the change language menu
         // mobileNavSelect.addEventListener("change", function() {
+        //   const options = mobileNavSelect.querySelector('.options');
+
+        //   if (options) {
+        //     options.style.display = 'block';
+        //   }
+        //   alert('AAA')
         //   let refKey = '';
         //   if (document.getElementById('RefKey')) {
         //     refKey = document.getElementById('RefKey').value;
         //   }
-        //   window.location.href = '/setlang?lang=' + this.value + '&RefKey=' + refKey;
+        //   // window.location.href = '/setlang?lang=' + this.value + '&RefKey=' + refKey;
 
         // });
 
-        // if (document.querySelector('.mobile-nav-content')) {
-        //   document.querySelector('.mobile-nav-content').append(mobileNavSelect);
-        // }
+        if (document.querySelector('.mobile-nav-content')) {
+          document.querySelector('.mobile-nav-content').append(mobileNavSelect);
+        }
 
 
-        // document.querySelector('.selected-option').addEventListener('click', function () {
-        //   this.parentNode.classList.toggle('open');
-        // });
-        // document.querySelectorAll('.option-lang').forEach(function (opt) {
-        //   opt.addEventListener('click', function () {
+        document.querySelector('.selected-option').addEventListener('click', function () {
+          this.parentNode.classList.toggle('open');
+        });
+        
+        document.querySelectorAll('.option-lang').forEach(function (opt) {
+          opt.addEventListener('click', function () {
 
-        //     let refKey = '';
-        //     if (document.getElementById('RefKey')) {
-        //       refKey = document.getElementById('RefKey').value;
-        //     }
-        //     // console.log('/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey)
-        //     window.location.href = '/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey;
+            let refKey = '';
+            if (document.getElementById('RefKey')) {
+              refKey = document.getElementById('RefKey').value;
+            }
+            // console.log('/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey)
+            window.location.href = '/setlang?lang=' + this.getAttribute('data-value') + '&RefKey=' + refKey;
 
-        //   });
-        // });
+          });
+        });
 
-        // document.querySelector('.change-language-menu').addEventListener('click', function () {
-          // document.querySelector('.change-language-menu .options').style.position = 'unset';
-          // document.querySelector('.change-language-menu .options').style.padding = 'unset';
-          // document.querySelector('.change-language-menu .options').style.background = 'unset';
-          // document.querySelectorAll('.change-language-menu img').forEach(function (img) {
-          //   img.style.width = '42px';
-          //   img.style.height = '32px';
-          // });
+        document.querySelector('.change-language-menu').addEventListener('click', function () {
+          document.querySelector('.change-language-menu .options').style.position = 'unset';
+          document.querySelector('.change-language-menu .options').style.padding = 'unset';
+          document.querySelector('.change-language-menu .options').style.background = 'unset';
+          document.querySelectorAll('.change-language-menu img').forEach(function (img) {
+            img.style.width = '42px';
+            img.style.height = '32px';
+          });
+        });
 
-          // let x = 0;
-          // document.querySelector('.change-language-menu .selected-option').addEventListener('click', function () {
-          //   let mobileOptions = document.querySelector('.change-language-menu .options');
-          //   if (x == 0) {
-          //     mobileOptions.style.display = 'block';
-          //     x = 1;
-          //   } else {
-          //     mobileOptions.style.display = 'none';
-          //     x = 0;
-          //   }
+          let x = 0;
+          document.querySelector('.change-language-menu .selected-option').addEventListener('click', function () {
+            let mobileOptions = document.querySelector('.change-language-menu .options');
+            if (x == 0) {
+              mobileOptions.style.display = 'block';
+              x = 1;
+            } else {
+              mobileOptions.style.display = 'none';
+              x = 0;
+            }
             
-          // });
+          });
 
 
         let supported_langs = JSON.parse('{{ jsonifiedSupportedLangsData | safe }}');
@@ -672,7 +690,11 @@
                     // languageButton.querySelector('span:first-child').textContent = `${flag}`;
                     // languageDropdown.classList.remove('active');
                     value = e.currentTarget.dataset.lang;
-                    refKey = document.getElementById('RefKey').value;
+                    let refKey = '';
+                    if (document.getElementById('RefKey')) {
+                      refKey = document.getElementById('RefKey').value;
+                    }
+
                     window.location.href = '/setlang?lang=' + value + '&RefKey=' + refKey;  
 
                 });
