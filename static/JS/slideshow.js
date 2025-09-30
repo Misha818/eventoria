@@ -87,7 +87,6 @@
         let imgStyle = window.getComputedStyle(thumbnailImage);
         let marginBottom = imgStyle.marginBottom;
         marginBottom = parseInt(marginBottom.replace("px", ""), 10);
-        // console.log('displaySize')
 
         // Price Thumbnails
         if (screen.width < 475) {
@@ -244,7 +243,6 @@
                     if (scrollChecker === scrollNumber) { // shows last group of images
                         if (images.length % maxShownThumbnails > 0) { // if num of last image group is less then maxShownThumbnails
                             scrollTo = thumbnailsWrapperHeight * (scrollCounter - 1) + itemHeight * (images.length % maxShownThumbnails);
-                            console.log(`scrollTo is ${scrollTo}`)
                         } else {
                             scrollTo = thumbnailsWrapperHeight * scrollCounter + marginBottom * scrollCounter;
                         }
@@ -433,9 +431,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function toggle_spss_elements() {
         document.querySelectorAll('.spss').forEach(el => {
-            console.log(el.style.display);
             el.classList.toggle('spss-view');
-
           });
           
     }
@@ -496,7 +492,6 @@ document.addEventListener("DOMContentLoaded", function() {
     ptIDs.forEach(ptID => {
         get_max_prch_qty(ptID.value, function(maxPrchQty) {
 
-            console.log(maxPrchQty)
             select = document.getElementById('select-quantity-'+ptID.value)
             if (maxPrchQty.length > 0) {
                 if (maxPrchQty.data[0].quantity > 0) {
@@ -530,8 +525,6 @@ document.addEventListener("DOMContentLoaded", function() {
             let ptID = selectParentNode.querySelector('.buy-btn').value;
             let selectedOption = this.value;
             get_max_prch_qty(ptID, function(maxPrchQty) {
-                console.log(maxPrchQty.data[0].Price)
-                console.log(selectedOption)
                 newPrice = parseFloat(maxPrchQty.data[0].Price) * parseFloat(selectedOption)
                 
                 let priceContainer = selectParentNode.parentNode.querySelector('.price');

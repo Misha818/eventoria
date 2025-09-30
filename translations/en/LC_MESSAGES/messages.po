@@ -464,7 +464,6 @@ msgid "Subproduct situation name exists!"
 msgstr "Product Type Situation name"
 
 #: app.py:4826
-#, fuzzy
 msgid "Invalid email address!"
 msgstr "Please specify valid email address!"
 

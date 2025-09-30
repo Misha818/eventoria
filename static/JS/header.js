@@ -199,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
     async function addToCart(ptID, num, clickedBotton) {
         let checkPtQuantity = await check_pt_quantity(ptID, num);
 
-        // console.log(`checkPtQuantity is ${checkPtQuantity.status}`)
-
         if (checkPtQuantity.status === '0') {
             // const textContent = document.getElementById('outOfStock').value;
             modal_message(checkPtQuantity.answer);
@@ -283,12 +281,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantity = document.getElementsByClassName('quantity');
     for (let i = 0; i < addToCartBtns.length; i++) {
         addToCartBtns[i].onclick = function() {
-            // console.log(`cartState before is ${cartState}`)
             if (cartState) {
                 return;
             }
             cartState = true;
-            // console.log(`cartState after is ${cartState}`)
             
             let clickedBotton = addToCartBtns[i];
 
@@ -338,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
     inputs.forEach(input => {
         input.addEventListener("keyup", (e) => {
             if (e.target) {
-                console.log(typeof(input.value))
                 if (input.value == "") {
                     return;
                 }    
@@ -377,7 +372,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.status === '1') {
                     window.location.href = `/buy-now/${this.value}-${quantity}`;
-                    // console.log(`/buy-now/${this.value}-${quantity}`)
                 } else {
                     modal_message(response.answer);
                 }  
@@ -451,7 +445,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 
                 let buttons = document.querySelectorAll('.add-to-cart-btn');
-                // console.log(buttons);
                 buttons.forEach(button => {
                     if (button.value === ptID) {
                         addToQuantity(button, quantity)

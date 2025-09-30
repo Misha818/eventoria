@@ -402,7 +402,7 @@ if (editBtns) {
                 input1.type = 'text';
                 input1.value = data.FirstName;
                 input1.required = true;
-                input1.name = 'firstName';
+                input1.readOnly = true;
                 group1.appendChild(label1);
                 group1.appendChild(input1);
                 form.appendChild(group1);
@@ -417,6 +417,7 @@ if (editBtns) {
                 input2.value = data.LastName;
                 input2.required = true;
                 input2.name = 'lastName';
+                input2.readOnly = true;
                 group2.appendChild(label2);
                 group2.appendChild(input2);
                 form.appendChild(group2);
@@ -432,6 +433,7 @@ if (editBtns) {
                 input3.placeholder = '37477123456';
                 input3.required = true;
                 input3.name = 'phone';
+                input3.readOnly = true;
                 group3.appendChild(label3);
                 group3.appendChild(input3);
                 form.appendChild(group3);
@@ -445,6 +447,7 @@ if (editBtns) {
                 input4.type = 'email';
                 input4.value = data.email;
                 input4.name = 'email';
+                input4.readOnly = true;
                 group4.appendChild(label4);
                 group4.appendChild(input4);
                 form.appendChild(group4);
@@ -459,6 +462,7 @@ if (editBtns) {
                 input5.value = data.address;
                 // input5.required = true;
                 input5.name = 'address';
+                input5.readOnly = true;
                 group5.appendChild(label5);
                 group5.appendChild(input5);
                 form.appendChild(group5);

@@ -502,7 +502,7 @@ babel = Babel(app, locale_selector=get_locale, timezone_selector=get_timezone)
 def setlang():
     defLang = getDefLang()
     lang = request.args.get('lang', defLang['Prefix'])
-
+    
     refKey = request.args.get('RefKey', '')
     session['lang'] = lang
     if refKey != '':
@@ -602,7 +602,7 @@ def home():
     languageID = getLangID()
     # result = sqlSelect(sqlQuery, sqlValTuple, True)
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs(), ensure_ascii=False), MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 @app.route('/get_home_slides', methods=["POST"])
 @validate_request
@@ -1095,19 +1095,13 @@ def about():
 @app.route('/contacts')
 @validate_request
 def contacts():
+    if session.get('lang') == None:
+        setlang()
+        
     languageID = getLangID()
-    sqlQuery =  f"""SELECT * FROM `product` 
-                    LEFT JOIN `product_relatives`
-                      ON  `product_relatives`.`P_ID` = `product`.`ID`
-                    WHERE `product_relatives`.`Language_ID` = %s
-                    AND `Product_Status` = 2
-                    ORDER BY `product`.`Order` ASC
-                """
-    
-    sqlValTuple = (languageID,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-
-    return render_template('index.html', result=result, scrollTo='contacts', current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    # result = sqlSelect(sqlQuery, sqlValTuple, True)
+    newCSRFtoken = generate_csrf()
+    return render_template('index.html', scrollTo='contacts', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/favorites')
@@ -1604,20 +1598,21 @@ def orders(filter):
                 `phones`.`phone`,
                 `emails`.`email`
             FROM `payment_details` 
-                LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+                LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+                LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
                 LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
                 LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
                 LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
                 LEFT JOIN `notes` ON `payment_details`.`notesID` = `notes`.`ID`
                 LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
             {where}
-                GROUP BY `payment_details`.`ID`
+                -- GROUP BY `payment_details`.`ID`
                 ORDER BY `payment_details`.`ID` DESC
                 LIMIT {rowsToSelect}, {int(PAGINATION)}; 
                """
-    
     result = sqlSelect(sqlQuery, sqlValTuple, True)
+    print(json.dumps(result, indent=4))
     sideBar = side_bar_stuff()
 
     numRows = totalNumRows('payment_details', where, sqlValTuple)
@@ -1951,6 +1946,7 @@ def order_details(pdID):
         `payment_details`.`timestamp`,   
         `payment_details`.`Status`,   
         `delivered`.`timestamp` AS `deliveryDate`,
+        `event_clients`.`ID` AS `ecID`,
         `clients`.`FirstName`,
         `clients`.`LastName`,
         `phones`.`phone`,
@@ -1964,8 +1960,9 @@ def order_details(pdID):
         `purchase_history`.`discount`
     FROM `payment_details` 
             LEFT JOIN `delivered` ON `delivered`.`pdID` = `payment_details`.`ID`
-            LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-            LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+            LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+            LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+            LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
             LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
             LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
             LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
@@ -7375,7 +7372,7 @@ def index(path):
                             """
                 sqlValL = (RefKey,)
                 resultL = sqlSelect(sqlQueryL, sqlValL, False)
-                supportedLangsData = []
+                
                 if resultL['length'] > 0:                    
                     langueges = supported_langs()
 
@@ -7395,7 +7392,8 @@ def index(path):
     ]  
 
     languageID = getLangID()
-    return render_template(myHtml, cartMessage=cartMessage, prData=prData, ptID=ptID, languageID=languageID, slideShow=slideShow, supportedLangsData=supportedLangsData, metaTags=metaTags, current_locale=get_locale())
+    jsonifiedSupportedLangsData = json.dumps(supportedLangsData, ensure_ascii=False)
+    return render_template(myHtml, cartMessage=cartMessage, prData=prData, ptID=ptID, languageID=languageID, slideShow=slideShow, supportedLangsData=supportedLangsData, jsonifiedSupportedLangsData=jsonifiedSupportedLangsData, metaTags=metaTags, current_locale=get_locale())
 
 
 @app.route("/get_langs", methods=["POST"])

@@ -460,7 +460,6 @@
             const value = element.value.trim();
             
             // Log values for debugging purposes
-            console.log(`Element ID: ${id}, Value: ${value}`);
             
             // Check if the value exists (non-empty)
             if (value === '') {
@@ -547,6 +546,7 @@
           this.style.border = '1px solid #ccc';
           this.style.color = '#000';
         });
+
 
         // let mobileNavSelect = document.querySelector('.custom-language-select').cloneNode(true);
 
@@ -667,10 +667,14 @@
             languageOptions.forEach(option => {
                 option.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const flag = option.querySelector('span:first-child').textContent;
-                    // const code = option.dataset.lang.toUpperCase();
-                    languageButton.querySelector('span:first-child').textContent = `${flag}`;
-                    languageDropdown.classList.remove('active');
+                    // const flag = option.querySelector('span:first-child').textContent;
+                    // // const code = option.dataset.lang.toUpperCase();
+                    // languageButton.querySelector('span:first-child').textContent = `${flag}`;
+                    // languageDropdown.classList.remove('active');
+                    value = e.currentTarget.dataset.lang;
+                    refKey = document.getElementById('RefKey').value;
+                    window.location.href = '/setlang?lang=' + value + '&RefKey=' + refKey;  
+
                 });
             });
         }

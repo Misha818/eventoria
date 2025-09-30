@@ -1,3 +1,299 @@
+let csrf = csrfToken;
+const emailRequired = document.getElementById('emailRequired').value;
+const invalidEmail = document.getElementById('invalidEmail').value;
+const subscribeText = document.getElementById('subscribe').textContent;
+const submitText = document.getElementById('message').textContent;
+const redFields = document.getElementById('redFields').value;
+const newEventsText = document.getElementById('newEventsText').value;
+const newEventsText1 = document.getElementById('newEventsText1').value;
+
+
+function isValidEmail(email) {
+    if (typeof email !== 'string') return false;
+    const value = email.trim();
+
+    const re = /^[\w\.-]+@[\w\.-]+\.\w+$/;
+    return re.test(value);
+    }
+
+
+function myLoader(color, gearID) {
+    if (color === undefined) {
+    color = 'crimson'
+    }
+
+    if (gearID === undefined) {
+    gearID = 'gear'
+    }
+    let loader = document.createElement('div'); // Create a div element for the loader
+    loader.id = gearID;
+    loader.style.color = color;
+    loader.style.fontSize = '20px';
+    loader.style.display = 'inline-block';
+    loader.textContent = '⚙';
+    return loader;
+}
+
+
+function rotate(gearElement) {
+    let angle = 0;
+    setInterval(() => {
+        angle = (angle + 5) % 360; 
+        gearElement.style.transform = `rotate(${angle}deg)`;
+    }, 50); 
+
+}
+
+
+function errorMC_view(mode) {
+    if (mode === 0) {
+        // document.getElementById('error-message').classList.add('hidden')
+        document.getElementById('error-message').style.border = '1px solid #10b981';
+        document.getElementById('error-message').style.color = '#10b981';
+        document.getElementById('error-message').style.background = 'rgba(16, 185, 129, 0.1)';
+        document.getElementById('error-message').style.display = 'none';
+    }
+    
+    if (mode === 1) {
+        // document.getElementById('error-message').classList.remove('hidden');
+        document.getElementById('error-message').style.border = '1px solid red';
+        document.getElementById('error-message').style.color = 'red';
+        document.getElementById('error-message').style.background = 'rgb(185 16 16 / 10%)';
+        document.getElementById('error-message').style.display = 'block';
+    }
+}
+// Subscribe function
+let sFlag = false;
+document.querySelector('#subscribe').addEventListener('click', function() {
+    if (sFlag) {
+    return;
+    }
+
+    let csrfToken = csrf;
+
+sFlag = true;
+document.getElementById('subscribe-message').classList.add('hidden')
+document.getElementById('subscribe-message').style.border = '1px solid #10b981';
+document.getElementById('subscribe-message').style.color = '#10b981';
+document.getElementById('subscribe-message').style.background = 'rgba(16, 185, 129, 0.1)';
+let Email = document.getElementById('subscribe-email').value;
+if (Email === '') {
+    document.getElementById('subscribe-message').textContent = emailRequired;
+    document.getElementById('subscribe-message').classList.remove('hidden');
+    document.getElementById('subscribe-message').style.border = '1px solid red';
+    document.getElementById('subscribe-message').style.color = 'red';
+    document.getElementById('subscribe-message').style.background = 'rgb(185 16 16 / 10%)';
+    document.getElementById('subscribe-message').style.display = 'block';
+    sFlag = false;
+    return;
+}
+
+if (!isValidEmail(Email)) {
+    document.getElementById('subscribe-message').textContent = invalidEmail;
+    document.getElementById('subscribe-message').classList.remove('hidden');
+    document.getElementById('subscribe-message').style.border = '1px solid red';
+    document.getElementById('subscribe-message').style.color = 'red';
+    document.getElementById('subscribe-message').style.background = 'rgb(185 16 16 / 10%)';
+    document.getElementById('subscribe-message').style.display = 'block';
+    sFlag = false;
+    return;
+}
+
+
+let loader = myLoader('#e1d7cc');    
+
+    document.getElementById('subscribe').innerHTML = '';
+    document.getElementById('subscribe').appendChild(loader);
+
+    let gearElement = document.getElementById('gear');
+    if (!gearElement) {
+        gearElement.remove();
+        document.getElementById('subscribe').textContent = subscribeText;
+        sFlag = false;
+        return;
+    } 
+
+    rotate(gearElement);
+
+    let formData = new FormData();
+
+    formData.append('Email', Email)     
+
+    // Create a new XMLHttpRequest object
+    let xhr = new XMLHttpRequest();
+    // Configure the request
+    xhr.open('POST', '/subscribe');
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+    // Define what happens on successful data submission
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            gearElement.remove();
+            document.getElementById('subscribe').textContent = subscribeText;
+            if (response.status === '1') {
+                let content = response.answer;
+                document.querySelector('#subscribe-message').innerHTML = content;
+                document.querySelector('#subscribe-message').style.color = 'green';
+                
+            }
+            
+            if (response.status === '0') {
+            let content = response.answer;
+            document.querySelector('#subscribe-message').innerHTML = content;
+            }
+            
+            document.querySelector('#subscribe-message').classList.remove('hidden');
+            document.querySelector('#subscribe-message').style.display = 'block';
+        } 
+        sFlag = false;
+    };
+
+    // Define what happens in case of error
+    xhr.onerror = function () {
+        console.error('Request failed.');
+    };
+
+    // Send the request with the JSON data
+    xhr.send(formData);
+});
+
+let cmFlag = false;
+document.getElementById('message').addEventListener('click', function() {
+    event.preventDefault();
+    if (cmFlag) {
+    return;
+    } 
+
+    scrollTarget = document.querySelector('#contacts');
+    
+    cmFlag = true;
+    let loader = myLoader('#e1d7cc');    
+    
+    document.getElementById('message').innerHTML = '';
+    document.getElementById('message').appendChild(loader);
+
+    let gearElement = document.getElementById('gear');
+    if (!gearElement) {
+        gearElement.remove();
+        document.getElementById('message').textContent = subscribeText;
+        cmFlag = false;
+        return;
+    } 
+
+    rotate(gearElement);
+
+    let errorMC = document.getElementById('error-message');
+    // errorMC.classList.add('hidden');
+    // errorMC.style.display = 'none';
+    errorMC_view(0)
+
+    const form = document.querySelector('.messageForm');
+
+    let isValid = true;
+    let errorMessages = [];
+    
+    // Get all input and textarea elements inside the form
+    const elements = form.querySelectorAll('input, textarea');
+    let formData = new FormData();
+
+    
+    elements.forEach(function(element) {
+    // Get the element's ID and trimmed value
+    const id = element.getAttribute('id');
+    const value = element.value.trim();
+    
+    // Log values for debugging purposes
+    console.log(`Element ID: ${id}, Value: ${value}`);
+    
+    // Check if the value exists (non-empty)
+    if (value === '') {
+        isValid = false;
+        // errorMessages.push(`The field '${id}' is required.`);
+        document.getElementById(id).style.border = '1px solid red';
+    }
+    
+    // If the element is an email input, perform email validation
+    if (element.type === 'email' && value !== '') {
+        // Simple email validation regex pattern
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+        isValid = false;
+        document.getElementById(id).style.border = '1px solid red';
+        document.getElementById(id).style.color = 'red';
+        errorMessages.push(invalidEmail);
+        }
+    }
+
+    formData.append(id, value); 
+    });
+    
+    // If there are validation errors, display them and do not proceed
+    if (!isValid) {
+    errorMC.innerHTML = `<p>${redFields}` + '</p><p>' + errorMessages.join('</p>');
+    errorMC_view(1)
+    gearElement.remove();
+    document.getElementById('message').textContent = submitText;
+    cmFlag = false;
+    scrollTarget.scrollIntoView({ behavior: 'smooth' });
+    return;  // Stop here if any error was found
+    }
+    
+    // Otherwise, the form is valid. You can process the form data or submit it.
+    form.querySelectorAll('input, textarea').forEach(function(element) {
+    element.style.border = '1px solid #ccc'; // Reset border color
+    element.style.color = '#000'; // Reset text color
+    });          
+
+    formData.append('languageID', languageID); 
+
+    // Create a new XMLHttpRequest object
+    let xhr = new XMLHttpRequest();
+    let csrfToken = csrf;
+    // Configure the request
+    xhr.open('POST', '/client-message');
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+    // Define what happens on successful data submission
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            gearElement.remove();
+            document.getElementById('message').textContent = submitText;
+            // cmFlag = false;
+            if (response.status === '1') {
+                let content = response.answer;
+                errorMC.innerHTML = content;
+                errorMC.style.color = 'green';
+                
+            }
+            
+            if (response.status === '0') {
+                let content = response.answer;
+                errorMC.style.color = 'red';
+                errorMC.innerHTML = content;
+            }
+            
+            errorMC.classList.remove('hidden');
+            errorMC.style.display = 'block';
+            scrollTarget.scrollIntoView({ behavior: 'smooth' });
+
+        } 
+        cmFlag = false;
+    };
+
+    // Define what happens in case of error
+    xhr.onerror = function () {
+        console.error('Request failed.');
+    };
+
+    // Send the request with the JSON data
+    xhr.send(formData);
+});
+
+
+
+
 // Slideshow functionality
 let currentSlide = 0;
 let slides = []
@@ -19,7 +315,7 @@ function updateSlideContent(index) {
     if (slideData.length > 0) {
         const heroTitle = document.querySelector('.hero-title');
         const heroSubtitle = document.querySelector('.hero-subtitle');
-        const heloButtons = document.querySelectorAll('.hero-buttons a');
+        const heroButtons = document.querySelectorAll('.hero-buttons a');
 
         let titleColor = "#fff";
         if (slideData[index].Title_Color !== "") {
@@ -37,8 +333,8 @@ function updateSlideContent(index) {
             heroSubtitle.textContent = slideData[index].Subtitle;
             heroSubtitle.style.color = subtitleColor;
 
-            heloButtons[0].href =  window.location.origin + '/buy/' + slideData[index].URL;
-            heloButtons[1].href =  slideData[index].URL;
+            // heroButtons[0].href =  window.location.origin + '/buy/' + slideData[index].URL;
+            heroButtons[0].href =  slideData[index].URL;
         }
     }
 }
@@ -238,37 +534,6 @@ function accessibility_key_nav() {
     });
 }
 
-document.getElementById('contact-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const subject = document.getElementById('subject').value;
-    const message = document.getElementById('message').value;
-
-    if (!name || !email || !subject || !message) {
-        alert('Please fill in all fields');
-        return;
-    }
-
-    // Show success message
-    document.getElementById('success-message').style.display = 'block';
-
-    // Reset form
-    this.reset();
-
-    // Log form data
-    console.log('Form submitted:', { name, email, subject, message });
-
-    // Hide success message after 5 seconds
-    setTimeout(() => {
-        document.getElementById('success-message').style.display = 'none';
-    }, 5000);
-
-
-
-});
-
 document.addEventListener('DOMContentLoaded', function () {
 
     // Event listeners
@@ -373,38 +638,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Slide content data
 
                         totalImages = response.data.length;
-                        slideData = response.data
-                        // slideData = [
-                        //     {
-                        //         title: "Professional Learning Events",
-                        //         title_color: "yellow",
-                        //         subtitle: "Expert-led workshops and training sessions designed to advance your career and skills.",
-                        //         subtitle_color: "#FFA500",
-                        //     },
-                        //     {
-                        //         title: "Musical Experiences",
-                        //         title_color: "green",
-                        //         subtitle: "Live performances, music workshops, and collaborative sessions with talented artists.",
-                        //         subtitle_color: "#FFC0CB",
-                        //     },
-                        //     {
-                        //         title: "Community Collaboration",
-                        //         title_color: "",
-                        //         subtitle: "Team-building activities and networking events that create lasting professional relationships.",
-                        //         subtitle_color: "blue",
-                        //     }
-                        // ];
+                        if (totalImages === 0) {
+                            slideData = [
+                                    {
+                                        "Alt_Text": "",
+                                        "IMG": "coming.png",
+                                        "Subtitle": newEventsText1,
+                                        "Subtitle_Color": "rgb(208, 15, 15)",
+                                        "Title": newEventsText,
+                                        "Title_Color": "rgb(18, 179, 126)",
+                                        "URL": "/contacts"
+                                    }
+                                ]
+                            slideImages.push(slideData[0].IMG);
+                            totalImages = 1;
+                        } else {
 
-                        // Image URLs for preloading
-                        // slideImages = [
-                            //     'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&h=900&fit=crop',
-                            //     'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&h=900&fit=crop',
-                            //     'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1600&h=900&fit=crop'
-                            // ];
-                        
-                        response.data.forEach(slide => {
-                            slideImages.push(slide.IMG);
-                        });
+                            slideData = response.data
+                            
+                            response.data.forEach(slide => {
+                                slideImages.push(slide.IMG);
+                            });
+                            
+                        }
 
                         preloadImages(); // Start loading images
                         slides = document.querySelectorAll('.slide');
@@ -417,10 +673,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         initializeSlideshow();
                     }
 
-                    // if (response.status === '0') {
-                    //     // Scroll the window to the mistakesDiv with smooth behavior
-                    //     mistakesDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // }
                 } else {
                     // Handle error response
                     console.error('Error adding category:', xhr.responseText);
@@ -559,14 +811,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 learnMore.className = "btn-text";
                                 learnMore.textContent = learnMoreText;
                                 
-                                const applyNow = document.createElement("a");
-                                applyNow.href = "#";
-                                applyNow.className = "btn-text";
-                                applyNow.textContent = applyNowText;
+                                // const applyNow = document.createElement("a");
+                                // applyNow.href = "#";
+                                // applyNow.className = "btn-text";
+                                // applyNow.textContent = applyNowText;
                                 
                                 // Append buttons
                                 btnContainer.appendChild(learnMore);
-                                btnContainer.appendChild(applyNow);
+                                // btnContainer.appendChild(applyNow);
                                 
                                 // Put together content
                                 content.appendChild(title);
@@ -612,6 +864,37 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    function headerScroll() {
+        console.log(scrollTo)
+        if (scrollTo) {
+    
+            let target_to_navigate = document.getElementById(scrollTo);
+            if (target_to_navigate) {
+                setTimeout(() => {
+                    let num = 0;
+                    const screenWidth = window.screen.width;
+                    if (screenWidth < 801) {
+                        num = 10;
+                    }
+                    
+                    // Get the header height
+                    const header = document.querySelector('#header');
+                    const headerHeight = header ? header.offsetHeight : 0;
 
+                    // Calculate target element's top position relative to the document
+                    const targetRect = target_to_navigate.getBoundingClientRect();
+                    const scrollTarget = targetRect.top + window.pageYOffset - headerHeight - num;
+                    
+                    window.scrollTo({
+                        top: scrollTarget,
+                        behavior: 'smooth'
+                    });
+                }, 1500);
+                
+                        
+                    }
+                };
 
+    }
+    headerScroll();
 });

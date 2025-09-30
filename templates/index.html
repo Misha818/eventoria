@@ -59,6 +59,11 @@
 
     <input type="hidden" id="learn-more" value="{{ _('More') }}">
     <input type="hidden" id="apply-now" value="{{ _('Apply') }}">
+    <input type="hidden" id="emailRequired" value="{{ _('Invalid email address!') }}">
+    <input type="hidden" id="invalidEmail" value="{{ _('Invalid email format') }}">
+    <input type="hidden" id="redFields" value="{{ _('Please improve all field marked in red') }}">
+    <input type="hidden" id="newEventsText" value="{{ _('New events comming soon.') }}">
+    <input type="hidden" id="newEventsText1" value="{{ _('Subscribe and follow not to miss them.') }}">
 
     <!-- Hero Section with Slideshow -->
     <section class="hero" id="events">
@@ -78,7 +83,7 @@
             <h1 class="hero-title"></h1>
             <p class="hero-subtitle"></p>
             <div class="hero-buttons">
-                <a href="#activities" class="btn btn-primary">{{ _('Apply') }}</a>
+                <!-- <a href="#activities" class="btn btn-primary">{{ _('Apply') }}</a> -->
                 <a href="#about" class="btn btn-outline">{{ _('More') }}</a>
             </div>
         </div>
@@ -141,32 +146,32 @@
             <div class="about-content">
                 
                 <div class="contact-section">
-                    <div class="success-message" id="success-message">
+                    <div class="success-message" id="error-message">
                         {{ _('Thank you for your message! We will get back to you soon.') }}
                     </div>
 
-                    <form id="contact-form">
+                    <form class="messageForm">
                         <div class="form-group">
                             <label for="name">{{ _('Your Name') }}</label>
-                            <input type="text" id="name" name="name" required>
+                            <input type="text" id="nameMessage" name="name" required>
                         </div>
 
                         <div class="form-group">
                             <label for="email">{{ _('Your Email') }}</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="emailMessage" name="email" required>
                         </div>
 
                         <div class="form-group">
                             <label for="subject">{{ _('Subject') }}</label>
-                            <input type="text" id="subject" name="subject" required>
+                            <input type="text" id="subjectMessage" name="subject" required>
                         </div>
 
                         <div class="form-group">
                             <label for="message">{{ _('Your message') }}</label>
-                            <textarea id="message" name="message" required></textarea>
+                            <textarea id="textareaMessage" name="message" required></textarea>
                         </div>
 
-                        <button type="submit" class="submit-btn">{{ _('Submit') }}</button>
+                        <div type="submit" class="submit-btn" id="message" style="text-align: center;">{{ _('Submit') }}</div>
                     </form>
                 </div>
 
@@ -222,16 +227,16 @@
                         <!-- <h2 class="section-title">Contact Us</h2> -->
                         <p class="section-subtitle">{{ _('Be the first to know about upcoming events and new opportunities.') }}</p>
 
-                        <div class="success-message" id="success-subscribe">
+                        <div class="success-message" id="subscribe-message">
                             {{ _('You have subscribed successfully!') }}
                         </div>
                         <form id="subscribe-form">
                             <div class="form-group">
-                                <label for="email">{{ _('Your Email') }}</label>
-                                <input type="email" id="email" name="email" required>
+                                <label for="subscribe-email">{{ _('Your Email') }}</label>
+                                <input type="email" id="subscribe-email" name="email" required>
                             </div>
 
-                            <button type="submit" class="subscribe-btn">{{ _('Subscribe') }}</button>
+                            <div type="submit" class="subscribe-btn" id="subscribe" style="text-align: center;">{{ _('Subscribe') }}</div>
                         </form>
                     </div>
                 </div>
@@ -325,7 +330,8 @@
         </div>
     </footer>
     <script type="text/javascript">
-        let csrfToken = "{{ csrf_token() }}";
+        let csrfToken = "{{ newCSRFtoken }}";
+        let scrollTo = "{{ scrollTo }}";  
         let supported_langs = JSON.parse(`{{ supported_langs | safe }}`);
         let languageID = "{{ languageID }}";
         let current_locale = "{{ current_locale }}";
