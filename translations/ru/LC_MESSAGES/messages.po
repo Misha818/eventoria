@@ -304,8 +304,11 @@ msgstr "Нажмите кнопку ниже, чтобы завершить на
 
 #: app.py:3517
 msgid ""
-"If you’re having trouble with the button above, copy and paste the URL below into your web browser."
-msgstr "Если у вас возникли проблемы с кнопкой выше, скопируйте и вставьте указанный ниже URL-адрес в адресную строку веб-браузера."
+"If you’re having trouble with the button above, copy and paste the URL "
+"below into your web browser."
+msgstr ""
+"Если у вас возникли проблемы с кнопкой выше, скопируйте и вставьте "
+"указанный ниже URL-адрес в адресную строку веб-браузера."
 
 #: app.py:3518
 msgid "cheers"
@@ -2588,8 +2591,9 @@ msgstr "Сотрудник"
 #~ msgid "recipient"
 #~ msgstr "получатель"
 
-msgid "For+1"
-msgstr "для"
+#~ msgid "For+1"
+#~ msgstr "для"
 
-msgid "person+1"
-msgstr "участников"
+#~ msgid "person+1"
+#~ msgstr "участников"
+

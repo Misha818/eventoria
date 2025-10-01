@@ -309,11 +309,13 @@ msgstr "Սեղմեք ստորև նշված կոճակը գրանցման գոր�
 
 #: app.py:3517
 msgid ""
-"If you’re having trouble with the button above, copy and paste the URL below into your web browser."
-msgstr "Եթե ​​վերևում նշված կոճակի հետ կապված խնդիրներ ունեք, պատճենեք և տեղադրեք ստորև նշված հղումը ձեր վեբ զննարկիչում։"
+"If you’re having trouble with the button above, copy and paste the URL "
+"below into your web browser."
+msgstr ""
+"Եթե ​​վերևում նշված կոճակի հետ կապված խնդիրներ ունեք, պատճենեք և տեղադրեք"
+" ստորև նշված հղումը ձեր վեբ զննարկիչում։"
 
 #: app.py:3518
-
 msgid "cheers"
 msgstr "Հարգանքներով"
 
@@ -866,9 +868,6 @@ msgstr "Ընտրեք գործողություններ"
 
 #: templates/add-teammate.html:27 templates/add-teammate.html:42
 msgid "Add Teammate"
-msgstr "Ավելացնել աշխատակից"
-
-msgid "Add teammate"
 msgstr "Ավելացնել աշխատակից"
 
 #: templates/add-teammate.html:44 templates/buy-now.html:178
@@ -1946,7 +1945,11 @@ msgstr "Մեր մասին"
 
 #: templates/index.html:144
 msgid "aboutText1"
-msgstr "Eventoria-ն մասնագիտացված հարթակ է, որը կենտրոնացած է բացառապես մասնագիտական միջոցառումների կազմակերպման վրա՝ ապահովելով բիզնես միջավայրի զարգացման, փորձի փոխանակման և արժեքավոր կապերի ստեղծման հնարավորություններ։"
+msgstr ""
+"Eventoria-ն մասնագիտացված հարթակ է, որը կենտրոնացած է բացառապես "
+"մասնագիտական միջոցառումների կազմակերպման վրա՝ ապահովելով բիզնես միջավայրի"
+" զարգացման, փորձի փոխանակման և արժեքավոր կապերի ստեղծման "
+"հնարավորություններ։"
 
 #: templates/index.html:145
 msgid "show more"
@@ -1954,11 +1957,16 @@ msgstr "Ավելին"
 
 #: templates/index.html:149
 msgid "aboutText2"
-msgstr "Մենք կառուցում ենք համայնք, որտեղ գաղափարները վերածվում են գործի, իսկ կապերը՝ նոր հնարավորությունների։"
+msgstr ""
+"Մենք կառուցում ենք համայնք, որտեղ գաղափարները վերածվում են գործի, իսկ "
+"կապերը՝ նոր հնարավորությունների։"
 
 #: templates/index.html:150
 msgid "aboutText3"
-msgstr "Հանդիսանալով պրոֆեսիոնալ միջոցառումների էկոհամակարգին նվիրված առաջին մասնագիտացված հարթակը Հայաստանում՝ մենք հավատում ենք, որ ճիշտ կապերն ու գիտելիքը կարող են փոխել կարիերան, բիզնեսը և ապագան։"
+msgstr ""
+"Հանդիսանալով պրոֆեսիոնալ միջոցառումների էկոհամակարգին նվիրված առաջին "
+"մասնագիտացված հարթակը Հայաստանում՝ մենք հավատում ենք, որ ճիշտ կապերն ու "
+"գիտելիքը կարող են փոխել կարիերան, բիզնեսը և ապագան։"
 
 #: templates/index.html:151
 msgid "aboutText4"
@@ -2275,9 +2283,6 @@ msgstr "Քաղաք, Նահանգ, 12345"
 msgid "Subscribe to us!"
 msgstr "Բաժանորդագրվեք մեզ։"
 
-msgid "Subscribe"
-msgstr "Բաժանորդագրվել"
-
 #: templates/public.html:123
 msgid "Be the first to know about discounts and promotions."
 msgstr "Եղեք առաջինը, ով կիմանա զեղչերի և ակցիաների մասին։"
@@ -2290,16 +2295,8 @@ msgstr "Խնդրում ենք մուտքագրել վավեր էլ. փոստի �
 msgid "Your email:"
 msgstr "Ձեր Էլ. փոստը"
 
-msgid "Your Email"
-msgstr "Ձեր Էլ. փոստը"
-
-
-
 #: templates/public.html:140
 msgid "Your name:"
-msgstr "Ձեր անունը"
-
-msgid "Your Name"
 msgstr "Ձեր անունը"
 
 #: templates/public.html:140
@@ -2307,7 +2304,8 @@ msgid "John Snow"
 msgstr "Պողոս Պողոսյան"
 
 #: templates/public.html:147
-msgid "Your message"
+#, fuzzy
+msgid "You message"
 msgstr "Ձեր հաղորդագրությունը"
 
 #: templates/public.html:162
@@ -2510,79 +2508,123 @@ msgstr "Ֆիլտրել աշխատակցով"
 msgid "Staff member"
 msgstr "Աշխատակից"
 
-msgid "Please specify lastname"
-msgstr "Խնդրում ենք մուտքագրել ազգանունը"
-msgid "Dashboards"
-msgstr "Կառավարման վահանակ"
-msgid "Click me to edit this price"
-msgstr "Սեղմեք ինձ վրա այս գինը խմբագրելու համար"
-msgid "Click me to add quantity"
-msgstr "Սեղմեք ինձ վրա քանակ ավելացնելու համար"
-msgid "Add Article"
-msgstr "Ավելացնել հոդված"
-msgid "Article Title"
-msgstr "Հոդվածի վերնագիր"
-msgid "Article Url"
-msgstr "Հոդվածի հղում"
-msgid "This-is-Your-Article-Link"
-msgstr "Սա-ձեր-հոդվածի-հղումն-է"
-msgid "Choose article category"
-msgstr "Ընտրեք հոդվածի կատեգորիա"
-msgid "You have not entered any article category yet."
-msgstr "Դուք դեռ չեք մուտքագրել որևէ հոդվածի կատեգորիա"
-msgid "Click on the link below to add an article category!"
-msgstr "Սեղմեք ներքևի հղման վրա հոդվածի կատեգորիա ավելացնելու համար"
-msgid "Article Category Name"
-msgstr "Հոդվածի կատեգորիայի անվանում"
-msgid "Article Categories"
-msgstr "Հոդվածների կատեգորիաներ"
-msgid "Edit Article Category"
-msgstr "Խմբագրել հոդվածի կատեգորիան"
-msgid "phone"
-msgstr "հեռախոս"
-msgid "Saveing"
-msgstr "Պահպանվում է"
-msgid "Add Product Type Specification"
-msgstr "Ավելացնել ապրանքատեսակի բնութագիր"
-msgid "Add teammate"
-msgstr "Ավելացնել աշխատակից"
-msgid "Transfers"
-msgstr "Փոխանցումներ"
-msgid "Transfer Funds"
-msgstr "Փոխանցել գումար"
-msgid "Assign Email"
-msgstr "Կցել էլ․ հասցե"
-msgid "Affiliate Orders"
-msgstr "Պատվերներ"
-msgid "Affiliate Transfers"
-msgstr "Փոխանցումներ"
-msgid "Manager"
-msgstr "Կառավարիչ"
-msgid "Sales AND Marketing"
-msgstr "Վաճառք և մարքեթինգ"
-msgid "HR"
-msgstr "Մարդկային ռեսուրսներ"
-msgid "CEO"
-msgstr "Գործադիր տնօրեն"
-msgid "Edit Product Type Specification"
-msgstr "Խմբագրել ապրանքատեսակի բնութագիրը"
-msgid "Edit Promo"
-msgstr "Խմբագրել պռոմո կոդը"
-msgid "Edit Order Details"
-msgstr "Խմբագրել պատվերը"
-msgid "Edit Corporate Email View"
-msgstr "Խմբագրել կորպորատիվ էլ.փոստը"
-msgid "Edit Corporate Email"
-msgstr "Խմբագրել կորպորատիվ էլ.փոստը"
-msgid "Edit Positions"
-msgstr "Խմբագրել պաշտոնը"
-msgid "recipient"
-msgstr "ստացող"
-msgid "Affiliate Order Details"
-msgstr "Պատվերի մանրամասներ"
+#~ msgid "Add teammate"
+#~ msgstr "Ավելացնել աշխատակից"
 
-msgid "For+1"
-msgstr ""
+#~ msgid "Subscribe"
+#~ msgstr "Բաժանորդագրվել"
 
-msgid "person+1"
-msgstr "անձի համար"
+#~ msgid "Your Email"
+#~ msgstr "Ձեր Էլ. փոստը"
+
+#~ msgid "Your Name"
+#~ msgstr "Ձեր անունը"
+
+#~ msgid "Please specify lastname"
+#~ msgstr "Խնդրում ենք մուտքագրել ազգանունը"
+
+#~ msgid "Dashboards"
+#~ msgstr "Կառավարման վահանակ"
+
+#~ msgid "Click me to edit this price"
+#~ msgstr "Սեղմեք ինձ վրա այս գինը խմբագրելու համար"
+
+#~ msgid "Click me to add quantity"
+#~ msgstr "Սեղմեք ինձ վրա քանակ ավելացնելու համար"
+
+#~ msgid "Add Article"
+#~ msgstr "Ավելացնել հոդված"
+
+#~ msgid "Article Title"
+#~ msgstr "Հոդվածի վերնագիր"
+
+#~ msgid "Article Url"
+#~ msgstr "Հոդվածի հղում"
+
+#~ msgid "This-is-Your-Article-Link"
+#~ msgstr "Սա-ձեր-հոդվածի-հղումն-է"
+
+#~ msgid "Choose article category"
+#~ msgstr "Ընտրեք հոդվածի կատեգորիա"
+
+#~ msgid "You have not entered any article category yet."
+#~ msgstr "Դուք դեռ չեք մուտքագրել որևէ հոդվածի կատեգորիա"
+
+#~ msgid "Click on the link below to add an article category!"
+#~ msgstr "Սեղմեք ներքևի հղման վրա հոդվածի կատեգորիա ավելացնելու համար"
+
+#~ msgid "Article Category Name"
+#~ msgstr "Հոդվածի կատեգորիայի անվանում"
+
+#~ msgid "Article Categories"
+#~ msgstr "Հոդվածների կատեգորիաներ"
+
+#~ msgid "Edit Article Category"
+#~ msgstr "Խմբագրել հոդվածի կատեգորիան"
+
+#~ msgid "phone"
+#~ msgstr "հեռախոս"
+
+#~ msgid "Saveing"
+#~ msgstr "Պահպանվում է"
+
+#~ msgid "Add Product Type Specification"
+#~ msgstr "Ավելացնել ապրանքատեսակի բնութագիր"
+
+#~ msgid "Transfers"
+#~ msgstr "Փոխանցումներ"
+
+#~ msgid "Transfer Funds"
+#~ msgstr "Փոխանցել գումար"
+
+#~ msgid "Assign Email"
+#~ msgstr "Կցել էլ․ հասցե"
+
+#~ msgid "Affiliate Orders"
+#~ msgstr "Պատվերներ"
+
+#~ msgid "Affiliate Transfers"
+#~ msgstr "Փոխանցումներ"
+
+#~ msgid "Manager"
+#~ msgstr "Կառավարիչ"
+
+#~ msgid "Sales AND Marketing"
+#~ msgstr "Վաճառք և մարքեթինգ"
+
+#~ msgid "HR"
+#~ msgstr "Մարդկային ռեսուրսներ"
+
+#~ msgid "CEO"
+#~ msgstr "Գործադիր տնօրեն"
+
+#~ msgid "Edit Product Type Specification"
+#~ msgstr "Խմբագրել ապրանքատեսակի բնութագիրը"
+
+#~ msgid "Edit Promo"
+#~ msgstr "Խմբագրել պռոմո կոդը"
+
+#~ msgid "Edit Order Details"
+#~ msgstr "Խմբագրել պատվերը"
+
+#~ msgid "Edit Corporate Email View"
+#~ msgstr "Խմբագրել կորպորատիվ էլ.փոստը"
+
+#~ msgid "Edit Corporate Email"
+#~ msgstr "Խմբագրել կորպորատիվ էլ.փոստը"
+
+#~ msgid "Edit Positions"
+#~ msgstr "Խմբագրել պաշտոնը"
+
+#~ msgid "recipient"
+#~ msgstr "ստացող"
+
+#~ msgid "Affiliate Order Details"
+#~ msgstr "Պատվերի մանրամասներ"
+
+#~ msgid "For+1"
+#~ msgstr ""
+
+#~ msgid "person+1"
+#~ msgstr "անձի համար"
+

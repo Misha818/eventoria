@@ -15,23 +15,20 @@ msgstr ""
 "Generated-By: Babel 2.15.0\n"
 
 #: app.py:380 app.py:3726 app.py:3877 templates/login.html:119
-#, fuzzy
 msgid "Please specify username"
-msgstr "Please specify the amount!"
+msgstr "Please specify username"
 
 #: app.py:388 templates/login.html:127
-#, fuzzy
 msgid "Please specify password"
-msgstr "Please specify the amount!"
+msgstr "Please specify password"
 
 #: app.py:405 app.py:409
-#, fuzzy
 msgid "The username or password do not match"
-msgstr "Phone numbers do not match!"
+msgstr "The username or password do not match"
 
 #: app.py:426
 msgid "Rate limit exceeded"
-msgstr ""
+msgstr "Rate limit exceeded"
 
 #: app.py:526 app.py:552 app.py:558 app.py:794 app.py:801 app.py:826 app.py:829
 #: app.py:884 app.py:889 app.py:913 app.py:925 app.py:1467 app.py:1489
@@ -50,9 +47,8 @@ msgstr ""
 #: app.py:6382 app.py:6386 app.py:6576 app.py:6584 app.py:6657 app.py:6816
 #: app.py:6824 app.py:6836 app.py:6842 app.py:6891 app.py:6899 app.py:6907
 #: app.py:6924
-#, fuzzy
 msgid "Something went wrong. Please try again!"
-msgstr "Something went wrong."
+msgstr "Something went wrong. Please try again!"
 
 #: app.py:806
 msgid "The phone numbers do not match"
@@ -69,39 +65,34 @@ msgstr ""
 
 #: app.py:892 app.py:6617 templates/buy-now.html:132
 #: templates/checkout.html:136
-#, fuzzy
 msgid "Invalid Promo Code"
-msgstr "Edit Promo Code"
+msgstr "Invalid Promo Code"
 
 #: app.py:935
-#, fuzzy
 msgid "Payment failed"
-msgstr "Payment Method"
+msgstr "Payment failed"
 
 #: app.py:1565
 msgid "No employees are associated with the current email"
-msgstr ""
+msgstr "No employees are associated with the current email"
 
 #: app.py:1658
-#, fuzzy
 msgid "Email already exists!"
-msgstr "Edit Product Type Title"
+msgstr "Email already exists!"
 
 #: app.py:1666
-#, fuzzy
 msgid "Email updated successfully!"
-msgstr "Form submitted successfully!"
+msgstr "Email updated successfully!"
 
 #: app.py:1820 app.py:2601 app.py:2619 app.py:2839 app.py:2869 app.py:2914
 #: app.py:2930 app.py:3410 app.py:3544 app.py:3613 app.py:3684 app.py:3810
 #: app.py:3925 app.py:3985 app.py:4042
-#, fuzzy
 msgid "Something is wrong!"
-msgstr "Something is wrong"
+msgstr "Something is wrong!"
 
 #: app.py:1823 products.py:1043 products.py:1088
 msgid "Update"
-msgstr ""
+msgstr "Update"
 
 #: app.py:1823 copy.html:45 copy.html:93 copy.html:218 copy.html:880
 #: products.py:1044 products.py:1089 templates/add-price.html:112
@@ -120,36 +111,32 @@ msgstr ""
 #: templates/send-email.html:220 templates/sp-specifications.html:60
 #: templates/stuff-signup.html:48 templates/teammate-signup.html:57
 #: templates/thumbnail.html:83 templates/transfer-funds.html:76
-#, fuzzy
 msgid "Saving..."
-msgstr "Saving"
+msgstr "Saving..."
 
 #: app.py:1956
 msgid "To continue translate the product first"
-msgstr ""
+msgstr "To continue translate the service first"
 
 #: app.py:2015
-#, fuzzy
 msgid "Please specify the title!"
-msgstr "Please specify the type!"
+msgstr "Please specify the title!"
 
 #: app.py:2020 app.py:2375 app.py:2676 app.py:2726
 msgid "Max allowed number of chars for title is 20"
-msgstr ""
+msgstr "Max allowed number of chars for title is 20"
 
 #: app.py:2033 app.py:2384
-#, fuzzy
 msgid "Product Type Title Already Exists!"
-msgstr "Edit Product Type Title"
+msgstr "Service Type Title Already Exists!"
 
 #: app.py:2039
-#, fuzzy
 msgid "Please specify the price!"
-msgstr "Please specify the type!"
+msgstr "Please specify the price!"
 
 #: app.py:2043 app.py:2396
 msgid "The price should be higher then 0!"
-msgstr ""
+msgstr "The price should be higher then 0"
 
 #: app.py:2047 app.py:2392
 msgid "At least one image should be uploaded"
@@ -170,122 +157,105 @@ msgstr "image size is more than 3MB"
 #: app.py:2228 app.py:2582 app.py:2917 app.py:3611 app.py:3682 app.py:4736
 #: app.py:5090 app.py:7126 products.py:474 templates/add_to_store.html:202
 #: templates/edit_store.html:210
-#, fuzzy
 msgid "Done!"
-msgstr "Phone"
+msgstr "Done!"
 
 #: app.py:2319
-#, fuzzy
 msgid "To continue, please, add at least one product category."
-msgstr "To continue add or translate at least one product category."
+msgstr "To continue add or translate at least one service category."
 
 #: app.py:2358
-#, fuzzy
 msgid "Nothing was uploaded!"
-msgstr "Nothing was found"
+msgstr "Nothing was uploaded"
 
 #: app.py:2371
-#, fuzzy
 msgid "Please specify title!"
-msgstr "Please specify the type!"
+msgstr "Please specify title!"
 
 #: app.py:2388
-#, fuzzy
 msgid "Please specify price!"
-msgstr "Please specify the type!"
+msgstr "Please specify the price!"
 
 #: app.py:2673
 msgid "Title is empty!"
-msgstr ""
+msgstr "The title is empty!"
 
 #: app.py:2679
 msgid "Link is empty!"
-msgstr ""
+msgstr "The link is empty!"
 
 #: app.py:2682 app.py:2732
-#, fuzzy
 msgid "Please Choose Product Category!"
-msgstr "Edit Product Category"
+msgstr "Please Choose Service Category!"
 
 #: app.py:2723
-#, fuzzy
 msgid "Product name is empty!"
-msgstr "Product name"
+msgstr "Service name is empty!"
 
 #: app.py:2729
 msgid "Product link is empty!"
-msgstr ""
+msgstr "Service link is empty!"
 
 #: app.py:2785
 msgid "Category name is empty!"
-msgstr ""
+msgstr "Category name is empty!"
 
 #: app.py:2845
 msgid "Category Name is empty!"
-msgstr ""
+msgstr "Category Name is empty!"
 
 #: app.py:2850 products.py:425
 msgid "Category Name Exists!"
-msgstr ""
+msgstr "Category Name Exists!"
 
 #: app.py:2955
-#, fuzzy
 msgid "Product is published"
-msgstr "Unpublished"
+msgstr "Service is published"
 
 #: app.py:2957
-#, fuzzy
 msgid "Product is unpublished"
-msgstr "Unpublished"
+msgstr "Service is unpublished"
 
 #: app.py:3088 app.py:3283 app.py:3367 app.py:3373 app.py:3441 app.py:3569
 #: app.py:3640 app.py:3998 app.py:4004
-#, fuzzy
 msgid "Something wrong!"
-msgstr "Something is wrong"
+msgstr "Something is wrong!"
 
 #: app.py:3095
-#, fuzzy
 msgid "Please specify the first name"
-msgstr "Please specify the type!"
+msgstr "Please specify the first name"
 
 #: app.py:3102 app.py:3720 app.py:3873
-#, fuzzy
 msgid "Please specify the last name"
-msgstr "Please specify the type!"
+msgstr "Please specify the last name"
 
 #: app.py:3109 app.py:3448 app.py:3576 app.py:3647
-#, fuzzy
 msgid "Please specify email"
-msgstr "Please specify the amount!"
+msgstr "Please specify the email!"
 
 #: app.py:3141
-#, fuzzy
 msgid "Please specify the position!"
-msgstr "Please specify the type!"
+msgstr "Please specify the position!"
 
 #: app.py:3148
-#, fuzzy
 msgid "Something is wrong, please try again!"
-msgstr "Something is wrong"
+msgstr Something is wrong, please try again!"
 
 #: app.py:3165
 msgid "You can not change the position of the last CEO!"
-msgstr ""
+msgstr "You can not change the position of the last CEO!"
 
 #: app.py:3169
 msgid "You can not deactivate the last CEO!"
-msgstr ""
+msgstr "You can not deactivate the last CEO!"
 
 #: app.py:3289 app.py:3462 app.py:4010
-#, fuzzy
 msgid "Please specify the role"
-msgstr "Please specify the type!"
+msgstr "Please specify the role!"
 
 #: app.py:3295 app.py:4016
-#, fuzzy
 msgid "Please choose at least on action"
-msgstr "Please select at least one product type!"
+msgstr "Please choose at least on action!"
 
 #: app.py:3316 app.py:4038 copy.html:188 templates/add_product
 #: templates/add_product.html:218 templates/add_product_category.html:241
@@ -293,33 +263,28 @@ msgstr "Please select at least one product type!"
 #: templates/edit-teammate.html:276 templates/edit_product_category.html:380
 #: templates/pr_thumbnail.html:339 templates/teammate-signup.html:172
 #: templates/thumbnail.html:335
-#, fuzzy
 msgid "Done"
-msgstr "Phone"
+msgstr "Done"
 
 #: app.py:3379
-#, fuzzy
 msgid "Please specify the position"
-msgstr "Please specify the type!"
+msgstr "Please specify the position"
 
 #: app.py:3385
-#, fuzzy
 msgid "Please choose at least on role"
-msgstr "Please select at least one product type!"
+msgstr "Please choose at least on role!"
 
 #: app.py:3506
-#, fuzzy
 msgid "Teammate Signup Invitation"
-msgstr "Teammate Signup"
+msgstr "Teammate Signup Invitation"
 
 #: app.py:3511 app.py:5187 sysadmin.py:1574 sysadmin.py:1579 sysadmin.py:1602
 msgid "company"
 msgstr "Eventoria"
 
 #: app.py:3512
-#, fuzzy
 msgid "Click here to sign up"
-msgstr "Click me to add quantity"
+msgstr "Click here to sign up"
 
 #: app.py:3514
 msgid "Hello dear"
@@ -327,7 +292,7 @@ msgstr "Welcome Dear Teammate!"
 
 #: app.py:3515
 msgid "We are thrilled to invite you to join the Mammy’s Bread team! "
-msgstr ""
+msgstr "We are thrilled to invite you to join the Eventoria’s team!"
 
 #: app.py:3516
 msgid ""
@@ -346,7 +311,7 @@ msgstr "Cheers"
 
 #: app.py:3519
 msgid "Mammy's Bread Team"
-msgstr "Mammy's Bread Team"
+msgstr "Eventoria Team"
 
 #: app.py:3520 app.py:3521 templates/edit-profile.html:35
 #: templates/teammate-signup.html:27 templates/teammate-signup.html:35
@@ -358,142 +323,123 @@ msgid "Your Company. All rights reserved."
 msgstr "Eventoria LTD. All rights reserved."
 
 #: app.py:3539 app.py:5211
-#, fuzzy
 msgid "Email sent successfully!"
-msgstr "Form submitted successfully!"
+msgstr "Email sent successfully!"
 
 #: app.py:3651
-#, fuzzy
 msgid "Please specify an employee"
-msgstr "Please specify the amount!"
+msgstr "Please specify an employee"
 
 #: app.py:3663
 msgid "Email does not exist"
-msgstr ""
+msgstr "Email does not exist"
 
 #: app.py:3671
 msgid "Email is already assigned to the employee"
 msgstr ""
 
 #: app.py:3714 app.py:3868
-#, fuzzy
 msgid "Please specify firstname"
-msgstr "Please specify the amount!"
+msgstr "Please specify firstname"
 
 #: app.py:3737 app.py:3888
-#, fuzzy
 msgid "Username exists"
-msgstr "Username"
+msgstr "The username exists"
 
 #: app.py:3742 app.py:3893
-#, fuzzy
 msgid "Please specify Password"
-msgstr "Please specify the amount!"
+msgstr "Please specify Password"
 
 #: app.py:3751 app.py:3908
 msgid "Password confirmation field is empty"
-msgstr ""
+msgstr "Password confirmation field is empty"
 
 #: app.py:3755 app.py:3899
-#, fuzzy
 msgid "Passwords do not match!"
-msgstr "Passwords do not match!"
+msgstr "The passwords do not match!"
 
 #: app.py:3759 app.py:3912
-#, fuzzy
 msgid "Please specify prefared language"
-msgstr "Please specify the amount!"
+msgstr "Please specify prefared language"
 
 #: app.py:3771 app.py:3945
 msgid "File should be in PNG or JPG/JPEG format"
-msgstr ""
+msgstr "File should be in PNG or JPG/JPEG format"
 
 #: app.py:3777 app.py:3951 templates/add_product.html:142
 #: templates/edit-profile.html:113 templates/edit-teammate.html:164
 #: templates/teammate-signup.html:95
 msgid "File size should not exceed 1MB."
-msgstr ""
+msgstr "File size should not exceed 1MB."
 
 #: app.py:3794
 msgid "The URL is expired"
-msgstr ""
+msgstr "The URL is expired"
 
 #: app.py:3929
-#, fuzzy
 msgid "Incorrect password"
-msgstr "Confirm password"
+msgstr "Incorrect password"
 
 #: app.py:4147 app.py:4185
-#, fuzzy
 msgid "Voided"
-msgstr "View"
+msgstr "Voided"
 
 #: app.py:4148 app.py:4186 sysadmin.py:1360
-#, fuzzy
 msgid "Pending"
-msgstr "Adding"
+msgstr "Pending"
 
 #: app.py:4149 app.py:4187
 msgid "Approved"
-msgstr ""
+msgstr "Approved"
 
 #: app.py:4150 app.py:4188
-#, fuzzy
 msgid "Settled"
-msgstr "Title"
+msgstr "Settled"
 
 #: app.py:4590
-#, fuzzy
 msgid "Order Changed Successfully!"
-msgstr "Form submitted successfully!"
+msgstr "Order Changed Successfully!"
 
 #: app.py:4615
-#, fuzzy
 msgid "Status changed successfully!"
-msgstr "Form submitted successfully!"
+msgstr "Status changed successfully!"
 
 #: app.py:4626 app.py:5237 templates/edit-pts.html:102
 #: templates/sp-specifications.html:130
-#, fuzzy
 msgid "Please specify subproduct situation name!"
-msgstr "Product Type Situation name"
+msgstr "Please Specify Service Type Specification Name"
 
 #: app.py:4647 app.py:5251
-#, fuzzy
 msgid "Subproduct situation name exists!"
-msgstr "Product Type Situation name"
+msgstr "Service Type Specification Name Exists"
 
 #: app.py:4826
 msgid "Invalid email address!"
-msgstr "Please specify valid email address!"
+msgstr "Invalid email address!"
 
 #: app.py:4910
 msgid "Invalid email format!"
-msgstr ""
+msgstr "Invalid email format!"
 
 #: app.py:5120
 msgid "No email address found associated with your account!"
-msgstr ""
+msgstr "No email address found associated with your account!"
 
 #: app.py:5128 templates/send-email.html:576
-#, fuzzy
 msgid "Please specify sender email address!"
-msgstr "Please specify valid email address!"
+msgstr "Please specify sender email address!"
 
 #: app.py:5131 templates/send-email.html:587
-#, fuzzy
 msgid "Please specify recipient email address!"
-msgstr "Please specify valid email address!"
+msgstr "Please specify recipient email address!"
 
 #: app.py:5156 templates/send-email.html:598
-#, fuzzy
 msgid "Please specify subject!"
-msgstr "Please specify the type!"
+msgstr "Please specify subject!"
 
 #: app.py:5159
-#, fuzzy
 msgid "Please specify email content!"
-msgstr "Please specify the amount!"
+msgstr "Please specify email content!"
 
 #: app.py:5188 sysadmin.py:1594 templates/confirmation-page.html:206
 #: templates/index.html:505
@@ -505,163 +451,145 @@ msgid "Contact US"
 msgstr "Contact US"
 
 #: app.py:5193 sysadmin.py:1605
-#, fuzzy
 msgid "unsubscribe"
-msgstr "Subscribe to us!"
+msgstr "unsubscribe"
 
 #: app.py:5265
 msgid "The current subproduct situation has already been translated!"
-msgstr ""
+msgstr "The current service type specification has already been translated!"
 
 #: app.py:5367
 msgid "The password must be between "
-msgstr ""
+msgstr "The password must be between "
 
 #: app.py:5367
 msgid " and "
-msgstr ""
+msgstr " and "
 
 #: app.py:5367
 msgid " characters long."
-msgstr ""
+msgstr " characters long."
 
 #: app.py:5371
 msgid "The password must contain at least one digit."
-msgstr ""
+msgstr "The password must contain at least one digit."
 
 #: app.py:5374
 msgid "The password must contain at least one uppercase letter."
-msgstr ""
+msgstr "The password must contain at least one uppercase letter."
 
 #: app.py:5377
 msgid "The password must contain at least one lowercase letter."
-msgstr ""
+msgstr "The password must contain at least one lowercase letter."
 
 #: app.py:5380
 msgid "The password must contain at least one special character."
-msgstr ""
+msgstr "The password must contain at least one special character."
 
 #: app.py:5772 app.py:6761
-msgid ""
-"You have already added this product to the basket. You can change the "
-"quantity if You would like to."
-msgstr ""
+msgid "You have already added this service to the basket. You can change the quantity if You would like to."
+msgstr "You have already added this service to the basket. You can change the quantity if You would like to."
 
 #: app.py:5774 app.py:6763 templates/buy-now.html:82 templates/buy-now.html:473
 #: templates/checkout.html:86 templates/checkout.html:486
 msgid "In Basket"
-msgstr ""
+msgstr "In Basket"
 
 #: app.py:5775 app.py:6672
 msgid "The seller doesn't have that many left."
-msgstr ""
+msgstr "Spots are full, but stay tuned for updates."
 
 #: app.py:5961 app.py:5967
 msgid "The specified amount is unavailable."
-msgstr ""
+msgstr "The specified amount is unavailable."
 
 #: app.py:5990 app.py:6144
-#, fuzzy
 msgid "Please Specify Product Type"
-msgstr "Please specify the type!"
+msgstr "Please specify service type!"
 
 #: app.py:5994 app.py:6148
-#, fuzzy
 msgid "Please Specify Store"
-msgstr "Please specify the type!"
+msgstr "Please Specify Spot"
 
 #: app.py:5998 app.py:6152
-#, fuzzy
 msgid "Please Specify Quantity"
-msgstr "Please specify the type!"
+msgstr "Please Specify Quantity!"
 
 #: app.py:6005 app.py:6159
 msgid "Quantity should be greater than Zero"
-msgstr ""
+msgstr "Quantity should be greater than Zero"
 
 #: app.py:6009 app.py:6163
-#, fuzzy
 msgid "Please Specify Production Date"
-msgstr "Please select expiration date!"
+msgstr "Please Specify Start Date!"
 
 #: app.py:6013 app.py:6167
-#, fuzzy
 msgid "Please Specify Expiration Date"
-msgstr "Please select expiration date!"
+msgstr "Please Specify End Date!"
 
 #: app.py:6019 app.py:6173
-#, fuzzy
 msgid "Please Specify Max Allowed Quantity"
-msgstr "Please specify the amount!"
+msgstr "Please Specify Max Allowed Quantity"
 
 #: app.py:6026 app.py:6180
 msgid "Max Allowed Quantity should be greater than Zero"
-msgstr ""
+msgstr "Max Allowed Quantity should be greater than Zero"
 
 #: app.py:6256 app.py:6364
 msgid "code exists"
-msgstr ""
+msgstr "code exists"
 
 #: app.py:6315
-#, fuzzy
 msgid "Promo Code Created Successfully"
-msgstr "Form submitted successfully!"
+msgstr "Promo Code Created Successfully"
 
 #: app.py:6494
-#, fuzzy
 msgid "Promo Code updated successfully!"
-msgstr "Form submitted successfully!"
+msgstr "Promo Code updated successfully"
 
 #: app.py:6682
 msgid "Maximum available quantity for single purchase is "
-msgstr ""
+msgstr "Maximum available quantity for single purchase is "
 
 #: app.py:6688
-#, fuzzy
 msgid "Out of stock"
 msgstr "Out of stock."
 
 #: app.py:6694
 msgid "Maximum available quantity is "
-msgstr ""
+msgstr "Maximum available quantity is "
 
 #: app.py:6694
-#, fuzzy
 msgid "item added to the cart"
-msgstr "Add to cart"
+msgstr "item added to the cart"
 
 #: app.py:6727 templates/index.html:14
 msgid "site name"
 msgstr "Eventoria"
 
 #: app.py:6797 app.py:6859
-#, fuzzy
 msgid "Please specify email!"
-msgstr "Please specify the amount!"
+msgstr "Please specify email!"
 
 #: app.py:6845
-#, fuzzy
 msgid "You have subscribed successfully!"
-msgstr "Form submitted successfully!"
+msgstr "You have subscribed successfully!"
 
 #: app.py:6863
-#, fuzzy
 msgid "Please specify your name!"
-msgstr "Please specify the amount!"
+msgstr "Please specify your name!"
 
 #: app.py:6867
-#, fuzzy
 msgid "Please specify the subject!"
-msgstr "Please specify the amount!"
+msgstr "Please specify the subject!"
 
 #: app.py:6871
-#, fuzzy
 msgid "Please specify the message!"
-msgstr "Please specify the type!"
+msgstr "Please specify the message!"
 
 #: app.py:6916
 msgid "Thank you for your message! We will contact you as soon as possible."
-msgstr ""
+msgstr "Thank you for your message! We will contact you as soon as possible."
 
 #: app.py:6987
 msgid "Out of stock."
@@ -669,34 +597,32 @@ msgstr "Out of stock."
 
 #: products.py:335 products.py:380
 msgid "Category Exists!"
-msgstr ""
+msgstr "Category Exists!"
 
 #: products.py:873 products.py:892 products.py:897 products.py:954
 #: products.py:959
-#, fuzzy
 msgid "Something Wrong!"
 msgstr "Something is wrong"
 
 #: sysadmin.py:131
 #, python-format
 msgid "Inserted successfully, %(count)d rows affected."
-msgstr ""
+msgstr "Inserted successfully, %(count)d rows affected."
 
 #: sysadmin.py:136
 msgid "Query executed successfully, but no rows were affected."
-msgstr ""
+msgstr "Query executed successfully, but no rows were affected."
 
 #: sysadmin.py:154
 #, python-format
 msgid "An error occurred: %(error)s"
-msgstr ""
+msgstr "An error occurred: %(error)s"
 
 #: sysadmin.py:1359 templates/affiliate-order-details.html:197
 #: templates/affiliate-orders.html:247 templates/order-details.html:240
 #: templates/orders.html:214
-#, fuzzy
 msgid "Cancelled"
-msgstr "Cancel"
+msgstr "Cancelled"
 
 #: sysadmin.py:1361 templates/affiliate-order-details.html:195
 #: templates/affiliate-order-details.html:203
@@ -704,7 +630,7 @@ msgstr "Cancel"
 #: templates/order-details.html:238 templates/order-details.html:246
 #: templates/orders.html:212 templates/orders.html:221
 msgid "Purchased"
-msgstr ""
+msgstr "Purchased"
 
 #: sysadmin.py:1362 templates/affiliate-order-details.html:206
 #: templates/affiliate-orders.html:257 templates/order-details.html:249
@@ -714,15 +640,14 @@ msgstr ""
 
 #: sysadmin.py:1363
 msgid "Ready"
-msgstr ""
+msgstr "Ready"
 
 #: sysadmin.py:1364 templates/affiliate-order-details.html:189
 #: templates/affiliate-order-details.html:212
 #: templates/affiliate-orders.html:263 templates/order-details.html:232
 #: templates/order-details.html:255 templates/orders.html:230
-#, fuzzy
 msgid "Delivered"
-msgstr "expired"
+msgstr "Delivered"
 
 #: sysadmin.py:1572
 msgid "Payment Confirmation"
@@ -743,25 +668,23 @@ msgstr "Delivery Information"
 #: sysadmin.py:1582 templates/affiliate-order-details.html:161
 #: templates/confirmation-page.html:162 templates/order-details.html:180
 #: templates/order-tracker.html:112
-#, fuzzy
 msgid "Order"
-msgstr "Order Now!"
+msgstr "Order"
 
 #: sysadmin.py:1584 templates/affiliate-order-details.html:4
 #: templates/affiliate-order-details.html:166
 #: templates/affiliate-orders.html:314 templates/confirmation-page.html:166
 #: templates/order-details.html:4 templates/order-details.html:191
 #: templates/orders.html:280
-#, fuzzy
 msgid "Order Details"
-msgstr "See Details"
+msgstr "Order Details"
 
 #: sysadmin.py:1585 templates/admin_panel.html:202
 #: templates/affiliate-order-details.html:280
 #: templates/confirmation-page.html:280 templates/order-details.html:317
 #: templates/promo-code-details.html:78
 msgid "Product"
-msgstr "Product"
+msgstr "Service"
 
 #: sysadmin.py:1586 templates/cart.html:31 templates/cart.html:43
 #: templates/confirmation-page.html:281 templates/index.html:347
@@ -801,14 +724,12 @@ msgstr "Nice! You’re officially applied"
 
 #: copy.html:154 templates/add-price.html:3 templates/product
 #: templates/product.html:314
-#, fuzzy
 msgid "Add Price"
-msgstr "Edit Price"
+msgstr "Add Price"
 
 #: templates/add-price.html:48
-#, fuzzy
 msgid "Add Product Type Title"
-msgstr "Edit Product Type Title"
+msgstr "Edit Service Type Title"
 
 #: templates/add-price.html:48 templates/add_product.html:54
 #: templates/add_product_lang.html:60 templates/edit-price.html:48
@@ -817,40 +738,34 @@ msgid "Max allowed number of chars is 20"
 msgstr ""
 
 #: templates/add-price.html:50
-#, fuzzy
 msgid "Add Product Type Price"
-msgstr "Edit Product Type Price"
+msgstr "Add Service Type Price"
 
 #: copy.html:213 templates/add-price.html:55 templates/edit-price.html:55
 #: templates/product templates/product.html:374
-#, fuzzy
 msgid "Click here to upload files"
-msgstr "Click me to add quantity"
+msgstr "Click here to upload files"
 
 #: templates/add-price.html:61 templates/edit-price.html:60
-#, fuzzy
 msgid "Choose product type specification"
-msgstr "Product Type Specifications"
+msgstr "Choose service type specification"
 
 #: templates/add-price.html:97 templates/edit-price.html:100
-#, fuzzy
 msgid "Translate Product Type Specification Name"
-msgstr "Edit Product Type Specifications"
+msgstr "Translate Service Type Specification Name"
 
 #: templates/add-price.html:105 templates/edit-price.html:108
-#, fuzzy
 msgid "You have not entered any product type specification yet."
-msgstr "Edit Product Type Specifications"
+msgstr "You have not entered any service type specification yet."
 
 #: copy.html:79 templates/add-price.html:106 templates/add_product
 #: templates/edit-price.html:109
 msgid "Click on the link below to add a product category!"
-msgstr ""
+msgstr "Click on the link below to add a service category!"
 
 #: templates/add-price.html:107 templates/edit-price.html:110
-#, fuzzy
 msgid "Add Product Type Specifications"
-msgstr "Product Type Specifications"
+msgstr "Add Service Type Specifications"
 
 #: copy.html:44 copy.html:92 copy.html:216 copy.html:217 copy.html:879
 #: templates/add-price.html:111 templates/add-role.html:48
@@ -894,7 +809,7 @@ msgstr ""
 #: copy.html:413 templates/add-price.html:296 templates/edit-price.html:301
 #: templates/product templates/product.html:574
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 #: copy.html:187 copy.html:425 templates/add-price.html:308
 #: templates/add_product templates/add_product.html:217
@@ -904,17 +819,15 @@ msgstr ""
 #: templates/pr_thumbnail.html:338 templates/product templates/product.html:586
 #: templates/teammate-signup.html:171 templates/thumbnail.html:334
 msgid "Crop"
-msgstr ""
+msgstr "Crop"
 
 #: templates/add-price.html:390 templates/edit-price.html:473
-#, fuzzy
 msgid "Please specify Title"
-msgstr "Please specify the type!"
+msgstr "Please specify Title"
 
 #: templates/add-price.html:399 templates/edit-price.html:481
-#, fuzzy
 msgid "Please specify Price"
-msgstr "Please specify the type!"
+msgstr "Please specify Price"
 
 #: templates/add-price.html:526 templates/edit-price.html:613
 msgid ""
@@ -923,26 +836,22 @@ msgid ""
 msgstr ""
 
 #: templates/add-role.html:27
-#, fuzzy
 msgid "Add Role"
-msgstr "Edit Role"
+msgstr "Add Role"
 
 #: templates/add-role.html:42 templates/edit-role.html:42
 #: templates/roles.html:42 templates/stuff-signup.html:41
-#, fuzzy
 msgid "Role"
-msgstr "Roles"
+msgstr "Role"
 
 #: templates/add-role.html:77 templates/edit-position.html:81
 #: templates/edit-role.html:83
-#, fuzzy
 msgid "Choose actions"
-msgstr "Choose transaction type"
+msgstr "Choose actions"
 
 #: templates/add-teammate.html:27 templates/add-teammate.html:42
-#, fuzzy
 msgid "Add Teammate"
-msgstr "Edit Teammate"
+msgstr "Add Teammate"
 
 #: templates/add-teammate.html:44 templates/buy-now.html:178
 #: templates/checkout.html:182 templates/confirmation-page.html:192
@@ -953,54 +862,47 @@ msgstr "Edit Teammate"
 #: templates/orders.html:94 templates/orders.html:163 templates/orders.html:265
 #: templates/public.html:108
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: templates/add-teammate.html:78
-#, fuzzy
 msgid "Choose Position"
-msgstr "Choose transaction type"
+msgstr "Choose Position"
 
 #: copy.html:3 copy.html:37 templates/add_product templates/add_product.html:3
 #: templates/add_product.html:50 templates/add_product_lang.html:3
-#, fuzzy
 msgid "Add Product"
-msgstr "Add Product Type"
+msgstr "Add Service"
 
 #: copy.html:41 templates/add_product templates/add_product.html:54
 #: templates/add_product_lang.html:60
-#, fuzzy
 msgid "Product Title"
-msgstr "Product Types"
+msgstr "Service Title"
 
 #: copy.html:42 templates/add_product templates/add_product.html:55
-#, fuzzy
 msgid "Product Url"
-msgstr "Products"
+msgstr "Service Url"
 
 #: copy.html:42 templates/add_product templates/add_product.html:55
 #: templates/add_product_lang.html:61
 msgid "This-is-Your-Product-Link"
-msgstr ""
+msgstr "This-is-Your-Service-Link"
 
 #: copy.html:43 templates/add_product templates/add_product.html:56
 #: templates/add_product_lang.html:62
-#, fuzzy
 msgid "Short description"
 msgstr "Short Description"
 
 #: copy.html:44 copy.html:570 templates/add_product
 #: templates/add_product.html:57 templates/add_product_lang.html:63
 #: templates/product
-#, fuzzy
 msgid "Long description"
 msgstr "Long Description"
 
 #: copy.html:48 copy.html:499 templates/add_product
 #: templates/add_product.html:61 templates/add_product_lang.html:67
 #: templates/product templates/product.html:660
-#, fuzzy
 msgid "Choose product category"
-msgstr "Product Category"
+msgstr "Choose Service Category"
 
 #: copy.html:70 templates/add_product templates/add_product_lang.html:100
 msgid "Translate category name"
@@ -1008,14 +910,13 @@ msgstr ""
 
 #: copy.html:78 templates/add_product
 msgid "You have not entered any product category yet."
-msgstr ""
+msgstr "You have not entered any service category yet."
 
 #: copy.html:27 copy.html:80 templates/add_product
 #: templates/add_product.html:88 templates/add_product_category
 #: templates/add_product_category.html:30 templates/add_product_lang.html:157
-#, fuzzy
 msgid "Add Product Category"
-msgstr "Product Category"
+msgstr "Add Service Category"
 
 #: copy.html:86 templates/add_product templates/add_product.html:94
 #: templates/add_product_category.html:88 templates/add_product_lang.html:163
@@ -1029,100 +930,86 @@ msgid "File should be in PNG or JPG/JPEG format."
 msgstr ""
 
 #: copy.html:34 templates/add_product_category
-#, fuzzy
 msgid "Add Article Category"
-msgstr "Edit Article Category"
+msgstr "Add Article Category"
 
 #: copy.html:38 templates/add_product_category
-#, fuzzy
 msgid "Article Category"
-msgstr "Edit Article Category"
+msgstr "Article Category"
 
 #: templates/add_product_category.html:47
 #: templates/edit_product_category.html:81
-#, fuzzy
 msgid "Product Category Name"
-msgstr "Product Category"
+msgstr "Service Category Name"
 
 #: templates/add_product_category.html:50
 #: templates/edit_product_category.html:84
-#, fuzzy
 msgid "Choose subproduct situation name"
-msgstr "Product Type Situation name"
+msgstr "Choose service type specification name"
 
 #: templates/add_product_category.html:69
 #: templates/edit_product_category.html:99
-#, fuzzy
 msgid "Translate subproduct situation name"
-msgstr "Product Type Situation name"
+msgstr "Translate service type specification name"
 
 #: templates/add_product_category.html:77
 #: templates/edit_product_category.html:109
-#, fuzzy
 msgid "You have not entered any product type situation name yet."
-msgstr "Product Type Situation name"
+msgstr "You have not entered any service type specification name yet."
 
 #: templates/add_product_category.html:78
 #: templates/edit_product_category.html:110
 msgid "Click on the link below to add a product type situation!"
-msgstr ""
+msgstr "Click on the link below to add a service type specification!"
 
 #: templates/add_product_category.html:79
 #: templates/edit_product_category.html:111
-#, fuzzy
 msgid "Add subproduct situation name"
-msgstr "Product Type Situation name"
+msgstr "Add service type specification name"
 
 #: templates/add_product_category.html:210 templates/edit-teammate.html:216
 #: templates/edit_product_category.html:317 templates/pr_thumbnail.html:286
 #: templates/thumbnail.html:282
 msgid "Enter alt text"
-msgstr ""
+msgstr "Enter alt text"
 
 #: templates/add_product_lang.html:55
-#, fuzzy
 msgid "Add Product in another lang"
-msgstr "Add Product Type"
+msgstr "Add Service in another language"
 
 #: copy.html:554 templates/add_product_lang.html:61 templates/product
 #: templates/product.html:715
-#, fuzzy
 msgid "Product link"
-msgstr "Product name"
+msgstr "Service link"
 
 #: templates/add_to_store.html:3 templates/add_to_store.html:57
 #: templates/slideshow.html:104 templates/slideshow.html:161
 #: templates/slideshow.html:209 templates/store.html:124
 #: templates/store.html:376
-#, fuzzy
 msgid "Add To Store"
-msgstr "Edit Store"
+msgstr "Add To Spot"
 
 #: templates/add_to_store.html:65 templates/edit_store.html:62
-#, fuzzy
 msgid "Choose a Product"
-msgstr "Shows All Products"
+msgstr "Choose a service"
 
 #: templates/add_to_store.html:72 templates/affiliate-order-details.html:281
 #: templates/edit_store.html:69 templates/store.html:1019
-#, fuzzy
 msgid "Quantity"
-msgstr "Max Quantity"
+msgstr "Quantity"
 
 #: templates/add_to_store.html:76 templates/edit_store.html:73
 #: templates/store.html:130 templates/store.html:1021
-#, fuzzy
 msgid "Production Date"
-msgstr "Product name"
+msgstr "Service date"
 
 #: templates/add_to_store.html:94 templates/affiliate.html:196
 #: templates/create-promo-code.html:123 templates/create-promo-code.html:129
 #: templates/edit-promo-code.html:179 templates/edit-promo-code.html:185
 #: templates/edit_store.html:91 templates/promo-codes.html:64
 #: templates/store.html:148 templates/store.html:1022
-#, fuzzy
 msgid "Expiration Date"
-msgstr "Expiration"
+msgstr "Expiration Date"
 
 #: templates/add_to_store.html:118 templates/add_to_store.html:119
 #: templates/edit_store.html:115 templates/edit_store.html:116
@@ -1131,107 +1018,97 @@ msgstr "Max allowed quantity for one purchase is"
 
 #: templates/add_to_store.html:298 templates/create-promo-code.html:1412
 #: templates/edit-promo-code.html:1443 templates/edit_store.html:304
-#, fuzzy
 msgid "Click on me to add a product"
-msgstr "Click me to add quantity"
+msgstr "Click on me to add a service"
 
 #: templates/add_to_store.html:405 templates/edit_store.html:410
-#, fuzzy
 msgid "Choose Store"
-msgstr "Choose recipient"
+msgstr "Choose Spot"
 
 #: templates/admin_panel.html:125
 msgid "Admin Panel"
-msgstr ""
+msgstr "Admin Panel"
 
 #: templates/admin_panel.html:145 templates/admin_panel.html:182
-#, fuzzy
 msgid "All Months"
-msgstr "About"
+msgstr "All Months"
 
 #: templates/admin_panel.html:146 templates/admin_panel.html:183
 msgid "January"
-msgstr ""
+msgstr "January"
 
 #: templates/admin_panel.html:147 templates/admin_panel.html:184
 msgid "February"
-msgstr ""
+msgstr "February"
 
 #: templates/admin_panel.html:148 templates/admin_panel.html:185
 msgid "March"
-msgstr ""
+msgstr "March"
 
 #: templates/admin_panel.html:149 templates/admin_panel.html:186
-#, fuzzy
 msgid "April"
-msgstr "Price"
+msgstr "April"
 
 #: templates/admin_panel.html:150 templates/admin_panel.html:187
 msgid "May"
-msgstr ""
+msgstr "May"
 
 #: templates/admin_panel.html:151 templates/admin_panel.html:188
-#, fuzzy
 msgid "June"
-msgstr "Yerevan"
+msgstr "June"
 
 #: templates/admin_panel.html:152 templates/admin_panel.html:189
 msgid "July"
-msgstr ""
+msgstr "July"
 
 #: templates/admin_panel.html:153 templates/admin_panel.html:190
 msgid "August"
-msgstr ""
+msgstr "August"
 
 #: templates/admin_panel.html:154 templates/admin_panel.html:191
-#, fuzzy
 msgid "September"
-msgstr "Staff member"
+msgstr "September"
 
 #: templates/admin_panel.html:155 templates/admin_panel.html:192
 msgid "October"
-msgstr ""
+msgstr "October"
 
 #: templates/admin_panel.html:156 templates/admin_panel.html:193
-#, fuzzy
 msgid "November"
-msgstr "Phone Number"
+msgstr "November"
 
 #: templates/admin_panel.html:157 templates/admin_panel.html:194
 msgid "December"
-msgstr ""
+msgstr "December"
 
 #: templates/admin_panel.html:161
-#, fuzzy
 msgid "All Affiliates"
-msgstr "Affiliate"
+msgstr "All Affiliates"
 
 #: templates/admin_panel.html:162 templates/index.html:3
 msgid "Mammy's Bread"
-msgstr "Mammy's Bread"
+msgstr "Eventoria"
 
 #: templates/admin_panel.html:197
 msgid "Chose the number of top products"
-msgstr "Choose the number of top products"
+msgstr "Choose the number of top services"
 
 #: templates/admin_panel.html:198
 msgid "Top"
-msgstr ""
+msgstr "Top"
 
 #: templates/admin_panel.html:230 templates/index.html:187
 #: templates/positions.html:84 templates/product-categories-copy.html:79
 #: templates/product-categories.html:99 templates/products.html:267
 #: templates/promo-codes.html:119 templates/roles.html:84
-#, fuzzy
 msgid "No data to show!"
-msgstr "No Data"
+msgstr "Nothing to show!"
 
 #: templates/affiliate-order-details.html:173
 #: templates/affiliate-orders.html:171 templates/affiliate-orders.html:287
 #: templates/orders.html:141 templates/orders.html:257
-#, fuzzy
 msgid "Client"
-msgstr "City"
+msgstr "Client"
 
 #: templates/affiliate-order-details.html:179
 #: templates/affiliate-orders.html:125 templates/affiliate-orders.html:183
@@ -1242,12 +1119,10 @@ msgstr "City"
 #: templates/orders.html:95 templates/orders.html:185 templates/orders.html:273
 #: templates/promo-code-details.html:43 templates/promo-code-details.html:46
 #: templates/promo-codes.html:42 templates/transfers.html:225
-#, fuzzy
 msgid "Promo Code"
-msgstr "Promo code"
+msgstr "Promo Code"
 
 #: templates/affiliate-order-details.html:184 templates/order-details.html:226
-#, fuzzy
 msgid "Ordered"
 msgstr "Order Confirmed!"
 
@@ -1267,16 +1142,14 @@ msgstr "Order Confirmed!"
 #: templates/product-type-specifications.html:307 templates/products.html:207
 #: templates/promo-codes.html:75 templates/roles.html:53
 #: templates/table.html:75 templates/team.html:44 templates/team.html:83
-#, fuzzy
 msgid "Status"
-msgstr "Contact US"
+msgstr "Status"
 
 #: templates/affiliate-order-details.html:200
 #: templates/affiliate-orders.html:251 templates/order-details.html:243
 #: templates/orders.html:218
-#, fuzzy
 msgid "Panding"
-msgstr "Adding"
+msgstr "Panding"
 
 #: templates/affiliate-order-details.html:209
 #: templates/affiliate-orders.html:260 templates/order-details.html:252
@@ -1297,7 +1170,7 @@ msgstr ""
 
 #: templates/affiliate-order-details.html:285
 msgid "Revard per product"
-msgstr ""
+msgstr "Revard per service"
 
 #: templates/affiliate-order-details.html:286
 msgid "Revard value"
@@ -1308,151 +1181,129 @@ msgid "Total revard"
 msgstr ""
 
 #: templates/affiliate-orders.html:3 templates/orders.html:3
-#, fuzzy
 msgid "Orders"
-msgstr "Order Now!"
+msgstr "Orders"
 
 #: templates/affiliate-orders.html:103
-#, fuzzy
 msgid "Purchase history related to promo code of"
-msgstr "Please create promo code!"
+msgstr "Purchase history related to promo code of"
 
 #: templates/affiliate-orders.html:105
-#, fuzzy
 msgid "Purchase history related to promo code"
-msgstr "Please create promo code!"
+msgstr "Purchase history related to promo code"
 
 #: templates/affiliate-orders.html:109
 msgid "Chose Order Status"
-msgstr ""
+msgstr "Chose Order Status"
 
 #: templates/affiliate-orders.html:110 templates/orders.html:78
-#, fuzzy
 msgid "All Orders"
-msgstr "Cancel Order"
+msgstr "All Orders"
 
 #: templates/affiliate-orders.html:123 templates/edit-profile.html:42
 #: templates/edit-teammate.html:49 templates/orders.html:91
 #: templates/teammate-signup.html:42
-#, fuzzy
 msgid "Firstname"
 msgstr "First name"
 
 #: templates/affiliate-orders.html:124 templates/edit-profile.html:43
 #: templates/edit-teammate.html:53 templates/orders.html:92
 #: templates/teammate-signup.html:43
-#, fuzzy
 msgid "Lastname"
 msgstr "Last name"
 
 #: templates/affiliate-orders.html:160 templates/affiliate-orders.html:283
 #: templates/orders.html:130 templates/orders.html:253
-#, fuzzy
 msgid "Order ID"
-msgstr "Order Now!"
+msgstr "Order ID"
 
 #: templates/affiliate-orders.html:217 templates/affiliate-orders.html:303
 #: templates/affiliate-transfers.html:172 templates/promo-code-details.html:80
 #: templates/transfer-funds.html:60 templates/transfers.html:207
-#, fuzzy
 msgid "Revard"
-msgstr "Yerevan"
+msgstr "Revard"
 
 #: templates/affiliate-orders.html:269 templates/affiliate-orders.html:274
 #: templates/affiliate-orders.html:279 templates/orders.html:239
 #: templates/orders.html:244 templates/orders.html:249
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: templates/affiliate-orders.html:324 templates/affiliate-transfers.html:207
 #: templates/corporate-emails.html:189 templates/emails.html:240
 #: templates/orders.html:290 templates/transfers.html:246
-#, fuzzy
 msgid "Nothing found."
 msgstr "Nothing was found"
 
 #: templates/affiliate-orders.html:527 templates/affiliate-transfers.html:474
 #: templates/orders.html:483
-#, fuzzy
 msgid "Invalid phone number"
-msgstr "Phone Number"
+msgstr "Invalid phone number"
 
 #: templates/affiliate-transfers.html:3
-#, fuzzy
 msgid "Affiliate Transfares"
-msgstr "Transfers"
+msgstr "Affiliate Transfares"
 
 #: templates/affiliate-transfers.html:111
-#, fuzzy
 msgid "Your transfers history"
-msgstr "Transfers' history"
+msgstr "Your transfers history"
 
 #: templates/affiliate-transfers.html:121
 #: templates/affiliate-transfers.html:178 templates/transfers.html:145
 #: templates/transfers.html:213
-#, fuzzy
 msgid "Transaction ID"
-msgstr "Choose transaction type"
+msgstr "Transaction ID"
 
 #: templates/affiliate-transfers.html:132
 #: templates/affiliate-transfers.html:182 templates/transfer-funds.html:64
 #: templates/transfers.html:167 templates/transfers.html:217
 #: templates/transfers.html:221
-#, fuzzy
 msgid "Amount"
-msgstr "About"
+msgstr "Amount"
 
 #: templates/affiliate-transfers.html:143 templates/transfers.html:178
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: templates/affiliate-transfers.html:154 templates/emails.html:173
 #: templates/emails.html:218 templates/transfers.html:189
-#, fuzzy
 msgid "Date"
-msgstr "Add Date"
+msgstr "Date"
 
 #: templates/affiliate-transfers.html:174 templates/transfer-funds.html:61
 #: templates/transfers.html:209
-#, fuzzy
 msgid "Compensation"
-msgstr "Optional"
+msgstr "Compensation"
 
 #: templates/affiliate-transfers.html:198 templates/transfers.html:237
-#, fuzzy
 msgid "Transaction Details"
-msgstr "Choose transaction type"
+msgstr "Transaction Details"
 
 #: templates/affiliate-transfers.html:275 templates/corporate-emails.html:256
 #: templates/corporate-emails.html:394 templates/emails.html:307
 #: templates/transfers.html:311
-#, fuzzy
 msgid "Loading....."
 msgstr "Loading..."
 
 #: templates/affiliate.html:164
-#, fuzzy
 msgid "Welcome dear"
-msgstr "Welcome Dear Teammate!"
+msgstr "Welcome dear"
 
 #: templates/affiliate.html:165
 msgid "Below is the summary of your payment and reward progress."
-msgstr ""
+msgstr "Below is the summary of your payment and reward progress."
 
 #: templates/affiliate.html:167
 msgid "Window for"
-msgstr ""
+msgstr "Window for"
 
 #: templates/affiliate.html:168
-msgid ""
-"Below is the summary of payment and reward progress of the current "
-"affiliate."
-msgstr ""
+msgid "Below is the summary of payment and reward progress of the current affiliate."
+msgstr "Below is the summary of payment and reward progress of the current affiliate."
 
 #: templates/affiliate.html:216 templates/affiliate.html:271
-#, fuzzy
 msgid "Details"
-msgstr "See Details"
+msgstr "Details"
 
 #: templates/affiliate.html:223 templates/affiliate.html:274
 msgid "Purchase History"
@@ -1460,7 +1311,7 @@ msgstr "Purchase History"
 
 #: templates/affiliate.html:225
 msgid "P/H"
-msgstr ""
+msgstr "P/H"
 
 #: templates/affiliate.html:236 templates/affiliates.html:58
 #: templates/corporate-emails.html:116 templates/corporate-emails.html:164
@@ -1468,29 +1319,25 @@ msgstr ""
 #: templates/positions.html:64 templates/product-type-specifications.html:121
 #: templates/product-type-specifications.html:288 templates/promo-codes.html:86
 #: templates/roles.html:64 templates/table.html:50 templates/team.html:58
-#, fuzzy
 msgid "Active"
-msgstr "Action"
+msgstr "Active"
 
 #: templates/affiliate.html:238 templates/positions.html:66
 #: templates/promo-codes.html:88 templates/roles.html:66
 msgid "Inactive"
-msgstr ""
+msgstr "Inactive"
 
 #: templates/affiliate.html:241
-#, fuzzy
 msgid "Expired"
-msgstr "expired"
+msgstr "Expired"
 
 #: templates/affiliate.html:252 templates/affiliate.html:286
-#, fuzzy
 msgid "No promo code registered"
-msgstr "Promo Code ID"
+msgstr "No promo code registered"
 
 #: templates/affiliates.html:3
-#, fuzzy
 msgid "Affiliates"
-msgstr "Affiliate"
+msgstr "Affiliates"
 
 #: templates/affiliates.html:23 templates/affiliates.html:67
 #: templates/affiliates.html:74 templates/product-categories-copy.html:49
@@ -1500,66 +1347,58 @@ msgstr "Affiliate"
 #: templates/product-type-specifications.html:303 templates/table.html:59
 #: templates/table.html:66 templates/team.html:23 templates/team.html:67
 #: templates/team.html:74
-#, fuzzy
 msgid "Name"
-msgstr "Username"
+msgstr "Name"
 
 #: templates/affiliates.html:34 templates/affiliates.html:80
 #: templates/corporate-emails.html:286 templates/corporate-emails.html:305
 #: templates/edit-position.html:42 templates/positions.html:42
 #: templates/table.html:72 templates/team.html:34 templates/team.html:80
-#, fuzzy
 msgid "Position"
-msgstr "Expiration"
+msgstr "Position"
 
 #: templates/affiliates.html:61 templates/product-type-specifications.html:124
 #: templates/product-type-specifications.html:291 templates/table.html:53
 #: templates/team.html:61
-#, fuzzy
 msgid "Disabled"
-msgstr "Disable"
+msgstr "Disabled"
 
 #: templates/affiliates.html:86
-#, fuzzy
 msgid "Affiliate Details"
-msgstr "Affiliate"
+msgstr "Affiliate Details"
 
 #: templates/assign-email.html:27
 msgid "Assign an Email"
-msgstr ""
+msgstr "Assign an Email"
 
 #: templates/assign-email.html:77 templates/create-email.html:77
-#, fuzzy
 msgid "Choose an employee"
-msgstr "Shows All Products"
+msgstr "Choose an employee"
 
 #: templates/assign-email.html:114
-#, fuzzy
 msgid "Choose an email"
-msgstr "Choose transaction type"
+msgstr "Choose an email"
 
 #: templates/assign-email.html:133
 msgid "No emails available"
-msgstr ""
+msgstr "No emails available"
 
 #: templates/assign-email.html:145
 msgid "Create an email"
-msgstr ""
+msgstr "Create an email"
 
 #: templates/base.html:62 templates/base.html:65
-#, fuzzy
 msgid "Tools"
-msgstr "Total"
+msgstr "Tools"
 
 #: templates/base.html:74 templates/base.html:87 templates/edit-profile.html:27
-#, fuzzy
 msgid "Edit Profile"
-msgstr "Edit Role"
+msgstr "Edit Profile"
 
 #: templates/base.html:98 templates/base.html:135
 #: templates/side-bar-stuff-1.html:63 templates/side-bar-stuff.html:19
 msgid "Logout"
-msgstr ""
+msgstr "Logout"
 
 #: templates/buy-now.html:4 templates/index.html:473
 msgid "Buy Now"
@@ -1575,9 +1414,8 @@ msgid "Promo code"
 msgstr "Promo code"
 
 #: templates/buy-now.html:113
-#, fuzzy
 msgid "Example"
-msgstr "Empty"
+msgstr "Example"
 
 #: templates/buy-now.html:143 templates/checkout.html:147
 #: templates/order-details.html:432
@@ -1783,22 +1621,20 @@ msgid "Contact us"
 msgstr "Contact us"
 
 #: templates/corporate-emails.html:3
-#, fuzzy
 msgid "Corporate Emails"
-msgstr "See Details"
+msgstr "Corporate Emails"
 
 #: templates/corporate-emails.html:110 templates/emails.html:110
 msgid "Search by email"
 msgstr ""
 
 #: templates/corporate-emails.html:112
-#, fuzzy
 msgid "Filter by status"
-msgstr "Filter by staff member"
+msgstr "Filter by status"
 
 #: templates/corporate-emails.html:115 templates/emails.html:115
 msgid "All"
-msgstr ""
+msgstr "All"
 
 #: templates/corporate-emails.html:117 templates/corporate-emails.html:166
 #: templates/edit-teammate.html:70 templates/edit_product_category.html:122
@@ -1807,44 +1643,40 @@ msgstr "Passive"
 
 #: templates/corporate-emails.html:158 templates/emails.html:194
 #: templates/products.html:216
-#, fuzzy
 msgid "Actions"
-msgstr "Action"
+msgstr "Actions"
 
 #: templates/corporate-emails.html:181
 msgid "Show associated employees"
-msgstr ""
+msgstr "Show associated employees"
 
 #: templates/corporate-emails.html:182
-#, fuzzy
 msgid "Edit email"
-msgstr "Edit Teammate"
+msgstr "Edit email"
 
 #: templates/corporate-emails.html:278
 msgid "Employees associated with email"
-msgstr ""
+msgstr "Employees associated with email"
 
 #: templates/corporate-emails.html:282 templates/corporate-emails.html:302
-#, fuzzy
 msgid "Employee"
-msgstr "Empty"
+msgstr "Employee"
 
 #: templates/corporate-emails.html:291
 msgid "Remove email from employee"
-msgstr ""
+msgstr "Remove email from employee"
 
 #: templates/corporate-emails.html:328
 msgid "The employee will no longer have access to this email."
-msgstr ""
+msgstr "The employee will no longer have access to this email."
 
 #: templates/corporate-emails.html:416
 msgid "The email to be edited is "
-msgstr ""
+msgstr "The email to be edited is "
 
 #: templates/create-email.html:27
-#, fuzzy
 msgid "Create Email"
-msgstr "See Details"
+msgstr "Create Email"
 
 #: templates/create-promo-code.html:3 templates/create-promo-code.html:92
 msgid "Create Promo Code"
@@ -1861,7 +1693,7 @@ msgstr "You do not have any affiliate yet"
 #: templates/create-promo-code.html:110 templates/edit-promo-code.html:166
 #: templates/products.html:3 templates/public.html:183
 msgid "Products"
-msgstr "Products"
+msgstr "Services"
 
 #: templates/create-promo-code.html:145 templates/create-promo-code.html:1571
 #: templates/edit-promo-code.html:202 templates/edit-promo-code.html:1982
@@ -1870,11 +1702,11 @@ msgstr "Auto Generate"
 
 #: templates/create-promo-code.html:351 templates/edit-promo-code.html:363
 msgid "Please improve all fields marked with red in products!"
-msgstr "Please improve all fields marked with red in products!"
+msgstr "Please improve all fields marked with red in services!"
 
 #: templates/create-promo-code.html:359 templates/edit-promo-code.html:371
 msgid "Please select at least one product type!"
-msgstr "Please select at least one product type!"
+msgstr "Please select at least one service type!"
 
 #: templates/create-promo-code.html:369 templates/edit-promo-code.html:381
 msgid "Please select expiration date!"
@@ -1897,16 +1729,15 @@ msgstr "All discount values will be changed to"
 #: templates/create-promo-code.html:1242 templates/edit-promo-code.html:652
 #: templates/edit-promo-code.html:962 templates/edit-promo-code.html:1279
 msgid "All revard values in Product Type fields will be changed to"
-msgstr "All reward values in Product Type fields will be changed to"
+msgstr "All reward values in Service Type fields will be changed to"
 
 #: templates/create-promo-code.html:686 templates/edit-promo-code.html:711
 msgid "All revard options will be changed to"
 msgstr "All reward options will be changed to"
 
 #: templates/create-promo-code.html:686
-#, fuzzy
 msgid "and all corresponding reward values will be removed"
-msgstr "And all corresponding reward values will be removed"
+msgstr "and all corresponding reward values will be removed"
 
 #: templates/create-promo-code.html:721 templates/create-promo-code.html:1027
 #: templates/edit-promo-code.html:746 templates/edit-promo-code.html:1057
@@ -1918,12 +1749,12 @@ msgstr "Discount state is disabled"
 #: templates/edit-promo-code.html:866 templates/edit-promo-code.html:884
 #: templates/edit-promo-code.html:1184 templates/edit-promo-code.html:1202
 msgid "All discount values in current Product Type fields will be changed to"
-msgstr "All discount values in current Product Type fields will be changed to"
+msgstr "All discount values in current Service Type fields will be changed to"
 
 #: templates/create-promo-code.html:992 templates/create-promo-code.html:1302
 #: templates/edit-promo-code.html:1022 templates/edit-promo-code.html:1339
 msgid "All revard options in current Product Type fields will be changed to"
-msgstr "All reward options in current Product Type fields will be changed to"
+msgstr "All reward options in current Service Type fields will be changed to"
 
 #: templates/create-promo-code.html:992 templates/create-promo-code.html:1302
 #: templates/edit-promo-code.html:711 templates/edit-promo-code.html:1022
@@ -1936,9 +1767,8 @@ msgid "Loading ......"
 msgstr "Loading..."
 
 #: templates/edit-position.html:27 templates/edit-position.html:37
-#, fuzzy
 msgid "Edit Position"
-msgstr "Expiration"
+msgstr "Edit Position"
 
 #: templates/edit-price.html:3 templates/slideshow.html:104
 #: templates/slideshow.html:161 templates/slideshow.html:209
@@ -1947,11 +1777,11 @@ msgstr "Edit Price"
 
 #: templates/edit-price.html:48
 msgid "Edit Product Type Title"
-msgstr "Edit Product Type Title"
+msgstr "Edit Service Type Title"
 
 #: templates/edit-price.html:50
 msgid "Edit Product Type Price"
-msgstr "Edit Product Type Price"
+msgstr "Edit Service Type Price"
 
 #: templates/edit-profile.html:44 templates/login.html:96
 #: templates/login1.html:11 templates/teammate-signup.html:44
@@ -1959,19 +1789,16 @@ msgid "Username"
 msgstr "Username"
 
 #: templates/edit-profile.html:45
-#, fuzzy
 msgid "Current password"
-msgstr "Password"
+msgstr "Current password"
 
 #: templates/edit-profile.html:47
-#, fuzzy
 msgid "New password"
-msgstr "Password"
+msgstr "New password"
 
 #: templates/edit-profile.html:48
-#, fuzzy
 msgid "Confirm new password"
-msgstr "Confirm password"
+msgstr "Confirm new password"
 
 #: templates/edit-profile.html:318 templates/teammate-signup.html:270
 msgid "Preferred language"
@@ -1983,11 +1810,11 @@ msgstr "Edit Promo Code"
 
 #: templates/edit-pts.html:4
 msgid "Edit Product Type Specifications"
-msgstr "Edit Product Type Specifications"
+msgstr "Edit Service Type Specifications"
 
 #: templates/edit-pts.html:15 templates/sp-specifications.html:4
 msgid "Product Type Situation name"
-msgstr "Product Type Situation name"
+msgstr "Service Type Specification name"
 
 #: templates/edit-pts.html:165 templates/sp-specifications.html:190
 msgid "Please improve all red fields!"
@@ -2006,14 +1833,13 @@ msgid "Avatar"
 msgstr "Avatar"
 
 #: templates/edit-teammate.html:350
-#, fuzzy
 msgid "Choose Role"
-msgstr "Choose recipient"
+msgstr "Choose Role"
 
 #: templates/edit_product_category.html:3
 #: templates/edit_product_category.html:71
 msgid "Edit Product Category"
-msgstr "Edit Product Category"
+msgstr "Edit Service Category"
 
 #: templates/edit_product_category.html:41 templates/pr_thumbnail.html:43
 #: templates/thumbnail.html:39
@@ -2027,49 +1853,44 @@ msgstr "Image"
 
 #: templates/edit_store.html:3 templates/edit_store.html:54
 msgid "Edit Store"
-msgstr "Edit Store"
+msgstr "Edit Spot"
 
 #: templates/emails.html:3
-#, fuzzy
 msgid "Emails"
-msgstr "See Details"
+msgstr "Emails"
 
 #: templates/emails.html:112
 msgid "Filter by email status"
-msgstr ""
+msgstr "Filter by email status"
 
 #: templates/emails.html:116 templates/emails.html:202
-#, fuzzy
 msgid "Read"
-msgstr "Yerevan"
+msgstr "Read"
 
 #: templates/emails.html:117 templates/emails.html:200
-#, fuzzy
 msgid "Unread"
-msgstr "Yerevan"
+msgstr "Unread"
 
 #: templates/emails.html:140 templates/emails.html:206
 #: templates/public.html:143 templates/send-email.html:207
-#, fuzzy
 msgid "Subject"
-msgstr "Submit"
+msgstr "Subject"
 
 #: templates/emails.html:162 templates/emails.html:214
 msgid "Initials"
-msgstr ""
+msgstr "Initials"
 
 #: templates/emails.html:228
 msgid "Show Message"
-msgstr ""
+msgstr "Show Message"
 
 #: templates/emails.html:230
-#, fuzzy
 msgid "Compose"
-msgstr "Choose..."
+msgstr "Compose"
 
 #: templates/error.html:38
 msgid "Back to home"
-msgstr ""
+msgstr "Back to home"
 
 #: templates/index.html:8 templates/index.html:20
 msgid "metaTitle"
@@ -2223,9 +2044,8 @@ msgid "Cancel Order"
 msgstr "Cancel Order"
 
 #: templates/positions.html:3
-#, fuzzy
 msgid "Positions"
-msgstr "Expiration"
+msgstr "Positions"
 
 #: templates/positions.html:73 templates/roles.html:73
 msgid "View/Edit"
@@ -2233,7 +2053,7 @@ msgstr "View/Edit"
 
 #: templates/pr_thumbnail.html:3
 msgid "Product Thumbnail"
-msgstr "Product Thumbnail"
+msgstr "Service Thumbnail"
 
 #: templates/pr_thumbnail.html:47 templates/thumbnail.html:43
 msgid "Images from other language(s)"
@@ -2262,14 +2082,13 @@ msgstr "Editor"
 #: templates/product-categories.html:42 templates/product.html:306
 #: templates/products.html:157 templates/store.html:193
 #: templates/thumbnail.html:3
-#, fuzzy
 msgid "Thumbnail"
-msgstr "Product Thumbnail"
+msgstr "Thumbnail"
 
 #: copy.html:153 templates/product templates/product.html:313
 #: templates/products.html:623
 msgid "Add Product Type"
-msgstr "Add Product Type"
+msgstr "Add Service Type"
 
 #: copy.html:165 templates/product templates/product.html:325
 #: templates/products.html:251 templates/products.html:386
@@ -2286,7 +2105,7 @@ msgstr "Edit Header"
 
 #: copy.html:548 templates/product templates/product.html:709
 msgid "Product name"
-msgstr "Product name"
+msgstr "Service name"
 
 #: copy.html:561 templates/product templates/product.html:722
 msgid "Short Description"
@@ -2298,14 +2117,13 @@ msgstr "Long Description"
 
 #: templates/product-categories-copy.html:12
 msgid "Product Categories"
-msgstr "Product Categories"
+msgstr "Service Categories"
 
 #: templates/product-categories-copy.html:53
 #: templates/product-categories.html:74 templates/products.html:225
 #: templates/products.html:389
-#, fuzzy
 msgid "Published"
-msgstr "Unpublished"
+msgstr "Published"
 
 #: templates/product-categories-copy.html:55
 #: templates/product-categories.html:76 templates/products.html:227
@@ -2319,33 +2137,31 @@ msgid "Empty"
 msgstr "Empty"
 
 #: templates/product-categories.html:3
-#, fuzzy
 msgid "Product categories"
-msgstr "Product Categories"
+msgstr "Service Categories"
 
 #: templates/product-type-specifications.html:3
 msgid "Product Type Specifications"
-msgstr "Product Type Specifications"
+msgstr "Service Type Specifications"
 
 #: templates/product-type-specifications.html:72 templates/products.html:147
 msgid "Show Originals"
-msgstr ""
+msgstr "Show Originals"
 
 #: templates/product-type-specifications.html:84
 #: templates/product-type-specifications.html:129
 #: templates/product-type-specifications.html:299
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/product-type-specifications.html:310 templates/products.html:302
 #: templates/products.html:384
-#, fuzzy
 msgid "Translate"
-msgstr "Transfers"
+msgstr "Translate"
 
 #: templates/product.html:731
 msgid "Suggested max number of chars is 125"
-msgstr ""
+msgstr "Suggested max number of chars is 125"
 
 #: templates/product.html:1243 templates/send-email.html:299
 #: templates/transfer-funds.html:163
@@ -2353,14 +2169,12 @@ msgid "Additional notes"
 msgstr "Additional notes"
 
 #: templates/products.html:144
-#, fuzzy
 msgid "Search for a product by title"
-msgstr "Edit Product Type Title"
+msgstr "Search for a service by title"
 
 #: templates/products.html:144
-#, fuzzy
 msgid "Type in a product title"
-msgstr "Edit Product Type Title"
+msgstr "Edit Service Type Title"
 
 #: templates/products.html:167 templates/store.html:199
 msgid "Title"
@@ -2379,7 +2193,7 @@ msgstr "Modified Date"
 
 #: templates/products.html:197
 msgid "Product Category"
-msgstr "Product Category"
+msgstr "Service Category"
 
 #: templates/products.html:257 templates/products.html:408
 #: templates/store.html:240 templates/store.html:855
@@ -2400,7 +2214,7 @@ msgstr ""
 
 #: templates/products.html:622
 msgid "No Product Type Detected"
-msgstr "No Product Type Detected"
+msgstr "No Service Type Detected"
 
 #: templates/products.html:653 templates/store.html:433
 msgid "Save Changes"
@@ -2421,7 +2235,7 @@ msgstr "Promo Codes"
 
 #: templates/public.html:79
 msgid "Mammys Bread Logo"
-msgstr "Mammys Bread Logo"
+msgstr "eventoria Logo"
 
 #: templates/public.html:106
 msgid "Contact and Follow"
@@ -2448,18 +2262,16 @@ msgid "Please specify valid email address!"
 msgstr "Please specify valid email address!"
 
 #: templates/public.html:136
-#, fuzzy
 msgid "Your email:"
-msgstr "Your cart"
+msgstr "Your email"
 
 #: templates/public.html:140
-#, fuzzy
 msgid "Your name:"
-msgstr "Username"
+msgstr "Your name:"
 
 #: templates/public.html:140
 msgid "John Snow"
-msgstr ""
+msgstr "John Snow"
 
 #: templates/public.html:147
 msgid "Your message"
@@ -2493,17 +2305,15 @@ msgstr "Roles"
 
 #: templates/send-email.html:4
 msgid "Send Email"
-msgstr ""
+msgstr "Send Email"
 
 #: templates/send-email.html:188
-#, fuzzy
 msgid "Choose sender email address"
-msgstr "Please enter a valid email address!"
+msgstr "Choose sender email address"
 
 #: templates/send-email.html:206
-#, fuzzy
 msgid "Enter recipient email address"
-msgstr "Please specify valid email address!"
+msgstr "Enter recipient email address"
 
 #: templates/slideshow.html:168 templates/slideshow.html:215
 msgid "left in stock"
@@ -2523,12 +2333,11 @@ msgstr "Buy now"
 
 #: templates/sp-specifications.html:3
 msgid "Create Specifications for Product Type"
-msgstr "Create Specifications for Product Type"
+msgstr "Create Specifications for Service Type"
 
 #: templates/sp-specifications.html:8
-#, fuzzy
 msgid "Translate Specifications for Product Type"
-msgstr "Create Specifications for Product Type"
+msgstr "Create Specifications for Service Type"
 
 #: templates/sp-specifications.html:9 templates/sp-specifications.html:34
 msgid "The field name to be translated:"
@@ -2536,7 +2345,7 @@ msgstr ""
 
 #: templates/store.html:3 templates/store.html:1017
 msgid "Store"
-msgstr "Store"
+msgstr "Spot"
 
 #: templates/store.html:123
 msgid "Filters"
@@ -2556,11 +2365,11 @@ msgstr "Outdated Quantity"
 
 #: templates/store.html:249
 msgid "The store(s) are empty."
-msgstr ""
+msgstr "The spot(s) are empty."
 
 #: templates/store.html:375
 msgid "No Product Type Detected In Store"
-msgstr "No Product Type Detected In Store"
+msgstr "No Service Type Detected In Spot"
 
 #: templates/store.html:391
 msgid "in stock"
@@ -2576,19 +2385,19 @@ msgstr "More"
 
 #: templates/store.html:625
 msgid "Shows From All Stores"
-msgstr "Shows From All Stores"
+msgstr "Shows From All Spots"
 
 #: templates/store.html:626
 msgid "Shows All Products"
-msgstr "Shows All Products"
+msgstr "Shows All Services"
 
 #: templates/store.html:706
 msgid "Product Types"
-msgstr "Product Types"
+msgstr "Service Types"
 
 #: templates/store.html:709
 msgid "No Types For Specified Product"
-msgstr "No Types For Specified Product"
+msgstr "No Types For Specified Service"
 
 #: templates/store.html:866
 msgid "No Data"
@@ -2705,65 +2514,65 @@ msgstr "Staff member"
 #~ msgid "Edit Article Category"
 #~ msgstr "Edit Article Category"
 
-#~ msgid "phone"
-#~ msgstr "phone"
+msgid "phone"
+msgstr "phone"
 
-#~ msgid "Saveing"
-#~ msgstr "Saving"
+msgid "Saveing"
+msgstr "Saving"
 
-#~ msgid "Add Product Type Specification"
-#~ msgstr "Product Type Specifications"
+msgid "Add Product Type Specification"
+msgstr "Add Service Type Specification"
 
-#~ msgid "Add teammate"
-#~ msgstr "Edit Teammate"
+msgid "Add teammate"
+msgstr "Add teammate"
 
-#~ msgid "Transfers"
-#~ msgstr "Transfers"
+msgid "Transfers"
+msgstr "Transfers"
 
-#~ msgid "Transfer Funds"
-#~ msgstr "Transfer funds"
+msgid "Transfer Funds"
+msgstr "Transfer funds"
 
-#~ msgid "Assign Email"
-#~ msgstr "Edit Teammate"
+msgid "Assign Email"
+msgstr "Assign Email"
 
-#~ msgid "Affiliate Orders"
-#~ msgstr "Affiliate"
+msgid "Affiliate Orders"
+msgstr "Affiliate Orders"
 
-#~ msgid "Affiliate Transfers"
-#~ msgstr "Transfers"
+msgid "Affiliate Transfers"
+msgstr "Affiliate Transfers"
 
-#~ msgid "Manager"
-#~ msgstr "Image"
+msgid "Manager"
+msgstr "Manager"
 
-#~ msgid "Sales AND Marketing"
-#~ msgstr ""
+msgid "Sales AND Marketing"
+msgstr "Sales AND Marketing"
 
-#~ msgid "HR"
-#~ msgstr ""
+msgid "HR"
+msgstr "HR"
 
-#~ msgid "CEO"
-#~ msgstr ""
+msgid "CEO"
+msgstr "CEO"
 
-#~ msgid "Edit Product Type Specification"
-#~ msgstr "Edit Product Type Specifications"
+msgid "Edit Product Type Specification"
+msgstr "Edit Service Type Specification"
 
-#~ msgid "Edit Promo"
-#~ msgstr "Edit Promo Code"
+msgid "Edit Promo"
+msgstr "Edit Promo"
 
-#~ msgid "Edit Order Details"
-#~ msgstr "See Details"
+msgid "Edit Order Details"
+msgstr "Edit Order Details"
 
-#~ msgid "Edit Corporate Email View"
-#~ msgstr "See Details"
+msgid "Edit Corporate Email View"
+msgstr "Edit Corporate Email View"
 
-#~ msgid "Edit Corporate Email"
-#~ msgstr "See Details"
+msgid "Edit Corporate Email"
+msgstr "Edit Corporate Email"
 
-#~ msgid "Edit Positions"
-#~ msgstr "Edit Position"
+msgid "Edit Positions"
+msgstr "Edit Position"
 
-#~ msgid "recipient"
-#~ msgstr "Choose recipient"
+msgid "recipient"
+msgstr "recipient"
 
 msgid "For+1"
 msgstr "for"
