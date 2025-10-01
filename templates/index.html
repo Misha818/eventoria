@@ -4,9 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title"       content="{{ _('metaTitle') }}" />
+    <meta property="og:description" content="{{ _('metaDescription') }}" />
+    <meta property="og:image"       content="{{ url_for('home', _external=True) }}images/homeSlides/background-1.png" />
+    <meta property="og:url"         content="{{ url_for('home', _external=True) }}" />
+    <meta property="og:type"        content="website" />
+    <link rel="canonical" href="{{ url_for('home', _external=True) }}" />
+    <meta property="og:site_name"   content="{{ _('site name') }}" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "{{ _('metaTitle') }}",
+      "url": "{{ url_for('home', _external=True) }}",
+      "description": "{{ _('metaDescription') }}",
+      "image": "{{ url_for('home', _external=True) }}images/homeSlides/background-1.png",
+    }
+    </script>
+
     <title>{{ _('Home Title') }}</title>
-    <meta name="description"
-        content="Discover professional learning events, music performances, and collaborative activities. Join our community of learners and creators.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -142,7 +160,7 @@
     <section class="section contacts" id="contacts">
         <div class="container">
             <h2 class="section-title" style="color: #000; max-width: 750px; margin: 0 auto -2rem auto;">
-                {{ _('Please feel free to submit a message or contact us via any of the methods below') }}.</h2>
+                {{ _('Please feel free to submit a message or contact us via any of the methods below') }}</h2>
             <div class="about-content">
                 
                 <div class="contact-section">
@@ -225,7 +243,7 @@
 
                     <div class="contact-section" style="position: relative; bottom: -2%;">
                         <!-- <h2 class="section-title">Contact Us</h2> -->
-                        <p class="section-subtitle">{{ _('Be the first to know about upcoming events and new opportunities.') }}</p>
+                        <p class="section-subtitle" style="font-size: 1rem;">{{ _('Be the first to know about upcoming events and new opportunities.') }}</p>
 
                         <div class="success-message" id="subscribe-message">
                             {{ _('You have subscribed successfully!') }}
@@ -282,32 +300,32 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Events</h3>
+                    <h3>{{ _('Events') }}</h3>
                     <ul>
-                        <li><a href="#">Upcoming Workshops</a></li>
-                        <li><a href="#">Music Performances</a></li>
-                        <li><a href="#">Conference Schedule</a></li>
-                        <li><a href="#">Past Events</a></li>
+                        <li><a href="#">{{ _('Upcoming Workshops') }}</a></li>
+                        <!-- <li><a href="#">Music Performances</a></li> -->
+                        <li><a href="#">{{ _('Conference Schedule') }}</a></li>
+                        <li><a href="#">{{ _('Past Events') }}</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Community</h3>
+                    <h3>{{ _('Community') }}</h3>
                     <ul>
-                        <li><a href="#">Join Our Network</a></li>
-                        <li><a href="#">Volunteer Opportunities</a></li>
-                        <li><a href="#">Partnership Program</a></li>
-                        <li><a href="#">Newsletter</a></li>
+                        <li><a href="#">{{ _('Join Our Network') }}</a></li>
+                        <li><a href="#">{{ _('Volunteer Opportunities') }}</a></li>
+                        <li><a href="#">{{ _('Partnership Program') }}</a></li>
+                        <li><a href="#">{{ _('Newsletter') }}</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-section">
-                    <h3>Support</h3>
+                    <h3>{{ _('Support') }}</h3>
                     <ul>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Event Guidelines</a></li>
-                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="/contacts">{{ _('Contact us') }}</a></li>
+                        <li><a href="#">{{ _('Help Center') }}</a></li>
+                        <li><a href="#">{{ _('Event Guidelines') }}</a></li>
+                        <li><a href="#">{{ _('Accessibility') }}</a></li>
                     </ul>
                 </div>
 <!-- 

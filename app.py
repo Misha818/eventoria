@@ -752,7 +752,7 @@ def edit_slide(HS_Ref_Key):
         oldOrder = int(request.form.get('oldOrder'))
 
         if not slideID or not slideID.isdigit() or not state:
-            answer = gettext('Something went wrong. Please try again! 1')
+            answer = gettext('Something went wrong. Please try again!')
             return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
         
         state = json.loads(state)
@@ -1013,6 +1013,8 @@ def slides():
                 condition = " AND `Status` = 0 "
             else:
                 condition = ""
+
+            
             
             sqlQuery =  f"""
                     SELECT 
@@ -7774,14 +7776,14 @@ def get_chart_data():
 def get_category_ar():
     categoryID = request.form.get('categoryID')
     if not categoryID:
-        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 1')})
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!')})
     
     sqlQuery = "SELECT `xRatio`, `yRatio` FROM `product_category` WHERE `Product_Category_ID` = %s;"
     sqlValTuple = (int(categoryID),)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
     if result['length'] == 0:
-        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 2')})
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!')})
 
     return jsonify({'status': "1", 'data': result['data'][0]})
 

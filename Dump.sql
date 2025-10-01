@@ -609,6 +609,12 @@ VALUES
 -- If ActionType = 1 show on dushboard, 2 => actions with POST requests and edits  that we do not show as a botton on the dashboard.
 INSERT INTO `actions` (`Action`, `ActionDir`, `ActionName`, `ActionGroup`, `ActionType`, `Img`)
 VALUES 
+    ('slides', 'slides', 'Slides', 0, 1, 'fas fa-sliders-h'),    
+    ('add_slide', 'add-slide', 'Add Slide', 0, 1, 'fas fa-plus'),    
+    ('add_slide_post', 'add_slide', 'Add Slide', 0, 2, 'fas fa-shopping-basket'),    
+    ('ticket', 'ticket/', 'ticket', 0, 2, 'fas fa-ticket'),    
+
+    
     ('products', 'products', 'Products', 1, 1, 'fas fa-shopping-basket'),    
     ('pd', 'product/new', 'Add Product', 1, 1, 'fas fa-plus'),    
     ('add_pr', 'add_product', 'Add Product', 1, 2, 'add-product.png'),    
@@ -721,29 +727,37 @@ VALUES
     ('HR', '5,4,3,2,1', 1),
     ('CEO', '6,5,4,3,2,1', 1);
 
-INSERT INTO `store` (`Name`, `Address`, `userID`, `Status`) Values('Հիմնական', '', 1, 1);
+INSERT INTO `store` (`Name`, `Address`, `userID`, `Status`) Values('Գլխամասային', '', 1, 1);
 
-INSERT INTO `sub_product_specification` (`Name`, `User_ID`, `Status`) VALUES ('Թթխմորով Հաց', 0, 1);
-INSERT INTO `sps_relatives` (`SPS_ID`, `Ref_Key`, `Language_ID`, `User_ID`, `Status`) VALUES (1, 0, 1, 0, 1);
+INSERT INTO `sub_product_specification` (`Name`, `User_ID`, `Status`) 
+    VALUES ('Միջոցառում', 0, 1),
+           ('Events', 0, 1);
+INSERT INTO `sps_relatives` (`SPS_ID`, `Ref_Key`, `Language_ID`, `User_ID`, `Status`) 
+    VALUES  (1, 0, 1, 0, 1), 
+            (2, 0, 2, 0, 1);
 
 INSERT INTO `sub_product_specifications` (`Name`, `Order`, `spsID`, `Status`) 
-    VALUES ('Քաշ', 0, 1, 1),
-           ('Բաղադրությունը', 1, 1, 1),
-           ('Պատրաստման եղանակը', 2, 1, 1),
-           ('Ֆերմենտացիայի տևողությունը', 3, 1, 1),
-           ('Կեղևի գույնը', 4, 1, 1),
-           ('Համային հատկանիշները', 5, 1, 1);
+    VALUES ('Ամսաթիվ', 0, 1, 1),
+           ('Հասցե', 1, 1, 1),
+           ('Date', 0, 2, 1),
+           ('Address', 1, 2, 1);
+INSERT INTO `spss_relatives` (`SPSS_ID`, `Ref_Key`, `Language_ID`, `User_ID`, `Status`) 
+    VALUES  (1, 0, 1, 0, 1), 
+            (3, 0, 2, 0, 1),
+            (2, 1, 1, 0, 1),
+            (4, 1, 2, 0, 1);
 
--- INSERT INTO `sub_product_specifications` (`Name`, `Order`, `spsID`, `Status`) 
---     VALUES ('Weight', 0, 1, 1),
---            ('Ingredients', 1, 1, 1),
---            ('Baking Method', 2, 1, 1),
---            ('Fermentation Time', 3, 1, 1),
---            ('Crust Color', 4, 1, 1),
---            ('Flavor Profile', 5, 1, 1);
 
-INSERT INTO `product_category` (`Product_Category_Name`, `User_ID`, `Product_Category_Status`, `spsID`) VALUES ('Թթխմորով Հաց', 0, 1, 1);
-INSERT INTO `product_c_relatives` (`PC_Ref_Key`, `PC_ID`, `Language_ID`, `User_ID`) VALUES (0, 1, 1, 0);
+INSERT INTO `product_category` (`Product_Category_Name`, `User_ID`, `Product_Category_Status`, `spsID`) 
+    VALUES  
+        ('Միջոցառումներ', 0, 1, 1),
+        ('Նախաձեռնություններ', 0, 1, 1),
+        ('Events', 0, 1, 2),
+        ('Activities', 0, 1, 2);
+
+
+INSERT INTO `product_c_relatives` (`PC_Ref_Key`, `PC_ID`, `Language_ID`, `User_ID`) 
+    VALUES (0, 1, 1, 0), (0, 3, 2, 0), (1, 2, 1, 0), (1, 4, 2, 0);
 
 INSERT INTO `languages` (`Language`, `Prefix`) VALUES
 ('Հայերեն', 'hy'),
@@ -760,4 +774,6 @@ INSERT INTO `payment_methods` (`method`, `Status`) VALUES
 ('Credit/Debit card', 1),
 ('Idram', 1),
 ('TellCell', 1),
-('Cash', 1);
+('Cash', 1),
+('Apple Pay',1),
+('Google Pay', 1);

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-08 19:43+0400\n"
+"POT-Creation-Date: 2025-10-01 12:44+0400\n"
 "PO-Revision-Date: 2024-05-17 21:44+0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -14,295 +14,357 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.15.0\n"
 
-#: app.py:380 app.py:3726 app.py:3877 templates/login.html:119
+#: app.py:393 app.py:4420 app.py:4570 templates/login.html:119
 msgid "Please specify username"
 msgstr "Пожалуйста, укажите имя пользователя"
 
-#: app.py:388 templates/login.html:127
+#: app.py:401 templates/login.html:127
 msgid "Please specify password"
 msgstr "Пожалуйста, укажите пароль"
 
-#: app.py:405 app.py:409
+#: app.py:418 app.py:422
 msgid "The username or password do not match"
 msgstr "Имя пользователя или пароль не совпадают."
 
-#: app.py:426
+#: app.py:439
 msgid "Rate limit exceeded"
 msgstr "Превышен лимит запросов."
 
-#: app.py:526 app.py:552 app.py:558 app.py:794 app.py:801 app.py:826 app.py:829
-#: app.py:884 app.py:889 app.py:913 app.py:925 app.py:1467 app.py:1489
-#: app.py:1496 app.py:1507 app.py:1525 app.py:1539 app.py:1543 app.py:1575
-#: app.py:1613 app.py:1619 app.py:1629 app.py:1635 app.py:1645 app.py:1664
-#: app.py:1674 app.py:1745 app.py:1754 app.py:1760 app.py:1767 app.py:1776
-#: app.py:1781 app.py:2011 app.py:2141 app.py:2150 app.py:2161 app.py:2177
-#: app.py:2198 app.py:2207 app.py:2222 app.py:2346 app.py:2354 app.py:2497
-#: app.py:2502 app.py:2544 app.py:2556 app.py:2571 app.py:2720 app.py:3541
-#: app.py:4555 app.py:4570 app.py:4583 app.py:4602 app.py:4611 app.py:4632
-#: app.py:4676 app.py:4699 app.py:4706 app.py:4715 app.py:4732 app.py:5066
-#: app.py:5072 app.py:5146 app.py:5213 app.py:5274 app.py:5500 app.py:5532
-#: app.py:5606 app.py:5851 app.py:5923 app.py:5986 app.py:6002 app.py:6023
-#: app.py:6156 app.py:6177 app.py:6200 app.py:6245 app.py:6265 app.py:6271
-#: app.py:6274 app.py:6278 app.py:6294 app.py:6350 app.py:6373 app.py:6379
-#: app.py:6382 app.py:6386 app.py:6576 app.py:6584 app.py:6657 app.py:6816
-#: app.py:6824 app.py:6836 app.py:6842 app.py:6891 app.py:6899 app.py:6907
-#: app.py:6924
+#: app.py:544 app.py:570 app.py:576 app.py:809 app.py:833 app.py:853 app.py:956
+#: app.py:975 app.py:1303 app.py:1310 app.py:1315 app.py:1364 app.py:1422
+#: app.py:1424 app.py:1448 app.py:1460 app.py:2086 app.py:2109 app.py:2116
+#: app.py:2128 app.py:2146 app.py:2161 app.py:2165 app.py:2198 app.py:2238
+#: app.py:2244 app.py:2255 app.py:2261 app.py:2272 app.py:2291 app.py:2302
+#: app.py:2376 app.py:2384 app.py:2390 app.py:2397 app.py:2406 app.py:2411
+#: app.py:2653 app.py:2783 app.py:2792 app.py:2803 app.py:2819 app.py:2850
+#: app.py:2865 app.py:2990 app.py:2998 app.py:3144 app.py:3149 app.py:3191
+#: app.py:3203 app.py:3218 app.py:3370 app.py:4229 app.py:5258 app.py:5273
+#: app.py:5286 app.py:5306 app.py:5315 app.py:5337 app.py:5381 app.py:5404
+#: app.py:5411 app.py:5420 app.py:5437 app.py:5775 app.py:5781 app.py:5855
+#: app.py:5931 app.py:5980 app.py:6185 app.py:6218 app.py:6293 app.py:6486
+#: app.py:6559 app.py:6622 app.py:6638 app.py:6659 app.py:6793 app.py:6814
+#: app.py:6837 app.py:6883 app.py:6903 app.py:6909 app.py:6912 app.py:6916
+#: app.py:6932 app.py:6990 app.py:7013 app.py:7019 app.py:7022 app.py:7026
+#: app.py:7216 app.py:7224 app.py:7298 app.py:7460 app.py:7468 app.py:7480
+#: app.py:7486 app.py:7536 app.py:7544 app.py:7552 app.py:7570 app.py:7797
+#: sysadmin.py:659
 msgid "Something went wrong. Please try again!"
 msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз!"
 
-#: app.py:806
-msgid "The phone numbers do not match"
+#: app.py:755 app.py:2841 app.py:7777
+#, fuzzy
+msgid "Something went wrong. Please try again! 1"
+msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз!"
+
+#: app.py:767 app.py:917 templates/add_slide.html:387
+#: templates/edit_slide.html:588
+#, fuzzy
+msgid "Event URL is required"
+msgstr "Срок действия ссылки истек."
+
+#: app.py:771 app.py:921 templates/add_slide.html:398
+#: templates/edit_slide.html:599
+#, fuzzy
+msgid "Please enter a valid URL"
+msgstr "Пожалуйста, введите действительный номер телефона!"
+
+#: app.py:778 app.py:928 templates/add_slide.html:408
+#: templates/edit_slide.html:609
+#, fuzzy
+msgid "Start Date and Expiration Date are required"
+msgstr "Требуется указать срок действия."
+
+#: app.py:794 app.py:933 templates/add_slide.html:421
+#: templates/edit_slide.html:625 templates/edit_slide.html:652
+msgid "Please upload an image"
+msgstr ""
+
+#: app.py:992
+#, fuzzy
+msgid "Something went wrong. Please try again! 3"
+msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз!"
+
+#: app.py:1334
+#, fuzzy
+msgid "The phone numbers do not match."
 msgstr "Номера телефонов не совпадают!"
 
-#: app.py:813 app.py:1650 app.py:1686 app.py:3119 app.py:3458 app.py:3586
-#: app.py:5152 app.py:6807 app.py:6882
+#: app.py:1339 app.py:2277 app.py:2314 app.py:3786 app.py:4137 app.py:4278
+#: app.py:5861 app.py:7451 app.py:7527 templates/index.html:63
 msgid "Invalid email format"
 msgstr "Неверный формат адреса электронной почты."
 
-#: app.py:822
+#: app.py:1359
 msgid "Invalid value for "
 msgstr "Недопустимое значение для "
 
-#: app.py:892 app.py:6617 templates/buy-now.html:132
+#: app.py:1427 app.py:7257 templates/buy-now.html:132
 #: templates/checkout.html:136
 msgid "Invalid Promo Code"
 msgstr "Недействительный промокод"
 
-#: app.py:935
+#: app.py:1470
 msgid "Payment failed"
 msgstr "Платеж не выполнен"
 
-#: app.py:1565
+#: app.py:2187
 msgid "No employees are associated with the current email"
 msgstr "С текущим адресом электронной почты не связан ни один сотрудник."
 
-#: app.py:1658
+#: app.py:2285
 msgid "Email already exists!"
 msgstr "Адрес электронной почты уже существует!"
 
-#: app.py:1666
+#: app.py:2293
 msgid "Email updated successfully!"
 msgstr "Адрес электронной почты успешно обновлен!"
 
-#: app.py:1820 app.py:2601 app.py:2619 app.py:2839 app.py:2869 app.py:2914
-#: app.py:2930 app.py:3410 app.py:3544 app.py:3613 app.py:3684 app.py:3810
-#: app.py:3925 app.py:3985 app.py:4042
+#: app.py:2453 app.py:3249 app.py:3267 app.py:3498 app.py:3528 app.py:3575
+#: app.py:3592 app.py:4086 app.py:4232 app.py:4305 app.py:4377 app.py:4504
+#: app.py:4618 app.py:4678 app.py:4736
 msgid "Something is wrong!"
 msgstr "Что-то не так!"
 
-#: app.py:1823 products.py:1043 products.py:1088
+#: app.py:2456 products.py:979 products.py:1024
 msgid "Update"
 msgstr "Обновить"
 
-#: app.py:1823 copy.html:45 copy.html:93 copy.html:218 copy.html:880
-#: products.py:1044 products.py:1089 templates/add-price.html:112
-#: templates/add-role.html:49 templates/add-teammate.html:51
-#: templates/add_product templates/add_product.html:101
-#: templates/add_product_category templates/add_product_category.html:104
-#: templates/add_product_lang.html:170 templates/add_to_store.html:130
+#: app.py:2456 copy.html:218 copy.html:880 products.py:980 products.py:1025
+#: templates/add-price.html:124 templates/add-role.html:49
+#: templates/add-teammate.html:51 templates/add_product.html:101
+#: templates/add_product_category.html:109 templates/add_product_lang.html:170
+#: templates/add_slide.html:155 templates/add_to_store.html:130
 #: templates/assign-email.html:50 templates/create-email.html:50
 #: templates/create-promo-code.html:152 templates/edit-position.html:52
-#: templates/edit-price.html:115 templates/edit-profile.html:59
+#: templates/edit-price.html:153 templates/edit-profile.html:59
 #: templates/edit-promo-code.html:210 templates/edit-pts.html:39
 #: templates/edit-role.html:52 templates/edit-teammate.html:79
-#: templates/edit_product_category.html:127 templates/edit_store.html:128
-#: templates/login1.html:17 templates/pr_thumbnail.html:87 templates/product
-#: templates/product.html:379 templates/product.html:1051
-#: templates/send-email.html:220 templates/sp-specifications.html:60
-#: templates/stuff-signup.html:48 templates/teammate-signup.html:57
-#: templates/thumbnail.html:83 templates/transfer-funds.html:76
+#: templates/edit_product_category.html:134 templates/edit_slide.html:220
+#: templates/edit_store.html:128 templates/login1.html:17
+#: templates/pr_thumbnail.html:86 templates/product templates/product.html:379
+#: templates/product.html:1051 templates/send-email.html:220
+#: templates/sp-specifications.html:60 templates/stuff-signup.html:48
+#: templates/teammate-signup.html:57 templates/thumbnail.html:83
+#: templates/transfer-funds.html:76
 msgid "Saving..."
 msgstr "Сохранение..."
 
-#: app.py:1956
+#: app.py:2593
 msgid "To continue translate the product first"
 msgstr "Чтобы продолжить, сначала переведите продукт."
 
-#: app.py:2015
+#: app.py:2657
 msgid "Please specify the title!"
 msgstr "Пожалуйста, укажите название!"
 
-#: app.py:2020 app.py:2375 app.py:2676 app.py:2726
+#: app.py:2662 app.py:3019 app.py:3325 app.py:3376
 msgid "Max allowed number of chars for title is 20"
 msgstr "Максимально допустимое количество символов для названия — 20."
 
-#: app.py:2033 app.py:2384
+#: app.py:2675 app.py:3028
 msgid "Product Type Title Already Exists!"
 msgstr "Название типа продукта уже существует!"
 
-#: app.py:2039
+#: app.py:2681
 msgid "Please specify the price!"
 msgstr "Пожалуйста, укажите цену!"
 
-#: app.py:2043 app.py:2396
-msgid "The price should be higher then 0!"
+#: app.py:2685 app.py:3040
+#, fuzzy
+msgid "The price should be 0 or higher!"
 msgstr "Цена должна быть больше 0!"
 
-#: app.py:2047 app.py:2392
+#: app.py:2689 app.py:3036
 msgid "At least one image should be uploaded"
 msgstr "Необходимо загрузить хотя бы одно изображение."
 
-#: app.py:2083 app.py:2454 sysadmin.py:796
+#: app.py:2725 app.py:3096 sysadmin.py:898
 msgid "Text is too long for field "
 msgstr "Текст слишком длинный для поля "
 
-#: app.py:2087 app.py:2457
+#: app.py:2729 app.py:3099
 msgid "Max allowed characters are 255."
 msgstr "Максимально допустимое число символов — 255."
 
-#: app.py:2132 app.py:2414
+#: app.py:2774 app.py:3058
 msgid "image size is more than 5MB"
 msgstr "Размер изображения превышает 3 МБ"
 
-#: app.py:2228 app.py:2582 app.py:2917 app.py:3611 app.py:3682 app.py:4736
-#: app.py:5090 app.py:7126 products.py:474 templates/add_to_store.html:202
+#: app.py:2871 app.py:3229 app.py:3578 app.py:4303 app.py:4375 app.py:5441
+#: app.py:5798 app.py:7771 products.py:410 templates/add_to_store.html:202
 #: templates/edit_store.html:210
 msgid "Done!"
 msgstr "Готово!"
 
-#: app.py:2319
+#: app.py:2962
 msgid "To continue, please, add at least one product category."
 msgstr "Чтобы продолжить, добавьте хотя бы одну категорию продукта."
 
-#: app.py:2358
+#: app.py:3002
 msgid "Nothing was uploaded!"
 msgstr "Ничего не было загружено!"
 
-#: app.py:2371
+#: app.py:3015
 msgid "Please specify title!"
 msgstr "Пожалуйста, укажите название!"
 
-#: app.py:2388
+#: app.py:3032
 msgid "Please specify price!"
 msgstr "Пожалуйста, укажите цену!"
 
-#: app.py:2673
+#: app.py:3322
 msgid "Title is empty!"
 msgstr "Название не указано!"
 
-#: app.py:2679
+#: app.py:3328
 msgid "Link is empty!"
 msgstr "Ссылка не указана!"
 
-#: app.py:2682 app.py:2732
+#: app.py:3331 app.py:3382
 msgid "Please Choose Product Category!"
 msgstr "Пожалуйста, выберите категорию продукта!"
 
-#: app.py:2723
+#: app.py:3373
 msgid "Product name is empty!"
 msgstr "Название продукта не указано!"
 
-#: app.py:2729
+#: app.py:3379
 msgid "Product link is empty!"
 msgstr "Ссылка на продукт не указана!"
 
-#: app.py:2785
+#: app.py:3439
 msgid "Category name is empty!"
 msgstr "Название категории не указано!"
 
-#: app.py:2845
+#: app.py:3504
 msgid "Category Name is empty!"
 msgstr "Название категории не указано!"
 
-#: app.py:2850 products.py:425
+#: app.py:3509 products.py:380
 msgid "Category Name Exists!"
 msgstr "Название категории уже существует!"
 
-#: app.py:2955
+#: app.py:3617
 msgid "Product is published"
 msgstr "Продукт опубликован"
 
-#: app.py:2957
+#: app.py:3619
 msgid "Product is unpublished"
 msgstr "Продукт не опубликован"
 
-#: app.py:3088 app.py:3283 app.py:3367 app.py:3373 app.py:3441 app.py:3569
-#: app.py:3640 app.py:3998 app.py:4004
+#: app.py:3755 app.py:3957 app.py:4043 app.py:4049 app.py:4120 app.py:4261
+#: app.py:4333 app.py:4692 app.py:4698
 msgid "Something wrong!"
 msgstr "Что-то не так!"
 
-#: app.py:3095
+#: app.py:3762
 msgid "Please specify the first name"
 msgstr "Пожалуйста, укажите имя"
 
-#: app.py:3102 app.py:3720 app.py:3873
+#: app.py:3769 app.py:4414 app.py:4566
 msgid "Please specify the last name"
 msgstr "Пожалуйста, укажите фамилию"
 
-#: app.py:3109 app.py:3448 app.py:3576 app.py:3647
+#: app.py:3776 app.py:4127 app.py:4268 app.py:4340
 msgid "Please specify email"
 msgstr "Пожалуйста, укажите адрес электронной почты"
 
-#: app.py:3141
+#: app.py:3808
 msgid "Please specify the position!"
 msgstr "Пожалуйста, укажите должность!"
 
-#: app.py:3148
+#: app.py:3815
 msgid "Something is wrong, please try again!"
 msgstr "Что-то не так, пожалуйста, попробуйте снова!"
 
-#: app.py:3165
+#: app.py:3832
 msgid "You can not change the position of the last CEO!"
 msgstr "Вы не можете изменить должность последнего CEO!"
 
-#: app.py:3169
+#: app.py:3836
 msgid "You can not deactivate the last CEO!"
 msgstr "Вы не можете деактивировать последнего CEO!"
 
-#: app.py:3289 app.py:3462 app.py:4010
+#: app.py:3919 app.py:4247 templates/affiliates.html:34
+#: templates/affiliates.html:80 templates/corporate-emails.html:286
+#: templates/corporate-emails.html:305 templates/edit-position.html:42
+#: templates/positions.html:42 templates/table.html:72 templates/team.html:34
+#: templates/team.html:80
+msgid "Position"
+msgstr "Должность"
+
+#: app.py:3943
+#, fuzzy
+msgid "Rol"
+msgstr "Роль"
+
+#: app.py:3963 app.py:4141 app.py:4704
 msgid "Please specify the role"
 msgstr "Пожалуйста, укажите роль"
 
-#: app.py:3295 app.py:4016
+#: app.py:3969 app.py:4710
 msgid "Please choose at least on action"
 msgstr "Пожалуйста, выберите хотя бы одно действие!"
 
-#: app.py:3316 app.py:4038 copy.html:188 templates/add_product
-#: templates/add_product.html:218 templates/add_product_category.html:241
-#: templates/add_product_lang.html:265 templates/edit-profile.html:220
-#: templates/edit-teammate.html:276 templates/edit_product_category.html:380
-#: templates/pr_thumbnail.html:339 templates/teammate-signup.html:172
-#: templates/thumbnail.html:335
+#: app.py:3990 app.py:4732 templates/add_product.html:220
+#: templates/add_product_category.html:246 templates/add_product_lang.html:265
+#: templates/add_slide.html:272 templates/edit-profile.html:220
+#: templates/edit-teammate.html:276 templates/edit_product_category.html:387
+#: templates/edit_slide.html:462 templates/pr_thumbnail.html:338
+#: templates/teammate-signup.html:172 templates/thumbnail.html:335
 msgid "Done"
 msgstr "Готово"
 
-#: app.py:3379
+#: app.py:4055
 msgid "Please specify the position"
 msgstr "Пожалуйста, укажите должность"
 
-#: app.py:3385
+#: app.py:4061
 msgid "Please choose at least on role"
 msgstr "Пожалуйста, выберите хотя бы одну роль!"
 
-#: app.py:3506
+#: app.py:4107 templates/affiliates.html:23 templates/affiliates.html:67
+#: templates/affiliates.html:74 templates/confirmation-page.html:351
+#: templates/product-categories-copy.html:49
+#: templates/product-categories.html:53
+#: templates/product-type-specifications.html:95
+#: templates/product-type-specifications.html:133
+#: templates/product-type-specifications.html:303 templates/table.html:59
+#: templates/table.html:66 templates/team.html:23 templates/team.html:67
+#: templates/team.html:74
+msgid "Name"
+msgstr "Имя"
+
+#: app.py:4185
 #, fuzzy
 msgid "Teammate Signup Invitation"
 msgstr "Регистрация коллеги"
 
-#: app.py:3511 app.py:5187 sysadmin.py:1574 sysadmin.py:1579 sysadmin.py:1602
+#: app.py:4190 app.py:4201 app.py:5896 sysadmin.py:1680 sysadmin.py:1685
+#: sysadmin.py:1707 templates/index.html:26 templates/public.html:63
 msgid "company"
 msgstr "Ивентория"
 
-#: app.py:3512
+#: app.py:4191
 #, fuzzy
 msgid "Click here to sign up"
 msgstr "Нажмите здесь, чтобы загрузить файлы"
 
-#: app.py:3514
+#: app.py:4193
 msgid "Hello dear"
 msgstr "Добро пожаловать, дорогой партнер!"
 
-#: app.py:3515
+#: app.py:4194
 msgid "We are thrilled to invite you to join the Mammy’s Bread team! "
 msgstr "Мы рады пригласить вас присоединиться к команде Mammy’s Bread!"
 
-#: app.py:3516
+#: app.py:4195
 msgid ""
 "Simply click the button below to finish setting up your profile and get "
 "started:"
 msgstr "Нажмите кнопку ниже, чтобы завершить настройку своего профиля:"
 
-#: app.py:3517
+#: app.py:4196
 msgid ""
 "If you’re having trouble with the button above, copy and paste the URL "
 "below into your web browser."
@@ -310,189 +372,190 @@ msgstr ""
 "Если у вас возникли проблемы с кнопкой выше, скопируйте и вставьте "
 "указанный ниже URL-адрес в адресную строку веб-браузера."
 
-#: app.py:3518
+#: app.py:4197
 msgid "cheers"
 msgstr "С уважением"
 
-#: app.py:3519
+#: app.py:4198
 msgid "Mammy's Bread Team"
 msgstr "Команда Mammy's bread"
 
-#: app.py:3520 app.py:3521 templates/edit-profile.html:35
+#: app.py:4199 app.py:4200 templates/edit-profile.html:35
 #: templates/teammate-signup.html:27 templates/teammate-signup.html:35
 msgid "Teammate Signup"
 msgstr "Регистрация коллеги"
 
-#: app.py:3522 app.py:5191 sysadmin.py:1603 templates/public.html:171
+#: app.py:4202 app.py:5900 app.py:5902 sysadmin.py:1708
+#: templates/index.html:326 templates/public.html:168
 msgid "Your Company. All rights reserved."
 msgstr "Ивентория. Все права защищены."
 
-#: app.py:3539 app.py:5211
+#: app.py:4227 app.py:5929
 msgid "Email sent successfully!"
 msgstr "Письмо успешно отправлено!"
 
-#: app.py:3651
+#: app.py:4344
 msgid "Please specify an employee"
 msgstr "Пожалуйста, укажите сотрудника"
 
-#: app.py:3663
+#: app.py:4356
 msgid "Email does not exist"
 msgstr "Адрес электронной почты не найден."
 
-#: app.py:3671
+#: app.py:4364
 msgid "Email is already assigned to the employee"
 msgstr "Этот адрес электронной почты уже назначен сотруднику."
 
-#: app.py:3714 app.py:3868
+#: app.py:4408 app.py:4561
 msgid "Please specify firstname"
 msgstr "Пожалуйста, укажите имя!"
 
-#: app.py:3737 app.py:3888
+#: app.py:4431 app.py:4581
 msgid "Username exists"
 msgstr "Имя пользователя уже существует"
 
-#: app.py:3742 app.py:3893
+#: app.py:4436 app.py:4586
 msgid "Please specify Password"
 msgstr "Пожалуйста, укажите пароль"
 
-#: app.py:3751 app.py:3908
+#: app.py:4445 app.py:4601
 msgid "Password confirmation field is empty"
 msgstr "Поле подтверждения пароля не заполнено."
 
-#: app.py:3755 app.py:3899
+#: app.py:4449 app.py:4592
 msgid "Passwords do not match!"
 msgstr "Пароли не совпадают!"
 
-#: app.py:3759 app.py:3912
+#: app.py:4453 app.py:4605
 msgid "Please specify prefared language"
 msgstr "Пожалуйста, укажите предпочитаемый язык"
 
-#: app.py:3771 app.py:3945
+#: app.py:4465 app.py:4638
 msgid "File should be in PNG or JPG/JPEG format"
 msgstr "Файл должен быть в формате PNG или JPG/JPEG."
 
-#: app.py:3777 app.py:3951 templates/add_product.html:142
-#: templates/edit-profile.html:113 templates/edit-teammate.html:164
+#: app.py:4471 app.py:4644 templates/add_product.html:144
+#: templates/add_slide.html:196 templates/edit-profile.html:113
+#: templates/edit-teammate.html:164 templates/edit_slide.html:363
 #: templates/teammate-signup.html:95
 msgid "File size should not exceed 1MB."
 msgstr "Размер файла не должен превышать 1 МБ."
 
-#: app.py:3794
+#: app.py:4488
 msgid "The URL is expired"
 msgstr "Срок действия ссылки истек."
 
-#: app.py:3929
+#: app.py:4622
 msgid "Incorrect password"
 msgstr "Неправильный пароль"
 
-#: app.py:4147 app.py:4185
+#: app.py:4845 app.py:4884
 msgid "Voided"
 msgstr "Аннулирован"
 
-#: app.py:4148 app.py:4186 sysadmin.py:1360
+#: app.py:4846 app.py:4885 sysadmin.py:1465
 msgid "Pending"
 msgstr "В ожидании"
 
-#: app.py:4149 app.py:4187
+#: app.py:4847 app.py:4886
 msgid "Approved"
 msgstr "Одобрено"
 
-#: app.py:4150 app.py:4188
+#: app.py:4848 app.py:4887
 msgid "Settled"
 msgstr "Завершен"
 
-#: app.py:4590
+#: app.py:5293
 msgid "Order Changed Successfully!"
 msgstr "Заказ успешно изменен!"
 
-#: app.py:4615
+#: app.py:5319
 msgid "Status changed successfully!"
 msgstr "Статус успешно изменен!"
 
-#: app.py:4626 app.py:5237 templates/edit-pts.html:102
+#: app.py:5331 app.py:5943 templates/edit-pts.html:102
 #: templates/sp-specifications.html:130
 msgid "Please specify subproduct situation name!"
 msgstr "Пожалуйста, укажите название состояния подпродукта!"
 
-#: app.py:4647 app.py:5251
+#: app.py:5352 app.py:5957
 msgid "Subproduct situation name exists!"
 msgstr "Название состояния подпродукта уже существует!"
 
-#: app.py:4826
+#: app.py:5533 templates/index.html:62
 msgid "Invalid email address!"
 msgstr "Неверный адрес электронной почты!"
 
-#: app.py:4910
+#: app.py:5618
 msgid "Invalid email format!"
 msgstr "Неверный формат адреса электронной почты!"
 
-#: app.py:5120
+#: app.py:5829
 msgid "No email address found associated with your account!"
 msgstr "Адрес электронной почты, связанный с вашей учетной записью, не найден!"
 
-#: app.py:5128 templates/send-email.html:576
+#: app.py:5837 templates/send-email.html:576
 msgid "Please specify sender email address!"
 msgstr "Пожалуйста, укажите адрес электронной почты отправителя!"
 
-#: app.py:5131 templates/send-email.html:587
+#: app.py:5840 templates/send-email.html:587
 msgid "Please specify recipient email address!"
 msgstr "Пожалуйста, укажите адрес электронной почты получателя!"
 
-#: app.py:5156 templates/send-email.html:598
+#: app.py:5865 templates/send-email.html:598
 msgid "Please specify subject!"
 msgstr "Пожалуйста, укажите тему!"
 
-#: app.py:5159
+#: app.py:5868
 msgid "Please specify email content!"
 msgstr "Пожалуйста, укажите текст письма!"
 
-#: app.py:5188 sysadmin.py:1594 templates/confirmation-page.html:206
-#: templates/index.html:505
+#: app.py:5897 sysadmin.py:1699
 msgid "Continue Shopping"
 msgstr "Продолжить покупки"
 
-#: app.py:5189 sysadmin.py:1596 templates/index.html:133
+#: app.py:5898 sysadmin.py:1701
 msgid "Contact US"
 msgstr "Контакты"
 
-#: app.py:5193 sysadmin.py:1605
+#: app.py:5903 sysadmin.py:1710
 #, fuzzy
 msgid "unsubscribe"
 msgstr "Подпишитесь на нас!"
 
-#: app.py:5265
+#: app.py:5971
 msgid "The current subproduct situation has already been translated!"
 msgstr "Текущее состояние подпродукта уже переведено!"
 
-#: app.py:5367
+#: app.py:6063
 msgid "The password must be between "
 msgstr "Пароль должен содержать от "
 
-#: app.py:5367
+#: app.py:6063
 msgid " and "
 msgstr " до "
 
-#: app.py:5367
+#: app.py:6063
 msgid " characters long."
 msgstr " символов."
 
-#: app.py:5371
+#: app.py:6067
 msgid "The password must contain at least one digit."
 msgstr "Пароль должен содержать хотя бы одну цифру."
 
-#: app.py:5374
+#: app.py:6070
 msgid "The password must contain at least one uppercase letter."
 msgstr "Пароль должен содержать хотя бы одну заглавную букву."
 
-#: app.py:5377
+#: app.py:6073
 msgid "The password must contain at least one lowercase letter."
 msgstr "Пароль должен содержать хотя бы одну строчную букву."
 
-#: app.py:5380
+#: app.py:6076
 msgid "The password must contain at least one special character."
 msgstr "Пароль должен содержать хотя бы один специальный символ."
 
-#: app.py:5772 app.py:6761
+#: app.py:6460 app.py:7402
 msgid ""
 "You have already added this product to the basket. You can change the "
 "quantity if You would like to."
@@ -500,235 +563,268 @@ msgstr ""
 "Вы уже добавили этот товар в корзину. Вы можете изменить количество, если"
 " хотите."
 
-#: app.py:5774 app.py:6763 templates/buy-now.html:82 templates/buy-now.html:473
+#: app.py:6462 app.py:7404 templates/buy-now.html:82 templates/buy-now.html:371
 #: templates/checkout.html:86 templates/checkout.html:486
 msgid "In Basket"
 msgstr "В корзине"
 
-#: app.py:5775 app.py:6672
+#: app.py:6463 app.py:7313
 msgid "The seller doesn't have that many left."
 msgstr "У продавца не осталось столько товаров."
 
-#: app.py:5961 app.py:5967
+#: app.py:6597 app.py:6602
 msgid "The specified amount is unavailable."
 msgstr "Указанное количество недоступно."
 
-#: app.py:5990 app.py:6144
+#: app.py:6626 app.py:6781
 msgid "Please Specify Product Type"
 msgstr "Пожалуйста, укажите тип продукта!"
 
-#: app.py:5994 app.py:6148
+#: app.py:6630 app.py:6785
 msgid "Please Specify Store"
 msgstr "Пожалуйста, укажите магазин!"
 
-#: app.py:5998 app.py:6152
+#: app.py:6634 app.py:6789
 msgid "Please Specify Quantity"
 msgstr "Пожалуйста, укажите количество!"
 
-#: app.py:6005 app.py:6159
+#: app.py:6641 app.py:6796
 msgid "Quantity should be greater than Zero"
 msgstr "Количество должно быть больше нуля."
 
-#: app.py:6009 app.py:6163
+#: app.py:6645 app.py:6800
 msgid "Please Specify Production Date"
 msgstr "Пожалуйста, укажите дату производства!"
 
-#: app.py:6013 app.py:6167
+#: app.py:6649 app.py:6804
 msgid "Please Specify Expiration Date"
 msgstr "Пожалуйста, укажите дату истечения срока!"
 
-#: app.py:6019 app.py:6173
+#: app.py:6655 app.py:6810
 msgid "Please Specify Max Allowed Quantity"
 msgstr "Пожалуйста, укажите максимально допустимое количество!"
 
-#: app.py:6026 app.py:6180
+#: app.py:6662 app.py:6817
 msgid "Max Allowed Quantity should be greater than Zero"
 msgstr "Максимально допустимое количество должно быть больше нуля."
 
-#: app.py:6256 app.py:6364
+#: app.py:6894 app.py:7004
 msgid "code exists"
 msgstr "Код уже существует"
 
-#: app.py:6315
+#: app.py:6953
 msgid "Promo Code Created Successfully"
 msgstr "Промокод успешно создан."
 
-#: app.py:6494
+#: app.py:7132
 msgid "Promo Code updated successfully!"
 msgstr "Промокод успешно обновлен!"
 
-#: app.py:6682
+#: app.py:7323
 msgid "Maximum available quantity for single purchase is "
 msgstr "Максимальное количество для одной покупки "
 
-#: app.py:6688
+#: app.py:7329
 msgid "Out of stock"
 msgstr "Нет в наличии"
 
-#: app.py:6694
+#: app.py:7335
 msgid "Maximum available quantity is "
 msgstr "Максимально доступное количество "
 
-#: app.py:6694
+#: app.py:7335
 msgid "item added to the cart"
 msgstr "Товар добавлен в корзину"
 
-#: app.py:6727 templates/index.html:14
+#: app.py:7369
 msgid "site name"
 msgstr "Мамин хлеб"
 
-#: app.py:6797 app.py:6859
+#: app.py:7441 app.py:7504
 msgid "Please specify email!"
 msgstr "Пожалуйста, укажите адрес электронной почты!"
 
-#: app.py:6845
+#: app.py:7489 templates/index.html:231
 msgid "You have subscribed successfully!"
 msgstr "Вы успешно подписались!"
 
-#: app.py:6863
+#: app.py:7508
 msgid "Please specify your name!"
 msgstr "Пожалуйста, укажите ваше имя!"
 
-#: app.py:6867
+#: app.py:7512
 msgid "Please specify the subject!"
 msgstr "Пожалуйста, укажите тему!"
 
-#: app.py:6871
+#: app.py:7516
 msgid "Please specify the message!"
 msgstr "Пожалуйста, укажите сообщение!"
 
-#: app.py:6916
+#: app.py:7561
 msgid "Thank you for your message! We will contact you as soon as possible."
 msgstr "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время."
 
-#: app.py:6987
+#: app.py:7633
 msgid "Out of stock."
 msgstr "Нет в наличии."
 
-#: products.py:335 products.py:380
+#: app.py:7784
+#, fuzzy
+msgid "Something went wrong. Please try again! 2"
+msgstr "Что-то пошло не так. Пожалуйста, попробуйте еще раз!"
+
+#: app.py:7829
+#, fuzzy
+msgid "Nothing to show"
+msgstr "Нет данных для отображения!"
+
+#: products.py:335
 msgid "Category Exists!"
 msgstr "Категория уже существует!"
 
-#: products.py:873 products.py:892 products.py:897 products.py:954
-#: products.py:959
+#: products.py:809 products.py:828 products.py:833 products.py:890
+#: products.py:895
 msgid "Something Wrong!"
 msgstr "Что-то не так!"
 
-#: sysadmin.py:131
+#: sysadmin.py:134
 #, python-format
 msgid "Inserted successfully, %(count)d rows affected."
 msgstr ""
 
-#: sysadmin.py:136
+#: sysadmin.py:139
 msgid "Query executed successfully, but no rows were affected."
 msgstr ""
 
-#: sysadmin.py:154
+#: sysadmin.py:157
 #, python-format
 msgid "An error occurred: %(error)s"
 msgstr ""
 
-#: sysadmin.py:1359 templates/affiliate-order-details.html:197
-#: templates/affiliate-orders.html:247 templates/order-details.html:240
+#: sysadmin.py:1067 templates/checkout.html:221
+msgid "Name on card is required."
+msgstr "Имя на карте обязательно."
+
+#: sysadmin.py:1069 templates/checkout.html:226
+msgid "Credit card number is required."
+msgstr "Номер кредитной карты обязателен."
+
+#: sysadmin.py:1071 templates/checkout.html:231
+msgid "Expiration date required."
+msgstr "Требуется указать срок действия."
+
+#: sysadmin.py:1073 templates/checkout.html:236
+msgid "Security code required."
+msgstr "Требуется код безопасности."
+
+#: copy.html:240 sysadmin.py:1464 templates/affiliate-order-details.html:197
+#: templates/affiliate-orders.html:247 templates/order-details
 #: templates/orders.html:214
 msgid "Cancelled"
 msgstr "Отменен"
 
-#: sysadmin.py:1361 templates/affiliate-order-details.html:195
+#: copy.html:238 copy.html:246 sysadmin.py:1466
+#: templates/affiliate-order-details.html:195
 #: templates/affiliate-order-details.html:203
 #: templates/affiliate-orders.html:244 templates/affiliate-orders.html:254
-#: templates/order-details.html:238 templates/order-details.html:246
-#: templates/orders.html:212 templates/orders.html:221
+#: templates/order-details templates/orders.html:212 templates/orders.html:221
 msgid "Purchased"
 msgstr "Оформлен"
 
-#: sysadmin.py:1362 templates/affiliate-order-details.html:206
-#: templates/affiliate-orders.html:257 templates/order-details.html:249
+#: copy.html:249 sysadmin.py:1467 templates/affiliate-order-details.html:206
+#: templates/affiliate-orders.html:257 templates/order-details
 #: templates/orders.html:224
 msgid "Preparing"
 msgstr "В обработке"
 
-#: sysadmin.py:1363
+#: sysadmin.py:1468
 msgid "Ready"
 msgstr "Готово"
 
-#: sysadmin.py:1364 templates/affiliate-order-details.html:189
+#: copy.html:232 copy.html:255 sysadmin.py:1469
+#: templates/affiliate-order-details.html:189
 #: templates/affiliate-order-details.html:212
-#: templates/affiliate-orders.html:263 templates/order-details.html:232
-#: templates/order-details.html:255 templates/orders.html:230
+#: templates/affiliate-orders.html:263 templates/order-details
+#: templates/orders.html:230
 msgid "Delivered"
 msgstr "Доставлен"
 
-#: sysadmin.py:1572
+#: sysadmin.py:1678
 msgid "Payment Confirmation"
 msgstr "Подтверждение оплаты"
 
-#: sysadmin.py:1580 templates/confirmation-page.html:161
+#: sysadmin.py:1686 templates/confirmation-page.html:311
 msgid "Dear"
 msgstr "Уважаемый / уважаемая"
 
-#: sysadmin.py:1580 templates/confirmation-page.html:161
+#: sysadmin.py:1686 templates/confirmation-page.html:311
 msgid "Thank you for shopping with us. We are preparing your order now!"
 msgstr "спасибо за покупку. Мы готовим ваш заказ!"
 
-#: sysadmin.py:1581 templates/confirmation-page.html:185
+#: sysadmin.py:1687
 msgid "Delivery Information"
 msgstr "Информация о доставке"
 
-#: sysadmin.py:1582 templates/affiliate-order-details.html:161
-#: templates/confirmation-page.html:162 templates/order-details.html:180
-#: templates/order-tracker.html:112
+#: copy.html:180 sysadmin.py:1688 templates/add_slide.html:133
+#: templates/affiliate-order-details.html:161
+#: templates/confirmation-page.html:312 templates/edit_slide.html:149
+#: templates/edit_slide.html:151 templates/order-details
+#: templates/order-details.html:180 templates/order-tracker.html:112
+#: templates/ticket-details.html:180
 msgid "Order"
 msgstr "Заказ"
 
-#: sysadmin.py:1584 templates/affiliate-order-details.html:4
+#: copy.html:4 copy.html:191 sysadmin.py:1690
+#: templates/affiliate-order-details.html:4
 #: templates/affiliate-order-details.html:166
-#: templates/affiliate-orders.html:314 templates/confirmation-page.html:166
-#: templates/order-details.html:4 templates/order-details.html:191
+#: templates/affiliate-orders.html:314 templates/order-details
+#: templates/order-details.html:4 templates/order-details.html:186
 #: templates/orders.html:280
 msgid "Order Details"
 msgstr "Детали заказа"
 
-#: sysadmin.py:1585 templates/admin_panel.html:202
+#: copy.html:317 sysadmin.py:1691 templates/admin_panel.html:202
 #: templates/affiliate-order-details.html:280
-#: templates/confirmation-page.html:280 templates/order-details.html:317
-#: templates/promo-code-details.html:78
+#: templates/confirmation-page.html:418 templates/order-details
+#: templates/order-details.html:244 templates/promo-code-details.html:76
+#: templates/ticket-details.html:244
 msgid "Product"
 msgstr "Продукт"
 
-#: sysadmin.py:1586 templates/cart.html:31 templates/cart.html:43
-#: templates/confirmation-page.html:281 templates/index.html:347
-#: templates/order-details.html:318
+#: copy.html:318 sysadmin.py:1692 templates/cart.html:31 templates/cart.html:43
+#: templates/confirmation-page.html:419 templates/order-details
+#: templates/order-details.html:245 templates/ticket-details.html:245
 msgid "Price"
 msgstr "Цена"
 
-#: sysadmin.py:1587 templates/buy-now.html:120 templates/checkout.html:124
-#: templates/confirmation-page.html:294 templates/confirmation-page.html:335
-#: templates/order-details.html:331
+#: copy.html:331 sysadmin.py:1693 templates/buy-now.html:120
+#: templates/checkout.html:124 templates/confirmation-page.html:432
+#: templates/confirmation-page.html:473 templates/order-details
+#: templates/order-details.html:258 templates/ticket-details.html:258
 msgid "Total"
 msgstr "Итого"
 
-#: sysadmin.py:1588 templates/affiliate-order-details.html:283
-#: templates/confirmation-page.html:282 templates/order-details.html:319
-#: templates/promo-code-details.html:79
+#: copy.html:319 sysadmin.py:1694 templates/affiliate-order-details.html:283
+#: templates/confirmation-page.html:420 templates/order-details
+#: templates/order-details.html:246 templates/promo-code-details.html:77
+#: templates/ticket-details.html:246
 msgid "Discount"
 msgstr "Скидка"
 
-#: sysadmin.py:1589 templates/affiliate-orders.html:206
-#: templates/affiliate-orders.html:299 templates/confirmation-page.html:283
+#: sysadmin.py:1695 templates/affiliate-orders.html:206
+#: templates/affiliate-orders.html:299 templates/confirmation-page.html:421
 msgid "Discounted Price"
 msgstr "Цена со скидкой"
 
-#: sysadmin.py:1592 templates/confirmation-page.html:198
-#: templates/order-details.html:209
+#: copy.html:209 sysadmin.py:1698 templates/order-details
 msgid "Payment Method"
 msgstr "Способ оплаты"
 
-#: sysadmin.py:1598 templates/confirmation-page.html:208
+#: sysadmin.py:1703
 msgid "Track Your Order"
 msgstr "Отслеживать ваш заказ"
 
-#: sysadmin.py:1600 sysadmin.py:1601 templates/confirmation-page.html:160
+#: sysadmin.py:1705 sysadmin.py:1706 templates/confirmation-page.html:310
 msgid "Order Confirmed!"
 msgstr "Заказ подтвержден!"
 
@@ -756,90 +852,95 @@ msgstr "Добавить цену типа продукта"
 msgid "Click here to upload files"
 msgstr "Нажмите здесь, чтобы загрузить файлы"
 
-#: templates/add-price.html:61 templates/edit-price.html:60
+#: templates/add-price.html:59 templates/edit-price.html:82
+#, fuzzy
+msgid "Select payment methods"
+msgstr "Способ оплаты"
+
+#: templates/add-price.html:73 templates/edit-price.html:98
 msgid "Choose product type specification"
 msgstr "Выберите характеристику типа продукта"
 
-#: templates/add-price.html:97 templates/edit-price.html:100
+#: templates/add-price.html:109 templates/edit-price.html:138
 msgid "Translate Product Type Specification Name"
 msgstr "Перевести название характеристики типа продукта"
 
-#: templates/add-price.html:105 templates/edit-price.html:108
+#: templates/add-price.html:117 templates/edit-price.html:146
 msgid "You have not entered any product type specification yet."
 msgstr "Вы еще не добавили ни одной характеристики типа продукта."
 
-#: copy.html:79 templates/add-price.html:106 templates/add_product
-#: templates/edit-price.html:109
+#: templates/add-price.html:118 templates/edit-price.html:147
 msgid "Click on the link below to add a product category!"
 msgstr "Нажмите на ссылку ниже, чтобы добавить категорию продукта!"
 
-#: templates/add-price.html:107 templates/edit-price.html:110
+#: templates/add-price.html:119 templates/edit-price.html:148
 msgid "Add Product Type Specifications"
 msgstr "Добавить характеристики типа продукта"
 
-#: copy.html:44 copy.html:92 copy.html:216 copy.html:217 copy.html:879
-#: templates/add-price.html:111 templates/add-role.html:48
-#: templates/add-teammate.html:50 templates/add_product
-#: templates/add_product.html:100 templates/add_product_category
-#: templates/add_product_category.html:99 templates/add_product_lang.html:169
-#: templates/add_to_store.html:129 templates/admin_panel.html:165
-#: templates/admin_panel.html:205 templates/assign-email.html:49
-#: templates/buy-now.html:138 templates/buy-now.html:1171
-#: templates/buy-now.html:1215 templates/buy-now.html:1230
-#: templates/buy-now.html:1236 templates/checkout.html:142
-#: templates/checkout.html:1187 templates/checkout.html:1232
-#: templates/checkout.html:1247 templates/checkout.html:1253
-#: templates/corporate-emails.html:421 templates/create-email.html:49
-#: templates/create-promo-code.html:151 templates/edit-position.html:51
-#: templates/edit-price.html:114 templates/edit-profile.html:58
-#: templates/edit-promo-code.html:209 templates/edit-pts.html:38
-#: templates/edit-role.html:51 templates/edit-teammate.html:78
-#: templates/edit_product_category.html:126 templates/edit_store.html:127
-#: templates/order-details.html:538 templates/pr_thumbnail.html:86
+#: copy.html:216 copy.html:217 copy.html:538 copy.html:879
+#: templates/add-price.html:123 templates/add-role.html:48
+#: templates/add-teammate.html:50 templates/add_product.html:100
+#: templates/add_product_category.html:104 templates/add_product_lang.html:169
+#: templates/add_slide.html:154 templates/add_to_store.html:129
+#: templates/admin_panel.html:165 templates/admin_panel.html:205
+#: templates/assign-email.html:49 templates/buy-now.html:138
+#: templates/buy-now.html:1272 templates/buy-now.html:1316
+#: templates/buy-now.html:1331 templates/buy-now.html:1337
+#: templates/checkout.html:142 templates/checkout.html:1187
+#: templates/checkout.html:1232 templates/checkout.html:1247
+#: templates/checkout.html:1253 templates/corporate-emails.html:421
+#: templates/create-email.html:49 templates/create-promo-code.html:151
+#: templates/edit-position.html:51 templates/edit-price.html:152
+#: templates/edit-profile.html:58 templates/edit-promo-code.html:209
+#: templates/edit-pts.html:38 templates/edit-role.html:51
+#: templates/edit-teammate.html:78 templates/edit_product_category.html:133
+#: templates/edit_slide.html:219 templates/edit_store.html:127
+#: templates/index.html:174 templates/order-details
+#: templates/order-details.html:496 templates/pr_thumbnail.html:85
 #: templates/product templates/product.html:377 templates/product.html:378
-#: templates/product.html:1050 templates/public.html:127
-#: templates/public.html:149 templates/public.html:385
-#: templates/public.html:409 templates/public.html:452
-#: templates/public.html:506 templates/public.html:531
+#: templates/product.html:1050 templates/public.html:123
+#: templates/public.html:146 templates/public.html:381
+#: templates/public.html:405 templates/public.html:448
+#: templates/public.html:501 templates/public.html:526
 #: templates/send-email.html:219 templates/send-email.html:581
 #: templates/send-email.html:592 templates/send-email.html:603
 #: templates/send-email.html:632 templates/send-email.html:648
 #: templates/sp-specifications.html:59 templates/stuff-signup.html:47
 #: templates/teammate-signup.html:56 templates/thumbnail.html:82
-#: templates/transfer-funds.html:75
+#: templates/ticket-details.html:500 templates/transfer-funds.html:75
 msgid "Submit"
 msgstr "Отправить"
 
-#: templates/add-price.html:117 templates/edit-price.html:120
-#: templates/edit-profile.html:61 templates/edit_product_category.html:130
-#: templates/pr_thumbnail.html:92 templates/thumbnail.html:88
+#: templates/add-price.html:129 templates/edit-price.html:158
+#: templates/edit-profile.html:61 templates/edit_product_category.html:137
+#: templates/pr_thumbnail.html:91 templates/thumbnail.html:88
 msgid "Back"
 msgstr "Назад"
 
-#: copy.html:413 templates/add-price.html:296 templates/edit-price.html:301
+#: copy.html:413 templates/add-price.html:308 templates/edit-price.html:339
 #: templates/product templates/product.html:574
 msgid "Close"
 msgstr "Закрыть"
 
-#: copy.html:187 copy.html:425 templates/add-price.html:308
-#: templates/add_product templates/add_product.html:217
-#: templates/add_product_category.html:240 templates/add_product_lang.html:264
-#: templates/edit-price.html:313 templates/edit-profile.html:219
-#: templates/edit-teammate.html:275 templates/edit_product_category.html:379
-#: templates/pr_thumbnail.html:338 templates/product templates/product.html:586
+#: copy.html:425 templates/add-price.html:320 templates/add_product.html:219
+#: templates/add_product_category.html:245 templates/add_product_lang.html:264
+#: templates/add_slide.html:271 templates/edit-price.html:351
+#: templates/edit-profile.html:219 templates/edit-teammate.html:275
+#: templates/edit_product_category.html:386 templates/edit_slide.html:461
+#: templates/pr_thumbnail.html:337 templates/product templates/product.html:586
 #: templates/teammate-signup.html:171 templates/thumbnail.html:334
 msgid "Crop"
 msgstr "Обрезать"
 
-#: templates/add-price.html:390 templates/edit-price.html:473
+#: templates/add-price.html:451 templates/edit-price.html:556
 msgid "Please specify Title"
 msgstr "Пожалуйста, укажите название!"
 
-#: templates/add-price.html:399 templates/edit-price.html:481
+#: templates/add-price.html:460 templates/edit-price.html:564
 msgid "Please specify Price"
 msgstr "Пожалуйста, укажите цену!"
 
-#: templates/add-price.html:526 templates/edit-price.html:613
+#: templates/add-price.html:591 templates/edit-price.html:701
 msgid ""
 "All changes in specifications fields will be lost, would you like to "
 "continue?"
@@ -863,14 +964,15 @@ msgstr "Выберите действия"
 msgid "Add Teammate"
 msgstr "Добавить коллегу"
 
-#: templates/add-teammate.html:44 templates/buy-now.html:178
-#: templates/checkout.html:182 templates/confirmation-page.html:192
+#: copy.html:205 copy.html:485 templates/add-teammate.html:44
+#: templates/buy-now.html:1069 templates/checkout.html:182
 #: templates/corporate-emails.html:139 templates/corporate-emails.html:171
 #: templates/create-email.html:43 templates/edit-teammate.html:57
-#: templates/emails.html:151 templates/emails.html:210
-#: templates/order-details.html:205 templates/order-details.html:485
+#: templates/emails.html:151 templates/emails.html:210 templates/order-details
+#: templates/order-details.html:283 templates/order-details.html:443
 #: templates/orders.html:94 templates/orders.html:163 templates/orders.html:265
-#: templates/public.html:108
+#: templates/public.html:98 templates/ticket-details.html:283
+#: templates/ticket-details.html:445
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -878,107 +980,92 @@ msgstr "Электронная почта"
 msgid "Choose Position"
 msgstr "Выберите должность"
 
-#: copy.html:3 copy.html:37 templates/add_product templates/add_product.html:3
-#: templates/add_product.html:50 templates/add_product_lang.html:3
+#: templates/add_product.html:3 templates/add_product.html:50
+#: templates/add_product_lang.html:3
 msgid "Add Product"
 msgstr "Добавить продукт"
 
-#: copy.html:41 templates/add_product templates/add_product.html:54
-#: templates/add_product_lang.html:60
+#: templates/add_product.html:54 templates/add_product_lang.html:60
 msgid "Product Title"
 msgstr "Название продукта"
 
-#: copy.html:42 templates/add_product templates/add_product.html:55
+#: templates/add_product.html:55
 msgid "Product Url"
 msgstr "Ссылка на продукт"
 
-#: copy.html:42 templates/add_product templates/add_product.html:55
-#: templates/add_product_lang.html:61
+#: templates/add_product.html:55 templates/add_product_lang.html:61
 msgid "This-is-Your-Product-Link"
 msgstr "Это-ваша-ссылка-на-продукт"
 
-#: copy.html:43 templates/add_product templates/add_product.html:56
-#: templates/add_product_lang.html:62
+#: templates/add_product.html:56 templates/add_product_lang.html:62
 msgid "Short description"
 msgstr "Краткое описание"
 
-#: copy.html:44 copy.html:570 templates/add_product
-#: templates/add_product.html:57 templates/add_product_lang.html:63
-#: templates/product
+#: copy.html:570 templates/add_product.html:57
+#: templates/add_product_lang.html:63 templates/product
 msgid "Long description"
 msgstr "Подробное описание"
 
-#: copy.html:48 copy.html:499 templates/add_product
-#: templates/add_product.html:61 templates/add_product_lang.html:67
-#: templates/product templates/product.html:660
+#: copy.html:499 templates/add_product.html:61
+#: templates/add_product_lang.html:67 templates/product
+#: templates/product.html:660
 msgid "Choose product category"
 msgstr "Выберите категорию продукта"
 
-#: copy.html:70 templates/add_product templates/add_product_lang.html:100
-msgid "Translate category name"
-msgstr "Перевести название категории"
-
-#: copy.html:78 templates/add_product
-msgid "You have not entered any product category yet."
-msgstr "Вы еще не добавили ни одной категории продукта."
-
-#: copy.html:27 copy.html:80 templates/add_product
-#: templates/add_product.html:88 templates/add_product_category
-#: templates/add_product_category.html:30 templates/add_product_lang.html:157
+#: templates/add_product.html:88 templates/add_product_category.html:30
+#: templates/add_product_lang.html:157
 msgid "Add Product Category"
 msgstr "Добавить категорию продукта"
 
-#: copy.html:86 templates/add_product templates/add_product.html:94
-#: templates/add_product_category.html:88 templates/add_product_lang.html:163
-#: templates/edit-profile.html:54 templates/teammate-signup.html:52
+#: templates/add_product.html:94 templates/add_product_category.html:93
+#: templates/add_product_lang.html:163 templates/edit-profile.html:54
+#: templates/teammate-signup.html:52
 msgid "Thumbnail image"
 msgstr "Миниатюра"
 
-#: templates/add_product.html:134 templates/edit-profile.html:104
-#: templates/edit-teammate.html:156 templates/teammate-signup.html:87
+#: templates/add_product.html:136 templates/add_slide.html:188
+#: templates/edit-profile.html:104 templates/edit-teammate.html:156
+#: templates/edit_slide.html:355 templates/teammate-signup.html:87
 msgid "File should be in PNG or JPG/JPEG format."
 msgstr "Файл должен быть в формате PNG или JPG/JPEG."
 
-#: copy.html:34 templates/add_product_category
-msgid "Add Article Category"
-msgstr "Добавить категорию статей"
-
-#: copy.html:38 templates/add_product_category
-msgid "Article Category"
-msgstr "Категория статей"
-
 #: templates/add_product_category.html:47
-#: templates/edit_product_category.html:81
+#: templates/edit_product_category.html:80
 msgid "Product Category Name"
 msgstr "Название категории продукта"
 
-#: templates/add_product_category.html:50
-#: templates/edit_product_category.html:84
+#: templates/add_product_category.html:49
+#: templates/edit_product_category.html:82
+msgid "Aspect Ratio"
+msgstr ""
+
+#: templates/add_product_category.html:55
+#: templates/edit_product_category.html:91
 msgid "Choose subproduct situation name"
 msgstr "Выберите название состояния подпродукта"
 
-#: templates/add_product_category.html:69
-#: templates/edit_product_category.html:99
+#: templates/add_product_category.html:74
+#: templates/edit_product_category.html:106
 msgid "Translate subproduct situation name"
 msgstr "Перевести название состояния подпродукта"
 
-#: templates/add_product_category.html:77
-#: templates/edit_product_category.html:109
+#: templates/add_product_category.html:82
+#: templates/edit_product_category.html:116
 msgid "You have not entered any product type situation name yet."
 msgstr "Вы еще не добавили ни одного названия состояния типа продукта."
 
-#: templates/add_product_category.html:78
-#: templates/edit_product_category.html:110
+#: templates/add_product_category.html:83
+#: templates/edit_product_category.html:117
 msgid "Click on the link below to add a product type situation!"
 msgstr "Нажмите на ссылку ниже, чтобы добавить состояние подпродукта!"
 
-#: templates/add_product_category.html:79
-#: templates/edit_product_category.html:111
+#: templates/add_product_category.html:84
+#: templates/edit_product_category.html:118
 msgid "Add subproduct situation name"
 msgstr "Добавить название состояния подпродукта"
 
-#: templates/add_product_category.html:210 templates/edit-teammate.html:216
-#: templates/edit_product_category.html:317 templates/pr_thumbnail.html:286
+#: templates/add_product_category.html:215 templates/edit-teammate.html:216
+#: templates/edit_product_category.html:324 templates/pr_thumbnail.html:285
 #: templates/thumbnail.html:282
 msgid "Enter alt text"
 msgstr "Введите альтернативный текст"
@@ -992,9 +1079,69 @@ msgstr "Добавить продукт на другом языке"
 msgid "Product link"
 msgstr "Ссылка на продукт"
 
+#: templates/add_product_lang.html:100
+msgid "Translate category name"
+msgstr "Перевести название категории"
+
+#: templates/add_slide.html:3 templates/add_slide.html:107
+#, fuzzy
+msgid "Add Slide"
+msgstr "Добавить роль"
+
+#: templates/add_slide.html:114 templates/add_slide.html:115
+#: templates/edit_slide.html:121 templates/edit_slide.html:122
+#: templates/products.html:167 templates/slides.html:183
+#: templates/store.html:199
+msgid "Title"
+msgstr "Название"
+
+#: templates/add_slide.html:121 templates/add_slide.html:122
+#: templates/edit_slide.html:130 templates/edit_slide.html:131
+#, fuzzy
+msgid "Subtitle"
+msgstr "Название"
+
+#: templates/add_slide.html:128 templates/edit_slide.html:138
+msgid "Event Url"
+msgstr ""
+
+#: templates/add_slide.html:128 templates/edit_slide.html:138
+#, fuzzy
+msgid "This-is-Your-Event-Link"
+msgstr "Это-ваша-ссылка-на-продукт"
+
+#: templates/add_slide.html:139 templates/edit_slide.html:158
+#: templates/slides.html:193
+#, fuzzy
+msgid "Start Date"
+msgstr "Дата добавления"
+
+#: templates/add_slide.html:143 templates/add_to_store.html:94
+#: templates/affiliate.html:196 templates/create-promo-code.html:123
+#: templates/create-promo-code.html:129 templates/edit-promo-code.html:179
+#: templates/edit-promo-code.html:185 templates/edit_slide.html:162
+#: templates/edit_store.html:91 templates/promo-codes.html:64
+#: templates/store.html:148 templates/store.html:1022
+msgid "Expiration Date"
+msgstr "Срок годности"
+
+#: templates/add_slide.html:149 templates/edit_slide.html:178
+#, fuzzy
+msgid "Slide image"
+msgstr "Изображение"
+
+#: templates/add_slide.html:460
+#, fuzzy
+msgid "Slide added successfully!"
+msgstr "Заказ успешно изменен!"
+
+#: templates/add_slide.html:463 templates/edit_slide.html:707
+msgid "An error occurred"
+msgstr ""
+
 #: templates/add_to_store.html:3 templates/add_to_store.html:57
-#: templates/slideshow.html:104 templates/slideshow.html:161
-#: templates/slideshow.html:209 templates/store.html:124
+#: templates/slideshow.html:106 templates/slideshow.html:163
+#: templates/slideshow.html:219 templates/store.html:124
 #: templates/store.html:376
 msgid "Add To Store"
 msgstr "Добавить в магазин"
@@ -1013,15 +1160,8 @@ msgstr "Количество"
 msgid "Production Date"
 msgstr "Дата производства"
 
-#: templates/add_to_store.html:94 templates/affiliate.html:196
-#: templates/create-promo-code.html:123 templates/create-promo-code.html:129
-#: templates/edit-promo-code.html:179 templates/edit-promo-code.html:185
-#: templates/edit_store.html:91 templates/promo-codes.html:64
-#: templates/store.html:148 templates/store.html:1022
-msgid "Expiration Date"
-msgstr "Срок годности"
-
 #: templates/add_to_store.html:118 templates/add_to_store.html:119
+#: templates/buy-now.html:1144 templates/buy-now.html:1191
 #: templates/edit_store.html:115 templates/edit_store.html:116
 msgid "Max allowed quantity to purchase"
 msgstr "Максимально доступное количество для покупки"
@@ -1095,7 +1235,7 @@ msgstr "Декабрь"
 msgid "All Affiliates"
 msgstr "Все партнеры"
 
-#: templates/admin_panel.html:162 templates/index.html:3
+#: templates/admin_panel.html:162
 msgid "Mammy's Bread"
 msgstr "Хлеб Мамми"
 
@@ -1107,10 +1247,11 @@ msgstr "Выберите количество лучших продуктов"
 msgid "Top"
 msgstr "Топ"
 
-#: templates/admin_panel.html:230 templates/index.html:187
-#: templates/positions.html:84 templates/product-categories-copy.html:79
+#: templates/admin_panel.html:230 templates/positions.html:84
+#: templates/product-categories-copy.html:79
 #: templates/product-categories.html:99 templates/products.html:267
 #: templates/promo-codes.html:119 templates/roles.html:84
+#: templates/slides.html:256 templates/slides.html:405
 msgid "No data to show!"
 msgstr "Нет данных для отображения!"
 
@@ -1120,30 +1261,32 @@ msgstr "Нет данных для отображения!"
 msgid "Client"
 msgstr "Клиент"
 
-#: templates/affiliate-order-details.html:179
+#: copy.html:220 templates/affiliate-order-details.html:179
 #: templates/affiliate-orders.html:125 templates/affiliate-orders.html:183
 #: templates/affiliate-orders.html:291 templates/affiliate-transfers.html:186
 #: templates/affiliate.html:185 templates/create-promo-code.html:119
 #: templates/create-promo-code.html:138 templates/edit-promo-code.html:175
-#: templates/edit-promo-code.html:195 templates/order-details.html:220
+#: templates/edit-promo-code.html:195 templates/order-details
 #: templates/orders.html:95 templates/orders.html:185 templates/orders.html:273
-#: templates/promo-code-details.html:43 templates/promo-code-details.html:46
+#: templates/promo-code-details.html:41 templates/promo-code-details.html:44
 #: templates/promo-codes.html:42 templates/transfers.html:225
 msgid "Promo Code"
 msgstr "Промокод"
 
-#: templates/affiliate-order-details.html:184 templates/order-details.html:226
+#: copy.html:226 templates/affiliate-order-details.html:184
+#: templates/order-details templates/order-details.html:284
+#: templates/ticket-details.html:284
 msgid "Ordered"
 msgstr "Заказ оформлен!"
 
-#: templates/affiliate-order-details.html:193
+#: copy.html:236 copy.html:512 templates/affiliate-order-details.html:193
 #: templates/affiliate-orders.html:228 templates/affiliate-orders.html:307
 #: templates/affiliate.html:207 templates/affiliates.html:44
 #: templates/affiliates.html:83 templates/corporate-emails.html:150
 #: templates/corporate-emails.html:175 templates/edit-teammate.html:68
-#: templates/edit_product_category.html:120 templates/emails.html:184
-#: templates/emails.html:222 templates/order-details.html:236
-#: templates/order-details.html:512 templates/orders.html:196
+#: templates/edit_product_category.html:127 templates/emails.html:184
+#: templates/emails.html:222 templates/order-details
+#: templates/order-details.html:470 templates/orders.html:196
 #: templates/orders.html:277 templates/positions.html:53
 #: templates/product-categories-copy.html:50
 #: templates/product-categories.html:63
@@ -1151,18 +1294,19 @@ msgstr "Заказ оформлен!"
 #: templates/product-type-specifications.html:137
 #: templates/product-type-specifications.html:307 templates/products.html:207
 #: templates/promo-codes.html:75 templates/roles.html:53
-#: templates/table.html:75 templates/team.html:44 templates/team.html:83
+#: templates/slides.html:213 templates/table.html:75 templates/team.html:44
+#: templates/team.html:83 templates/ticket-details.html:474
 msgid "Status"
 msgstr "Статус"
 
-#: templates/affiliate-order-details.html:200
-#: templates/affiliate-orders.html:251 templates/order-details.html:243
+#: copy.html:243 templates/affiliate-order-details.html:200
+#: templates/affiliate-orders.html:251 templates/order-details
 #: templates/orders.html:218
 msgid "Panding"
 msgstr "В ожидании"
 
-#: templates/affiliate-order-details.html:209
-#: templates/affiliate-orders.html:260 templates/order-details.html:252
+#: copy.html:252 templates/affiliate-order-details.html:209
+#: templates/affiliate-orders.html:260 templates/order-details
 #: templates/orders.html:227
 msgid "Ready for delivery"
 msgstr "Готов к доставке"
@@ -1174,7 +1318,9 @@ msgstr "Готов к доставке"
 msgid "Net"
 msgstr "Нетто"
 
-#: templates/affiliate-order-details.html:284 templates/order-details.html:320
+#: copy.html:320 templates/affiliate-order-details.html:284
+#: templates/order-details templates/order-details.html:247
+#: templates/ticket-details.html:247
 msgid "Discounted"
 msgstr "Со скидкой"
 
@@ -1228,7 +1374,7 @@ msgid "Order ID"
 msgstr "ID заказа"
 
 #: templates/affiliate-orders.html:217 templates/affiliate-orders.html:303
-#: templates/affiliate-transfers.html:172 templates/promo-code-details.html:80
+#: templates/affiliate-transfers.html:172 templates/promo-code-details.html:78
 #: templates/transfer-funds.html:60 templates/transfers.html:207
 msgid "Revard"
 msgstr "Вознаграждение"
@@ -1327,10 +1473,11 @@ msgstr "История покупок"
 
 #: templates/affiliate.html:236 templates/affiliates.html:58
 #: templates/corporate-emails.html:116 templates/corporate-emails.html:164
-#: templates/edit-teammate.html:69 templates/edit_product_category.html:121
+#: templates/edit-teammate.html:69 templates/edit_product_category.html:128
 #: templates/positions.html:64 templates/product-type-specifications.html:121
 #: templates/product-type-specifications.html:288 templates/promo-codes.html:86
-#: templates/roles.html:64 templates/table.html:50 templates/team.html:58
+#: templates/roles.html:64 templates/slides.html:231 templates/slides.html:377
+#: templates/table.html:50 templates/team.html:58
 msgid "Active"
 msgstr "Активен"
 
@@ -1339,7 +1486,7 @@ msgstr "Активен"
 msgid "Inactive"
 msgstr "Неактивен"
 
-#: templates/affiliate.html:241
+#: templates/affiliate.html:241 templates/slides.html:383
 msgid "Expired"
 msgstr "Истекший"
 
@@ -1351,27 +1498,9 @@ msgstr "Нет зарегистрированных промокодов"
 msgid "Affiliates"
 msgstr "Партнеры"
 
-#: templates/affiliates.html:23 templates/affiliates.html:67
-#: templates/affiliates.html:74 templates/product-categories-copy.html:49
-#: templates/product-categories.html:53
-#: templates/product-type-specifications.html:95
-#: templates/product-type-specifications.html:133
-#: templates/product-type-specifications.html:303 templates/table.html:59
-#: templates/table.html:66 templates/team.html:23 templates/team.html:67
-#: templates/team.html:74
-msgid "Name"
-msgstr "Имя"
-
-#: templates/affiliates.html:34 templates/affiliates.html:80
-#: templates/corporate-emails.html:286 templates/corporate-emails.html:305
-#: templates/edit-position.html:42 templates/positions.html:42
-#: templates/table.html:72 templates/team.html:34 templates/team.html:80
-msgid "Position"
-msgstr "Должность"
-
 #: templates/affiliates.html:61 templates/product-type-specifications.html:124
-#: templates/product-type-specifications.html:291 templates/table.html:53
-#: templates/team.html:61
+#: templates/product-type-specifications.html:291 templates/slides.html:379
+#: templates/table.html:53 templates/team.html:61
 msgid "Disabled"
 msgstr "Неактивен"
 
@@ -1399,20 +1528,20 @@ msgstr "Нет доступных адресов электронной почт
 msgid "Create an email"
 msgstr "Создать Email"
 
-#: templates/base.html:62 templates/base.html:65
+#: templates/base.html:61 templates/base.html:64 templates/base.html:147
 msgid "Tools"
 msgstr "Инструменты"
 
-#: templates/base.html:74 templates/base.html:87 templates/edit-profile.html:27
+#: templates/base.html:73 templates/base.html:86 templates/edit-profile.html:27
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
-#: templates/base.html:98 templates/base.html:135
+#: templates/base.html:97 templates/base.html:134
 #: templates/side-bar-stuff-1.html:63 templates/side-bar-stuff.html:19
 msgid "Logout"
 msgstr "Выход"
 
-#: templates/buy-now.html:4 templates/index.html:473
+#: templates/buy-now.html:4
 msgid "Buy Now"
 msgstr "Купить сейчас"
 
@@ -1430,152 +1559,81 @@ msgstr "Промокод"
 msgid "Example"
 msgstr "Сотрудник"
 
-#: templates/buy-now.html:143 templates/checkout.html:147
-#: templates/order-details.html:432
-msgid "Billing address"
-msgstr "Платежный адрес"
+#: templates/buy-now.html:151
+#, fuzzy
+msgid "Choose payment method"
+msgstr "Способ оплаты"
 
-#: templates/buy-now.html:148 templates/checkout.html:152
-#: templates/order-details.html:442
-msgid "First name"
-msgstr "Имя"
-
-#: templates/buy-now.html:150 templates/checkout.html:154
-msgid "Valid first name is required."
-msgstr "Требуется корректное имя."
-
-#: templates/buy-now.html:153 templates/checkout.html:157
-#: templates/order-details.html:456
-msgid "Last name"
-msgstr "Фамилия"
-
-#: templates/buy-now.html:155 templates/checkout.html:159
-msgid "Valid last name is required."
-msgstr "Требуется корректная фамилия."
-
-#: templates/buy-now.html:160 templates/checkout.html:164
-#: templates/order-details.html:470
-msgid "Phone Number"
-msgstr "Номер телефона"
-
-#: templates/buy-now.html:163 templates/buy-now.html:172
-#: templates/checkout.html:167 templates/checkout.html:176
-msgid "Please enter valid phone number!"
-msgstr "Пожалуйста, введите действительный номер телефона!"
-
-#: templates/buy-now.html:169 templates/checkout.html:173
-msgid "Confirm Phone Number"
-msgstr "Подтвердите номер телефона"
-
-#: templates/buy-now.html:173 templates/checkout.html:177
-msgid "Phone numbers do not match!"
-msgstr "Номера телефонов не совпадают!"
-
-#: templates/buy-now.html:178 templates/checkout.html:182
-msgid "Optional"
-msgstr "Необязательно"
-
-#: templates/buy-now.html:180 templates/checkout.html:184
-msgid "Please enter a valid email address!"
-msgstr "Пожалуйста, введите действительный адрес электронной почты!"
-
-#: templates/buy-now.html:184 templates/checkout.html:188
-#: templates/order-details.html:498
-msgid "Address"
-msgstr "Адрес"
-
-#: templates/buy-now.html:186 templates/checkout.html:190
-msgid "Please enter your shipping address!"
-msgstr "Пожалуйста, введите адрес доставки!"
-
-#: templates/buy-now.html:190 templates/checkout.html:194
-msgid "City"
-msgstr "Город"
-
-#: templates/buy-now.html:192 templates/checkout.html:196
-msgid "Choose..."
-msgstr "Выберите..."
-
-#: templates/buy-now.html:193 templates/checkout.html:197
-#: templates/confirmation-page.html:189 templates/order-details.html:202
-msgid "Yerevan"
-msgstr "Ереван"
-
-#: templates/buy-now.html:198 templates/checkout.html:202
-msgid "Payment"
-msgstr "Оплата"
-
-#: templates/buy-now.html:202 templates/checkout.html:206
-msgid "Credit card"
-msgstr "Кредитная карта"
-
-#: templates/buy-now.html:206 templates/checkout.html:210
-msgid "Debit card"
-msgstr "Дебетовая карта"
-
-#: templates/buy-now.html:210 templates/checkout.html:214
-msgid "PayPal"
-msgstr "PayPal"
-
-#: templates/buy-now.html:215 templates/checkout.html:219
-msgid "Name on card"
-msgstr "Имя на карте"
-
-#: templates/buy-now.html:217 templates/checkout.html:221
-msgid "Name on card is required."
-msgstr "Имя на карте обязательно."
-
-#: templates/buy-now.html:220 templates/checkout.html:224
-msgid "Credit card number"
-msgstr "Номер кредитной карты"
-
-#: templates/buy-now.html:222 templates/checkout.html:226
-msgid "Credit card number is required."
-msgstr "Номер кредитной карты обязателен."
-
-#: templates/buy-now.html:225 templates/checkout.html:229
-msgid "Expiration"
-msgstr "Срок действия"
-
-#: templates/buy-now.html:227 templates/checkout.html:231
-msgid "Expiration date required."
-msgstr "Требуется указать срок действия."
-
-#: templates/buy-now.html:230 templates/checkout.html:234
-msgid "CVV"
-msgstr "CVV"
-
-#: templates/buy-now.html:232 templates/checkout.html:236
-msgid "Security code required."
-msgstr "Требуется код безопасности."
-
-#: templates/buy-now.html:240 templates/checkout.html:244
+#: templates/buy-now.html:167 templates/checkout.html:244
 #: templates/choose.html:22
 msgid "Continue"
 msgstr "Продолжить"
 
-#: templates/buy-now.html:621 templates/checkout.html:636
-#: templates/index.html:182 templates/index.html:363 templates/index.html:825
+#: templates/buy-now.html:519 templates/checkout.html:636
 msgid "Add To Cart"
 msgstr "В корзину"
 
-#: templates/buy-now.html:1158 templates/checkout.html:1174
+#: templates/buy-now.html:1037
+msgid "Ticket"
+msgstr ""
+
+#: copy.html:442 templates/buy-now.html:1040 templates/checkout.html:152
+#: templates/order-details templates/order-details.html:400
+#: templates/ticket-details.html:400
+msgid "First name"
+msgstr "Имя"
+
+#: templates/buy-now.html:1042 templates/checkout.html:154
+msgid "Valid first name is required."
+msgstr "Требуется корректное имя."
+
+#: copy.html:456 templates/buy-now.html:1046 templates/checkout.html:157
+#: templates/order-details templates/order-details.html:414
+#: templates/ticket-details.html:414
+msgid "Last name"
+msgstr "Фамилия"
+
+#: templates/buy-now.html:1048 templates/checkout.html:159
+msgid "Valid last name is required."
+msgstr "Требуется корректная фамилия."
+
+#: copy.html:470 templates/buy-now.html:1052 templates/checkout.html:164
+#: templates/order-details templates/order-details.html:428
+#: templates/ticket-details.html:429
+msgid "Phone Number"
+msgstr "Номер телефона"
+
+#: templates/buy-now.html:1055 templates/buy-now.html:1063
+#: templates/checkout.html:167 templates/checkout.html:176
+msgid "Please enter valid phone number!"
+msgstr "Пожалуйста, введите действительный номер телефона!"
+
+#: templates/buy-now.html:1060 templates/checkout.html:173
+msgid "Confirm Phone Number"
+msgstr "Подтвердите номер телефона"
+
+#: templates/buy-now.html:1064 templates/checkout.html:177
+msgid "Phone numbers do not match!"
+msgstr "Номера телефонов не совпадают!"
+
+#: templates/buy-now.html:1071 templates/checkout.html:184
+msgid "Please enter a valid email address!"
+msgstr "Пожалуйста, введите действительный адрес электронной почты!"
+
+#: templates/buy-now.html:1259 templates/checkout.html:1174
 msgid "Louding..."
 msgstr "Загрузка..."
 
-#: templates/buy-now.html:1163 templates/checkout.html:1179
+#: templates/buy-now.html:1264 templates/checkout.html:1179
 msgid "Enter Promo Code"
 msgstr "Введите промокод"
 
-#: templates/buy-now.html:1367 templates/buy-now.html:1415
+#: templates/buy-now.html:1702 templates/buy-now.html:1733
 #: templates/checkout.html:1316 templates/checkout.html:1402
-#: templates/checkout.html:1448 templates/public.html:43
+#: templates/checkout.html:1448 templates/index.html:64
+#: templates/public.html:43
 msgid "Please improve all field marked in red"
 msgstr "Пожалуйста, исправьте все поля, отмеченные красным"
-
-#: templates/buy-now.html:1432 templates/checkout.html:1466
-msgid "Country codes of phone numbers do not match!"
-msgstr "Коды стран в номерах телефонов не совпадают!"
 
 #: templates/cart.html:3 templates/cart.html:30 templates/cart.html:42
 msgid "Shopping Cart"
@@ -1597,7 +1655,7 @@ msgstr "Промежуточный итог"
 msgid "items"
 msgstr "товаров"
 
-#: templates/cart.html:124 templates/index.html:500
+#: templates/cart.html:124
 msgid "Proceed to Checkout"
 msgstr "Перейти к оформлению заказа"
 
@@ -1609,11 +1667,77 @@ msgstr "Оформление заказа"
 msgid "Your cart"
 msgstr "Ваша корзина"
 
+#: copy.html:432 templates/checkout.html:147 templates/order-details
+#: templates/order-details.html:390 templates/ticket-details.html:390
+msgid "Billing address"
+msgstr "Платежный адрес"
+
+#: templates/checkout.html:182
+msgid "Optional"
+msgstr "Необязательно"
+
+#: copy.html:498 templates/checkout.html:188 templates/order-details
+#: templates/order-details.html:456 templates/ticket-details.html:459
+msgid "Address"
+msgstr "Адрес"
+
+#: templates/checkout.html:190
+msgid "Please enter your shipping address!"
+msgstr "Пожалуйста, введите адрес доставки!"
+
+#: templates/checkout.html:194
+msgid "City"
+msgstr "Город"
+
+#: templates/checkout.html:196
+msgid "Choose..."
+msgstr "Выберите..."
+
+#: copy.html:202 templates/checkout.html:197 templates/order-details
+msgid "Yerevan"
+msgstr "Ереван"
+
+#: templates/checkout.html:202
+msgid "Payment"
+msgstr "Оплата"
+
+#: templates/checkout.html:206
+msgid "Credit card"
+msgstr "Кредитная карта"
+
+#: templates/checkout.html:210
+msgid "Debit card"
+msgstr "Дебетовая карта"
+
+#: templates/checkout.html:214
+msgid "PayPal"
+msgstr "PayPal"
+
+#: templates/checkout.html:219
+msgid "Name on card"
+msgstr "Имя на карте"
+
+#: templates/checkout.html:224
+msgid "Credit card number"
+msgstr "Номер кредитной карты"
+
+#: templates/checkout.html:229
+msgid "Expiration"
+msgstr "Срок действия"
+
+#: templates/checkout.html:234
+msgid "CVV"
+msgstr "CVV"
+
+#: templates/checkout.html:1466
+msgid "Country codes of phone numbers do not match!"
+msgstr "Коды стран в номерах телефонов не совпадают!"
+
 #: templates/checkout.html:1602 templates/error.html:21
 msgid "Something went wrong!"
 msgstr "Что-то пошло не так!"
 
-#: templates/choose.html:3 templates/error.html:3 templates/index.html:1002
+#: templates/choose.html:3 templates/error.html:3
 msgid "Something is wrong"
 msgstr "Что-то не так"
 
@@ -1625,13 +1749,13 @@ msgstr "Вернуться"
 msgid "Confirmation Page"
 msgstr "Страница подтверждения"
 
-#: templates/confirmation-page.html:189 templates/order-details.html:202
-msgid "Armenia"
-msgstr "Армения"
+#: templates/confirmation-page.html:352
+msgid "Event"
+msgstr ""
 
-#: templates/confirmation-page.html:207
-msgid "Contact us"
-msgstr "Контакты"
+#: templates/confirmation-page.html:650
+msgid "Scan this code to enter!"
+msgstr ""
 
 #: templates/corporate-emails.html:3
 msgid "Corporate Emails"
@@ -1650,12 +1774,12 @@ msgid "All"
 msgstr "Все"
 
 #: templates/corporate-emails.html:117 templates/corporate-emails.html:166
-#: templates/edit-teammate.html:70 templates/edit_product_category.html:122
+#: templates/edit-teammate.html:70 templates/edit_product_category.html:129
 msgid "Passive"
 msgstr "Пассивный"
 
 #: templates/corporate-emails.html:158 templates/emails.html:194
-#: templates/products.html:216
+#: templates/products.html:216 templates/slides.html:222
 msgid "Actions"
 msgstr "Действия"
 
@@ -1704,7 +1828,7 @@ msgid "You do not have any affiliate yet"
 msgstr "У вас еще нет партнеров"
 
 #: templates/create-promo-code.html:110 templates/edit-promo-code.html:166
-#: templates/products.html:3 templates/public.html:183
+#: templates/products.html:3
 msgid "Products"
 msgstr "Продукты"
 
@@ -1785,8 +1909,8 @@ msgstr "Загрузка ......"
 msgid "Edit Position"
 msgstr "Редактировать должность"
 
-#: templates/edit-price.html:3 templates/slideshow.html:104
-#: templates/slideshow.html:161 templates/slideshow.html:209
+#: templates/edit-price.html:3 templates/slideshow.html:106
+#: templates/slideshow.html:163 templates/slideshow.html:219
 msgid "Edit Price"
 msgstr "Редактировать цену"
 
@@ -1856,15 +1980,30 @@ msgstr "Выберите роль"
 msgid "Edit Product Category"
 msgstr "Редактировать категорию продуктов"
 
-#: templates/edit_product_category.html:41 templates/pr_thumbnail.html:43
+#: templates/edit_product_category.html:41 templates/pr_thumbnail.html:42
 #: templates/thumbnail.html:39
 msgid "Something went wrong."
 msgstr "Что-то пошло не так."
 
-#: templates/edit_product_category.html:116 templates/pr_thumbnail.html:83
+#: templates/edit_product_category.html:123 templates/pr_thumbnail.html:82
 #: templates/thumbnail.html:79
 msgid "Image"
 msgstr "Изображение"
+
+#: templates/edit_slide.html:3 templates/edit_slide.html:107
+#, fuzzy
+msgid "Edit Slide"
+msgstr "Редактировать роль"
+
+#: templates/edit_slide.html:183 templates/pr_thumbnail.html:46
+#: templates/thumbnail.html:43
+msgid "Images from other language(s)"
+msgstr "Изображения на других языках"
+
+#: templates/edit_slide.html:704
+#, fuzzy
+msgid "Slide updated successfully!"
+msgstr "Адрес электронной почты успешно обновлен!"
 
 #: templates/edit_store.html:3 templates/edit_store.html:54
 msgid "Edit Store"
@@ -1886,12 +2025,13 @@ msgstr "Прочитано"
 msgid "Unread"
 msgstr "Непрочитано"
 
-#: templates/emails.html:140 templates/emails.html:206
-#: templates/public.html:143 templates/send-email.html:207
+#: templates/emails.html:140 templates/emails.html:206 templates/index.html:165
+#: templates/public.html:140 templates/send-email.html:207
 msgid "Subject"
 msgstr "Тема"
 
 #: templates/emails.html:162 templates/emails.html:214
+#: templates/order-details.html:281 templates/ticket-details.html:281
 msgid "Initials"
 msgstr "Инициалы"
 
@@ -1907,78 +2047,170 @@ msgstr "Написать"
 msgid "Back to home"
 msgstr "На главную"
 
-#: templates/index.html:8 templates/index.html:20
-msgid "metaTitle"
+#: templates/index.html:7
+#, fuzzy
+msgid "Home Title"
 msgstr "Вкусный и полезный хлеб на закваске из экологически чистых продуктов"
 
-#: templates/index.html:9 templates/index.html:22
-msgid "metaDescription"
+#: templates/index.html:31 templates/public.html:180
+msgid "Events"
 msgstr ""
-"Лакомный и легкоусвояемый 100% эко чистый хлеб на закваске, "
-"приготовленный с любовью и из высококачественных ингредиентов."
 
-#: templates/index.html:124 templates/index.html:366 templates/index.html:671
-#: templates/index.html:791
-msgid "Added"
-msgstr "Добавлено"
+#: templates/index.html:34 templates/public.html:181
+#, fuzzy
+msgid "Activities"
+msgstr "Активен"
 
-#: templates/index.html:128
-msgid "Fresh Sourdough Bread"
-msgstr "Свежий хлеб на закваске"
+#: templates/index.html:38
+msgid "Collaboration"
+msgstr ""
 
-#: templates/index.html:134
-msgid "Order Now!"
-msgstr "Заказать!"
-
-#: templates/index.html:135
+#: templates/index.html:42 templates/public.html:182
 msgid "About"
 msgstr "О нас"
 
-#: templates/index.html:144
+#: templates/index.html:45 templates/public.html:183
+msgid "Contacts"
+msgstr "Контакты"
+
+#: templates/index.html:60 templates/index.html:87
+#: templates/product_client.html:162 templates/store.html:420
+msgid "More"
+msgstr "Еще"
+
+#: templates/index.html:61 templates/index.html:86
+#: templates/product_client.html:169 templates/slideshow.html:188
+#: templates/slideshow.html:242
+#, fuzzy
+msgid "Apply"
+msgstr "Апрель"
+
+#: templates/index.html:65
+msgid "New events comming soon."
+msgstr ""
+
+#: templates/index.html:66
+msgid "Subscribe and follow not to miss them."
+msgstr ""
+
+#: copy.html:189 copy.html:546 copy.html:1119 templates/index.html:73
+#: templates/login.html:101 templates/order-details
+#: templates/order-details.html:184 templates/order-details.html:506
+#: templates/product templates/product.html:1507 templates/store.html:742
+#: templates/ticket-details.html:184 templates/ticket-details.html:510
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: templates/index.html:108
+msgid "About Eventoria"
+msgstr ""
+
+#: templates/index.html:109
 msgid "aboutText1"
 msgstr ""
 "Ищете 100% экологически чистый хлеб, приготовленный с материнской заботой"
 " и нежностью из лучших ингредиентов? Вы гурман, жаждущий испытать новый "
 "вкусовой опыт? Значит вы по адресу!"
 
-#: templates/index.html:145
-msgid "show more"
-msgstr "больше"
-
-#: templates/index.html:149
+#: templates/index.html:110
 msgid "aboutText2"
 msgstr ""
 "Вкусные и полезные хлебушки на закваске, приготовленные традиционным "
 "способом по рецептам, передаваемым из поколения в поколение, качество, "
 "воплощающее вкус и тепло прошлого и совершенство современных инноваций."
 
-#: templates/index.html:150
+#: templates/index.html:111
 msgid "aboutText3"
 msgstr ""
 "Наш хлеб отличается богатым питательным составом и непревзойденными "
 "вкусовыми нюансами."
 
-#: templates/index.html:151
-msgid "aboutText4"
+#: templates/index.html:118
+msgid "Professional Growth"
 msgstr ""
-"Нажмите на любую карточку, затем нажмите кнопку «Детали», чтобы получить "
-"подробную информацию о каждом продукте, или не стесняйтесь "
 
-#: templates/index.html:151
-msgid "contact with us"
-msgstr "связатся с нами"
+#: templates/index.html:119
+msgid ""
+"Workshops, conferences, and training programs that empower professionals "
+"with knowledge and practical skills."
+msgstr ""
 
-#: templates/index.html:152
-msgid "aboutText5"
-msgstr "Мы с радостью ответим на ваши вопросы и поможем сделать правильный выбор."
+#: templates/index.html:125
+msgid "Networking & Connections"
+msgstr ""
 
-#: templates/index.html:153
-msgid "show less"
-msgstr "Скрыть"
+#: templates/index.html:126
+msgid ""
+"Opportunities to meet industry leaders, exchange ideas, and build "
+"valuable partnerships."
+msgstr ""
 
-#: templates/index.html:181 templates/product_client.html:162
-msgid "See Details"
-msgstr "Детали"
+#: templates/index.html:132
+msgid "Idea to Impact"
+msgstr ""
+
+#: templates/index.html:133
+msgid ""
+"A collaborative environment where innovative ideas turn into real "
+"projects and future opportunities."
+msgstr ""
+
+#: templates/index.html:145
+msgid ""
+"Please feel free to submit a message or contact us via any of the methods"
+" below"
+msgstr ""
+
+#: templates/index.html:150
+#, fuzzy
+msgid "Thank you for your message! We will get back to you soon."
+msgstr "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время."
+
+#: templates/index.html:155
+#, fuzzy
+msgid "Your Name"
+msgstr "Ваше имя:"
+
+#: templates/index.html:160 templates/index.html:235
+#, fuzzy
+msgid "Your Email"
+msgstr "Ваш email:"
+
+#: templates/index.html:170
+#, fuzzy
+msgid "Your message"
+msgstr "Ваше сообщение"
+
+#: templates/index.html:185
+msgid "Subscribe to our Telegram and stay up to date"
+msgstr ""
+
+#: templates/index.html:193
+msgid "Follow us on Facebook"
+msgstr ""
+
+#: templates/index.html:202
+msgid "Discover Eventoria on Instagram"
+msgstr ""
+
+#: templates/index.html:212
+msgid "Join our LinkedIn community"
+msgstr ""
+
+#: templates/index.html:221
+#, fuzzy
+msgid "Clcik to send an email to"
+msgstr "Выберите адрес электронной почты"
+
+#: templates/index.html:228 templates/public.html:113
+#, fuzzy
+msgid "Be the first to know about upcoming events and new opportunities."
+msgstr "Будьте первыми, кто узнает о скидках и акциях."
+
+#: templates/index.html:239
+#, fuzzy
+msgid "Subscribe"
+msgstr "Подпишитесь на нас!"
 
 #: templates/login.html:92 templates/login1.html:4
 msgid "Login"
@@ -1993,66 +2225,79 @@ msgstr "Пароль"
 msgid "Log In"
 msgstr "Войти"
 
-#: copy.html:1119 templates/login.html:101 templates/order-details.html:189
-#: templates/order-details.html:546 templates/product
-#: templates/product.html:1507 templates/store.html:742
-msgid "Loading..."
-msgstr "Загрузка..."
-
-#: templates/order-details.html:186 templates/product-categories-copy.html:67
+#: copy.html:186 templates/order-details templates/order-details.html:273
+#: templates/product-categories-copy.html:67
 #: templates/product-categories.html:88 templates/products.html:243
 #: templates/products.html:249 templates/products.html:298
-#: templates/promo-codes.html:108 templates/store.html:970
+#: templates/promo-codes.html:108 templates/slides.html:244
+#: templates/slides.html:249 templates/slides.html:287
+#: templates/slides.html:375 templates/store.html:970
+#: templates/ticket-details.html:273
 msgid "Edit"
 msgstr "Редактировать"
 
-#: templates/order-details.html:198
+#: copy.html:198 templates/order-details templates/order-details.html:192
+#: templates/ticket-details.html:192
 msgid "Client Information"
 msgstr "Информация о клиенте"
 
-#: templates/order-details.html:215
+#: copy.html:202 templates/order-details
+msgid "Armenia"
+msgstr "Армения"
+
+#: copy.html:215 templates/order-details
 msgid "Note"
 msgstr "Примечание"
 
-#: templates/order-details.html:222
+#: copy.html:222 templates/order-details
 msgid "Promo Code ID"
 msgstr "ID промокода"
 
-#: templates/order-details.html:373 templates/orders.html:152
-#: templates/orders.html:261 templates/public.html:109
+#: copy.html:373 templates/order-details templates/order-details.html:282
+#: templates/orders.html:93 templates/orders.html:152 templates/orders.html:261
+#: templates/public.html:99 templates/ticket-details.html:282
 msgid "Phone"
 msgstr "Телефон"
 
-#: templates/order-details.html:406 templates/order-details.html:641
+#: copy.html:406 copy.html:641 templates/order-details
+#: templates/order-details.html:364 templates/order-details.html:602
 #: templates/store.html:712 templates/store.html:873 templates/store.html:1079
+#: templates/ticket-details.html:364 templates/ticket-details.html:606
 msgid "Something Went Wrong!"
 msgstr "Что-то пошло не так!"
 
-#: templates/order-details.html:575
+#: copy.html:575 templates/order-details templates/order-details.html:534
+#: templates/ticket-details.html:538
 msgid "First name is required."
 msgstr "Имя обязательно."
 
-#: templates/order-details.html:580
+#: copy.html:580 templates/order-details templates/order-details.html:539
+#: templates/ticket-details.html:543
 msgid "Last name is required."
 msgstr "Фамилия обязательна."
 
-#: templates/order-details.html:586
+#: copy.html:586 templates/order-details templates/order-details.html:545
+#: templates/ticket-details.html:549
 msgid "Valid phone number is required."
 msgstr "Требуется корректный номер телефона."
 
-#: templates/order-details.html:592
+#: copy.html:592 templates/order-details templates/order-details.html:551
+#: templates/ticket-details.html:555
 msgid "Valid email is required."
 msgstr "Требуется корректный адрес электронной почты."
 
-#: templates/order-details.html:598
+#: copy.html:598 templates/order-details templates/order-details.html:557
+#: templates/ticket-details.html:561
 msgid "Address is required."
 msgstr "Адрес обязателен."
 
-#: templates/order-details.html:604
+#: copy.html:604 templates/order-details templates/order-details.html:563
+#: templates/ticket-details.html:567
 msgid "Status is required."
 msgstr "Статус обязателен."
 
-#: templates/order-details.html:637
+#: copy.html:637 templates/order-details templates/order-details.html:598
+#: templates/ticket-details.html:602
 msgid "Form submitted successfully!"
 msgstr "Форма успешно отправлена!"
 
@@ -2076,10 +2321,6 @@ msgstr "Просмотр/Редактирование"
 msgid "Product Thumbnail"
 msgstr "Миниатюра продукта"
 
-#: templates/pr_thumbnail.html:47 templates/thumbnail.html:43
-msgid "Images from other language(s)"
-msgstr "Изображения на других языках"
-
 #: copy.html:128 copy.html:140 templates/product templates/product.html:288
 #: templates/product.html:300 templates/side-bar-stuff-1.html:41
 #: templates/side-bar-stuff.html:4
@@ -2101,13 +2342,13 @@ msgstr "Редактор"
 
 #: copy.html:146 templates/product templates/product-categories-copy.html:48
 #: templates/product-categories.html:42 templates/product.html:306
-#: templates/products.html:157 templates/store.html:193
-#: templates/thumbnail.html:3
+#: templates/products.html:157 templates/slides.html:173
+#: templates/store.html:193 templates/thumbnail.html:3
 msgid "Thumbnail"
 msgstr "Миниатюра"
 
 #: copy.html:153 templates/product templates/product.html:313
-#: templates/products.html:623
+#: templates/products.html:623 templates/slides.html:601
 msgid "Add Product Type"
 msgstr "Добавить тип продукта"
 
@@ -2166,6 +2407,7 @@ msgid "Product Type Specifications"
 msgstr "Характеристики типа продукта"
 
 #: templates/product-type-specifications.html:72 templates/products.html:147
+#: templates/slides.html:157
 msgid "Show Originals"
 msgstr "Показать оригиналы"
 
@@ -2176,7 +2418,7 @@ msgid "ID"
 msgstr "ID"
 
 #: templates/product-type-specifications.html:310 templates/products.html:302
-#: templates/products.html:384
+#: templates/products.html:384 templates/slides.html:291
 msgid "Translate"
 msgstr "Перевести"
 
@@ -2193,13 +2435,9 @@ msgstr "Дополнительные примечания"
 msgid "Search for a product by title"
 msgstr "Поиск продукта по названию"
 
-#: templates/products.html:144
+#: templates/products.html:144 templates/slides.html:154
 msgid "Type in a product title"
 msgstr "Введите название продукта"
-
-#: templates/products.html:167 templates/store.html:199
-msgid "Title"
-msgstr "Название"
 
 #: templates/products.html:177
 msgid "Published Date"
@@ -2218,23 +2456,24 @@ msgstr "Категория продукта"
 msgid "View Types"
 msgstr "Просмотреть типы"
 
-#: templates/products.html:293
+#: templates/products.html:293 templates/slides.html:282
 msgid "Disable"
 msgstr "Отключить"
 
-#: templates/products.html:295
+#: templates/products.html:295 templates/slides.html:284
 msgid "Enable"
 msgstr "Включить"
 
-#: templates/products.html:399
+#: templates/products.html:399 templates/slides.html:390
 msgid "Edit in original language"
 msgstr "Редактировать в оригинале"
 
-#: templates/products.html:622
+#: templates/products.html:622 templates/slides.html:600
 msgid "No Product Type Detected"
 msgstr "Тип продукта не обнаружен"
 
-#: templates/products.html:653 templates/store.html:433
+#: templates/products.html:653 templates/slides.html:631
+#: templates/store.html:433
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
@@ -2242,7 +2481,7 @@ msgstr "Сохранить изменения"
 msgid "Promo Code Details"
 msgstr "Детали промокода"
 
-#: templates/promo-code-details.html:41 templates/promo-code-details.html:45
+#: templates/promo-code-details.html:39 templates/promo-code-details.html:43
 #: templates/promo-codes.html:53
 msgid "Affiliate"
 msgstr "Партнер"
@@ -2251,51 +2490,47 @@ msgstr "Партнер"
 msgid "Promo Codes"
 msgstr "Промокоды"
 
-#: templates/public.html:79
-msgid "Mammys Bread Logo"
-msgstr "Логотип Хлеба Мамми"
+#: templates/public.html:62
+msgid "Eventoria Logo"
+msgstr ""
 
-#: templates/public.html:106
+#: templates/public.html:96
 msgid "Contact and Follow"
 msgstr "Контакты и подписка"
 
-#: templates/public.html:107
+#: templates/public.html:97
 msgid "123 Street Name"
 msgstr "Улица 123"
 
-#: templates/public.html:107
+#: templates/public.html:97
 msgid "City, State, 12345"
 msgstr "Город, Область, 12345"
 
-#: templates/public.html:122
+#: templates/public.html:112
 msgid "Subscribe to us!"
 msgstr "Подпишитесь на нас!"
 
-#: templates/public.html:123
-msgid "Be the first to know about discounts and promotions."
-msgstr "Будьте первыми, кто узнает о скидках и акциях."
-
-#: templates/public.html:124 templates/public.html:494
+#: templates/public.html:114 templates/public.html:489
 msgid "Please specify valid email address!"
 msgstr "Пожалуйста, укажите действительный адрес электронной почты!"
 
-#: templates/public.html:136
+#: templates/public.html:133
 msgid "Your email:"
 msgstr "Ваш email:"
 
-#: templates/public.html:140
+#: templates/public.html:137
 msgid "Your name:"
 msgstr "Ваше имя:"
 
-#: templates/public.html:140
+#: templates/public.html:137
 msgid "John Snow"
 msgstr "Иван Иванов"
 
-#: templates/public.html:147
+#: templates/public.html:144
 msgid "You message"
 msgstr "Ваше сообщение"
 
-#: templates/public.html:162
+#: templates/public.html:159
 msgid ""
 "Thank you for visiting! Our platform is still under construction. Buying "
 "options will be available soon."
@@ -2303,21 +2538,13 @@ msgstr ""
 "Спасибо за визит! Наша платформа еще находится в разработке. Возможности "
 "покупки будут доступны в ближайшее время."
 
-#: templates/public.html:181
+#: templates/public.html:178
 msgid "Home"
 msgstr "Главная"
 
-#: templates/public.html:182
+#: templates/public.html:179
 msgid "Favorites"
 msgstr "Избранное"
-
-#: templates/public.html:184
-msgid "Our History"
-msgstr "О нас"
-
-#: templates/public.html:185
-msgid "Contacts"
-msgstr "Контакты"
 
 #: templates/roles.html:3
 msgid "Roles"
@@ -2335,21 +2562,63 @@ msgstr "Выберите адрес электронной почты отпра
 msgid "Enter recipient email address"
 msgstr "Введите адрес электронной почты получателя"
 
-#: templates/slideshow.html:168 templates/slideshow.html:215
+#: templates/slides.html:3
+#, fuzzy
+msgid "Slides"
+msgstr "Слайдер"
+
+#: templates/slides.html:154
+#, fuzzy
+msgid "Search for a slide by title"
+msgstr "Поиск продукта по названию"
+
+#: templates/slides.html:161
+msgid "Show active slides"
+msgstr ""
+
+#: templates/slides.html:162
+#, fuzzy
+msgid "Show disabled slides"
+msgstr "Скрыть"
+
+#: templates/slides.html:163
+#, fuzzy
+msgid "Show all slides"
+msgstr "Показывать из всех магазинов"
+
+#: templates/slides.html:203
+#, fuzzy
+msgid "End Date"
+msgstr "Дата добавления"
+
+#: templates/slides.html:233
+#, fuzzy
+msgid "Past"
+msgstr "Обновить"
+
+#: templates/slideshow.html:45
+msgid "No spot left"
+msgstr ""
+
+#: templates/slideshow.html:168 templates/slideshow.html:223
+msgid "Participation is free"
+msgstr ""
+
+#: templates/slideshow.html:177 templates/slideshow.html:231
 msgid "left in stock"
 msgstr "осталось"
 
-#: templates/slideshow.html:176 templates/slideshow.html:223
+#: templates/slideshow.html:184 templates/slideshow.html:238
 msgid "Add to cart"
 msgstr "В корзину"
 
-#: templates/slideshow.html:180
-msgid "Adding"
-msgstr "Добавление"
+#: templates/slideshow.html:191 templates/slideshow.html:245
+msgid "For+1"
+msgstr ""
 
-#: templates/slideshow.html:184 templates/slideshow.html:227
-msgid "Buy now"
-msgstr "Купить сейчас"
+#: templates/slideshow.html:195 templates/slideshow.html:249
+msgid "person+1"
+msgstr ""
 
 #: templates/sp-specifications.html:3
 msgid "Create Specifications for Product Type"
@@ -2398,10 +2667,6 @@ msgstr "в наличии"
 #: templates/store.html:392
 msgid "expired"
 msgstr "просрочено"
-
-#: templates/store.html:420
-msgid "More"
-msgstr "Еще"
 
 #: templates/store.html:625
 msgid "Shows From All Stores"
@@ -2454,6 +2719,11 @@ msgstr "Команда"
 #: templates/teammate-signup.html:46
 msgid "Confirm assword"
 msgstr "Подтвердите пароль"
+
+#: templates/ticket-details.html:4 templates/ticket-details.html:186
+#, fuzzy
+msgid "Ticket Details"
+msgstr "Детали"
 
 #: templates/transfer-funds.html:4
 msgid "Transfer funds"
@@ -2596,4 +2866,63 @@ msgstr "Сотрудник"
 
 #~ msgid "person+1"
 #~ msgstr "участников"
+
+#~ msgid "You have not entered any product category yet."
+#~ msgstr "Вы еще не добавили ни одной категории продукта."
+
+#~ msgid "Add Article Category"
+#~ msgstr "Добавить категорию статей"
+
+#~ msgid "Article Category"
+#~ msgstr "Категория статей"
+
+#~ msgid "Contact us"
+#~ msgstr "Контакты"
+
+#~ msgid "metaDescription"
+#~ msgstr ""
+#~ "Лакомный и легкоусвояемый 100% эко "
+#~ "чистый хлеб на закваске, приготовленный "
+#~ "с любовью и из высококачественных "
+#~ "ингредиентов."
+
+#~ msgid "Added"
+#~ msgstr "Добавлено"
+
+#~ msgid "Fresh Sourdough Bread"
+#~ msgstr "Свежий хлеб на закваске"
+
+#~ msgid "Order Now!"
+#~ msgstr "Заказать!"
+
+#~ msgid "show more"
+#~ msgstr "больше"
+
+#~ msgid "aboutText4"
+#~ msgstr ""
+#~ "Нажмите на любую карточку, затем нажмите"
+#~ " кнопку «Детали», чтобы получить подробную"
+#~ " информацию о каждом продукте, или не"
+#~ " стесняйтесь "
+
+#~ msgid "contact with us"
+#~ msgstr "связатся с нами"
+
+#~ msgid "aboutText5"
+#~ msgstr ""
+#~ "Мы с радостью ответим на ваши "
+#~ "вопросы и поможем сделать правильный "
+#~ "выбор."
+
+#~ msgid "Mammys Bread Logo"
+#~ msgstr "Логотип Хлеба Мамми"
+
+#~ msgid "Our History"
+#~ msgstr "О нас"
+
+#~ msgid "Adding"
+#~ msgstr "Добавление"
+
+#~ msgid "Buy now"
+#~ msgstr "Купить сейчас"
 
