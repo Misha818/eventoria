@@ -15,8 +15,8 @@ meta-tags-scretch.txt
 gunicorn.txt
 nginx-conf.txt
 
-/static/images/uploads/
-/static/images/
+# /static/images/uploads/
+# /static/images/
 
 
 ToDo.txt
