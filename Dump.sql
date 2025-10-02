@@ -589,17 +589,13 @@ ALTER TABLE `pd_buffer` AUTO_INCREMENT = 1;
 
 INSERT INTO `stuff` (`Username`, `Password`, `Email`, `Firstname`, `Lastname`, `PositionID`, `LanguageID`, `Status`)
 VALUES 
-    ('superuser', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'test@test.com', 'John', 'Smith', 6, 2, 1);
-    -- ('HR', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'hr@test.com', 'Satti', 'Matti', 5, 2, 1),
-    -- ('Sales AND Marketing', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'sales@test.com', 'Hayek', 'Manas', 4, 2, 1),
-    -- ('Manager', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'manager@test.com', 'Avi', 'Manavi', 3, 2, 1),
-    -- ('Editor', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'editor@test.com', 'Lyubov', 'Uspenskaia', 2, 2, 1);
+    ('superuser', 'scrypt:32768:8:1$gA4uJNdnHmDVnE7E$5f5ab03f948509ea13d2807eb5f48f85b202e2d09bc99cb8476f26e1f8151b0ba3e0e5c5a85b4b351d628b0a1757c017e9e0ea52ad6802b1ebc644002024e64c', 'test@test.com', 'John', 'Smith', 6, 1, 1);
 
 
 INSERT INTO `rol` (`Rol`, `ActionIDs`, `Status`)
 VALUES 
     ('Affiliate', '33,74,75,76,77,78,81', 1),
-    ('Editor', '33,1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,22,23,24,25,34,35,36,37,38,39,41,42,43,44,45,46,81,82', 1),
+    ('Editor', '33,1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,22,23,24,25,34,35,36,37,38,39,41,42,43,44,45,46,81,82,84,85,86,87', 1),
     ('Manager', '33,15,16,17,18,19,20,40,59,60,61,62,66,67,81,82', 1),
     ('Sales AND Marketing', '47,48,49,50,51,52,53,54,55,56,57,58,59,62,81,82,83', 1),
     ('HR', '26,27,28,29,63,69,64,65,68,70,71,72,73,81,82', 1),
@@ -608,13 +604,7 @@ VALUES
 
 -- If ActionType = 1 show on dushboard, 2 => actions with POST requests and edits  that we do not show as a botton on the dashboard.
 INSERT INTO `actions` (`Action`, `ActionDir`, `ActionName`, `ActionGroup`, `ActionType`, `Img`)
-VALUES 
-    ('slides', 'slides', 'Slides', 0, 1, 'fas fa-sliders-h'),    
-    ('add_slide', 'add-slide', 'Add Slide', 0, 1, 'fas fa-plus'),    
-    ('add_slide_post', 'add_slide', 'Add Slide', 0, 2, 'fas fa-shopping-basket'),    
-    ('ticket', 'ticket/', 'ticket', 0, 2, 'fas fa-ticket'),    
-
-    
+VALUES     
     ('products', 'products', 'Products', 1, 1, 'fas fa-shopping-basket'),    
     ('pd', 'product/new', 'Add Product', 1, 1, 'fas fa-plus'),    
     ('add_pr', 'add_product', 'Add Product', 1, 2, 'add-product.png'),    
@@ -715,7 +705,12 @@ VALUES
 
     ('setroll', 'setroll/', 'Set role', 18, 2, ''),
 
-    ('get_chart_data', 'get-chart-data', 'Get chart data', 19, 2, '')
+    ('get_chart_data', 'get-chart-data', 'Get chart data', 19, 2, ''),
+
+    ('slides', 'slides', 'Slides', 0, 1, 'fas fa-sliders-h'),    
+    ('add_slide', 'add-slide', 'Add Slide', 0, 1, 'fas fa-plus'),    
+    ('add_slide_post', 'add_slide', 'Add Slide', 0, 2, 'fas fa-shopping-basket'),    
+    ('ticket', 'ticket/', 'ticket', 0, 2, 'fas fa-ticket')
     ;
 
     INSERT INTO `position` (`Position`, `rolIDs`, `Status`)

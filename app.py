@@ -805,7 +805,6 @@ def add_slide_post():
                     """
         sqlValTuple = (order, lastOrder, result.get('inserted_id'), languageID)
         resultUpdate = sqlUpdate(sqlQuery, sqlValTuple)
-        print(resultUpdate)
         if resultUpdate['status'] == '-1':
             answer = gettext('Something went wrong. Please try again! 3')
             return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken})
@@ -1172,7 +1171,6 @@ def checkout():
 
         paymentMethod, priceState = [False, False]
         for key, value in data.items():
-            print(key, '=>', value)
             if key == "payment_methods" and value in allowedPaymentMethods:
                 paymentMethod = value
             if key != 'email' and key != 'promo' and key != 'ptData' and list != type(value) != bool and value.strip() == '':
@@ -1445,7 +1443,6 @@ def orders(filter):
                 LIMIT {rowsToSelect}, {int(PAGINATION)}; 
                """
     result = sqlSelect(sqlQuery, sqlValTuple, True)
-    print(json.dumps(result, indent=4))
     sideBar = side_bar_stuff()
 
     numRows = totalNumRows('payment_details', where, sqlValTuple)
@@ -1967,7 +1964,6 @@ def get_email_content():
 
     sqlQueryUpdate = "UPDATE `client_messages` SET `Status` = 1 WHERE `ID` = %s;"
     sqlup = sqlUpdate(sqlQueryUpdate, (messageID,))
-    print(sqlup)
     return jsonify({'status': "1", 'row': result['data'][0], 'newCSRFtoken': newCSRFtoken})
 
 
@@ -4371,7 +4367,7 @@ def edit_profile(stuffID):
 
         languages = supported_langs()
         row = result['data'][0]
-
+        
         return render_template('edit-profile.html',  row=row, languages=languages, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
         
     if request.method == 'POST':
@@ -7644,7 +7640,6 @@ def get_activitis():
             """
     sqlValTuple = (languageID, RefKey, languageID, int(start), int(limit))
     result = sqlSelect(sqlQuery, sqlValTuple, True)
-    print(result)
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext('Nothing to show'), 'newCSRFtoken': newCSRFtoken})
 

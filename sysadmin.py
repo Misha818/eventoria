@@ -19,6 +19,7 @@ import requests
 import cssutils
 import base64
 import imghdr
+import json
 
 
 def with_conn(f):
@@ -680,8 +681,9 @@ def login_required(f):
         if Action not in exeptionActions:
             if permissions(userID, Action) == False:
                 return redirect("/login")
-                
+
         return f(*args, **kwargs)
+    
     return decorated_function
 
 
@@ -699,14 +701,11 @@ def permissions(stuffID, Action):
                 """
     sqlValTuple = (stuffID,)
     result = sqlSelect(sqlQuery, sqlValTuple, False)
-
     if result['length'] == 0:
         session.clear()
         return False
     
-    # print(stuffID)
     for actionTuple in result['data']:
-        # print(actionTuple[0] + ' ' + Action + '\n')
         if actionTuple[0] == Action:
             session['action_info'] = {'actionName': actionTuple[1], 'role': actionTuple[2]}
             action_info()
@@ -866,7 +865,6 @@ def generate_pagination_urls(page, numRows, pagination):
     if page < total_pages:
         url_next = f"{url_for('team', _external=True)}/{page + 1}"
         urls["next"] = url_next
-    print(urls)
     return urls
 
 
@@ -1143,16 +1141,12 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
 
     totalPrice = 0
     for row in data['ptData']:
-        # print(f'showing row of ptData {row}')
-        # QUANTITY = row['quantity']
         QUANTITY = len(data['contact_list'])
         for r in result['data']:
             if QUANTITY == 0:
                 break
             
             if row['ptID'] == r['ptID']:
-                # print(f'quantity before: ptID is {r["ptID"]} quantity is {r["Quantity"]} and QUANTITY is {QUANTITY}')
-                                
                 if r['Quantity'] >= QUANTITY:
                     if r['discount'] is not None:
                         totalPrice = totalPrice +  r['Price'] * QUANTITY - r['Price'] * QUANTITY * r['discount'] / 100
@@ -1199,7 +1193,6 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                             'payment_details_id': pdID
                         })
                     
-                # print(f'quantity after: ptID is {r["ptID"]} quantity is {r["Quantity"]} and QUANTITY is {QUANTITY}')
 
     # insert into `buffer_store` bufferQuantities
     bufferInsertRows = "(%s, %s, %s, %s, %s, %s, %s, %s, %s)," * len(bufferQuantities)
@@ -1494,14 +1487,11 @@ def send_email_mailgun(credentials):
     )
     
     if response.status_code == 200:
-        print("This is email ID ", response.json().get('id'))
         return {'status': '1', 'emailID': response.json().get('id')}  # Message ID for tracking
     else:
-        print("This is Error Message ", response.text)
         return {'status': '0', 'answer': "Failed to send email:" + response.text} 
 
 def check_delivery_status(message_id):
-    # print("Waiting for status update...")
     time.sleep(10)  # Wait a bit to allow Mailgun to process
     response = requests.get(
         f"https://api.mailgun.net/v3/{MAILGUN_DOMAIN}/events",
@@ -1513,13 +1503,11 @@ def check_delivery_status(message_id):
         events = response.json().get('items', [])
         answer = False
         for event in events:
-            # print(f"Event: {event.get('event')}, Timestamp: {event.get('timestamp')}")
             if event.get('event') == 'delivered':
                 answer = True
                 
         return answer
     else:
-        # print("Failed to fetch delivery status:", response.text)
         return answer
 
 
@@ -1723,7 +1711,6 @@ def send_confirmation_email(pdID, trackOrderUrl):
         "telegram_url": "",
         "main_currency": MAIN_CURRENCY
     }
-    # print(data)
     # resp = {'status_code': None}
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
 
