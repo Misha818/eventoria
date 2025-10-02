@@ -86,8 +86,14 @@
         }
 
         .logo img {
-        transform-origin: 50% 50%;
-        animation: logo-spin 30s linear infinite; /* slower = larger number */
+            transform-origin: 50% 50%;
+            animation: logo-spin 30s linear infinite; /* slower = larger number */
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         @keyframes logo-spin {
@@ -101,7 +107,7 @@
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 1rem;
             align-items: center;
         }
 
@@ -775,6 +781,23 @@
         @media (max-width: 900px) {
             .hero-content {
                 margin-top: 10%;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--mist-gray);
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 2rem;
+                transition: var(--transition);
+            }
+
+            .mobile-menu-toggle {
+                display: block;
             }
         }
 
