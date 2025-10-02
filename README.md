@@ -72,7 +72,7 @@ sudo chmod -R 775 /var/www/eventoria/static/images
 
 # 1. Update your remote‐tracking branch
 <!-- git fetch origin -->
-sudo -u eventoria git -C /var/www/eventoria fetch origin
+sudo -u eventoria git fetch origin
 
 # 2. Discard any staged changes in templates/ and reset them to origin/main
 sudo -u eventoria git restore --source=origin/main --staged -- templates/
