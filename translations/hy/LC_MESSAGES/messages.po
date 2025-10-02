@@ -631,7 +631,7 @@ msgstr "ապրանքը ավելացվել է զամբյուղ։"
 
 #: app.py:7369
 msgid "site name"
-msgstr "Մայրիկի Հացը"
+msgstr "Իվենտորիա"
 
 #: app.py:7441 app.py:7504
 msgid "Please specify email!"
