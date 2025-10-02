@@ -31,7 +31,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        html, body { overflow-x: hidden; }
         body {
             font-family: 'Open Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-bright);
@@ -88,12 +88,6 @@
         .logo img {
             transform-origin: 50% 50%;
             animation: logo-spin 30s linear infinite; /* slower = larger number */
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         @keyframes logo-spin {
@@ -275,6 +269,9 @@
          } */
 
         .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
             z-index: 2;
             text-align: center;
@@ -927,6 +924,11 @@
         @media (max-width: 380px) {
             .hero-content {
                 margin-top: 23%;
+            }
+
+            .hero-title {
+                font-size: 30px;
+                margin-top: 5%;
             }
 
 
