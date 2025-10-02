@@ -128,189 +128,6 @@ cert_file = os.path.join(basedir, 'certs', 'certificate.crt')
 
 orderStatusList = get_order_status_list()
 
-
-# from flask import render_template_string
-# @app.route("/test", methods=["GET"])
-# @validate_request
-# def test():    
-
-#     # result = [{'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': 'lalal', 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': "good@mail.com", 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 1', 'quantity': 3, 'price': 1000.0, 'discount': None}, {'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': None, 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': None, 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 2', 'quantity': 1, 'price': 2000.0, 'discount': None}]
-#     # new_html = """<p style="margin: 0; padding: 0"><span style='font-size: 20px; font-family: "Montserrat", sans-serif'>Hola amigos</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(40, 252, 85); font-family: "Montserrat", sans-serif'><u>Amigios Muchachos ketanios</u></em></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(255, 255, 255); background-color: rgb(211, 26, 26); font-family: "Montserrat", sans-serif'><u>HaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<span></span></u></em></p>"""
-
-#     data = {
-#         # For add teammate
-        
-#         # 'type': 'mailersend',
-#         # 'langPrefix': 'en',
-#         # 'template': 'static.html',
-#         # 'subject': 'Teammate Signup Invitation',
-#         # 'mail_from': 'info@mammysbread.am',
-#         # 'mail_from_user': 'CEO TEST',
-#         # 'mail_to': 'Mishayil Movsisyan',
-#         # 'mail_to_email': 'misha818m@gmail.com',
-#         # 'main_url': 'http://127.0.0.1:5000',
-#         # 'logo_url': 'http://127.0.0.1:5000/static/images/logo.jpg',
-#         # 'logo_alt': "Mammy's Bread",
-#         # 'user_name': 'Test User',
-#         # 'btn_0_content': 'Click here to sign up',
-#         # 'btn_0_href': 'http://127.0.0.1:5000/stuff-signup/jdsakjdkajdkasjdkjaskdjaskdkjafbas',
-#         # 'greatings': gettext("Hello dear"),
-#         # 'text_0': 'We are thrilled to invite you to join the Mammy’s Bread team! ',
-#         # 'text_1': 'Simply click the button below to finish setting up your profile and get started:',
-#         # 'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
-#         # 'text_3': gettext("cheers"),
-#         # 'company_team': gettext("Mammy's Bread Team"),
-#         # 'title': 'Teammate Signup',
-#         # 'header': 'Teammate Signup',
-#         # 'company_name': gettext("Your Company. All rights reserved."),
-#         # 'company_address': '',       
-#         # 'year': 2025,
-#         # 'fb_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png',
-#         # 'insta_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png',
-#         # 'youtube_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png',
-#         # 'whatsapp_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png',
-#         # 'telegram_icon': '',
-#         # 'fb_url': '',
-#         # 'insta_url': '',
-#         # 'youtube_url': '',
-#         # 'whatsapp_url': '',
-#         # 'telegram_url': ''
-        
-#         # For send email
-        
-#         'data': '<p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>Hello dear Misha!</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>I am here to test some functionallity. So I am going to write some text.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: cursive, "Kurland"\'>In today’s fast-paced digital world, effective communication is more important than ever. Whether you\'re writing an email, crafting a blog post, or composing content for social media, clarity and conciseness can make your message stand out. Always consider your audience and choose language that resonates with them. Structure your text with short paragraphs and engaging headings. Proofread carefully to avoid errors. Great communication fosters trust, builds relationships, and drives success in any field.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Wish y<span>\ufeff</span>ou all the best,</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Sincerly</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Misha\xa0</span></p>',
-#         'langPrefix': 'en',
-#         'type': 'mailersend',
-#         'template': 'typed.html',
-#         'subject': 'Testing typed email functionality',
-#         'mail_from': 'info@mammysbread.am',
-#         'mail_from_user': 'Satti Matti',
-#         'mail_to_email': 'mishatab7@gmail.com',
-#         'main_url': 'http://127.0.0.1:5000',
-#         'logo_url': 'http://127.0.0.1:5000/static/images/logo.jpg',
-#         'logo_alt': "Mammy's Bread",
-#         'continue_shopping': 'Continue Shopping',
-#         'contact_us': 'Contact US',
-#         'contact_us_url': 'http://127.0.0.1:5000/contacts',
-#         'company_name': gettext("Your Company. All rights reserved."),
-#         'company_address': '',
-#         'unsubscribe': 'unsubscribe',
-#         'unsubscribe_url': 'http://127.0.0.1:5000/unsubscribe',
-#         'year': 2025,
-#         'fb_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png',
-#         'insta_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png',
-#         'youtube_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png',
-#         'whatsapp_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png',
-#         'telegram_icon': '',
-#         'fb_url': '',
-#         'insta_url': '',
-#         'youtube_url': '',
-#         'whatsapp_url': '',
-#         'telegram_url': '',
-#         'main_currency': '֏'
-
-#         # for payment-confirmetion email
-#         # 'data': [
-#         #     {
-#         #         'ID': 17,
-#         #         'payment_method': 'Visa',
-#         #         'CMD': 4242,
-#         #         'promo_code': None,
-#         #         'final_price': 4000.0,
-#         #         'FirstName': 'Jhon',
-#         #         'LastName': 'Matti',
-#         #         'phone': '37433151580',
-#         #         'email': 'mishatab7@gmail.com',
-#         #         'address': '182 KHUDYAKOV STREET',
-#         #         'note': None,
-#         #         'prTitle': 'Թեսթավորման պրոդուկտ',
-#         #         'ptTitle': 'Գին 1',
-#         #         'quantity': 2,
-#         #         'price': 1000.0,
-#         #         'discount': 10
-#         #     },
-#         #     {
-#         #         'ID': 17,
-#         #         'payment_method': 'Visa',
-#         #         'CMD': 4242,
-#         #         'promo_code': None,
-#         #         'final_price': 4000.0,
-#         #         'FirstName': 'Jhon',
-#         #         'LastName': 'Matti',
-#         #         'phone': '37433151580',
-#         #         'email': 'mishatab7@gmail.com',
-#         #         'address': '182 KHUDYAKOV STREET',
-#         #         'note': None,
-#         #         'prTitle': 'Թեսթավորման պրոդուկտ',
-#         #         'ptTitle': 'Գին 2',
-#         #         'quantity': 1,
-#         #         'price': 2000.0,
-#         #         'discount': 10
-#         #     }
-#         # ],
-#         # 'langPrefix': 'hy',
-#         # 'type': 'mailersend',
-#         # 'template': 'dynemic.html',
-#         # 'subject': 'Վճարման հաստատում',
-#         # 'mail_from': 'info@mammysbread.am',
-#         # 'mail_from_user': 'Մայրիկի Հացը',
-#         # 'mail_to': 'Jhon Matti',
-#         # 'mail_to_email': 'mishatab7@gmail.com',
-#         # 'main_url': 'http://127.0.0.1:5000',
-#         # 'logo_url': 'http://127.0.0.1:5000/static/images/logo.jpg',
-#         # 'logo_alt': 'Մայրիկի Հացը',
-#         # 'text_0': 'Շնորհակալություն մեր ծառայություններից օգտվելու համար։ Ձեր պատվերը ընթացքի մեջ է։',
-#         # 'delivery_info': 'Առաքման տվյալներ',
-#         # 'Order': 'Պատվեր',
-#         # 'order_number': '#17',
-#         # 'order_details': 'Պատվերի մանրամասներ',
-#         # 'product': 'Ապրանք',
-#         # 'price': 'Գին',
-#         # 'total': 'Ընդհամենը',
-#         # 'discount': 'Զեղչ',
-#         # 'discounted_price': 'Զեղչված գին',
-#         # 'display': '',
-#         # 'cp_price': '3600',
-#         # 'payment_method': 'Վճարման եղանակ',
-#         # 'continue_shopping': 'Շարունակել գնումները',
-#         # 'continue_shopping_url': 'http://127.0.0.1:5000/products-client',
-#         # 'contact_us': 'Կապ',
-#         # 'contact_us_url': 'http://127.0.0.1:5000/contacts',
-#         # 'track_order': 'Հետևեք Ձեր պատվերին',
-#         # 'track_order_url': 'http://127.0.0.1:5000/order-tracker/BEGIzENqLnWe2rTNAEbZBGK1uAQNTennq2ta2d85',
-#         # 'title': 'Գնումը հաստատված է։',
-#         # 'header': 'Գնումը հաստատված է։',
-#         # 'company_name': 'Մայրիկի Հացը',
-#         # 'company_rights': 'Մայրիկի Հացը։ Բոլորս իրավունքները պաշտպանված են։',
-#         # 'company_address': '',
-#         # 'unsubscribe': 'հրաժարվել բաժանորդագրությունից։',
-#         # 'unsubscribe_url': 'http://127.0.0.1:5000/unsubscribe',
-#         # 'year': 2025,
-#         # 'fb_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png',
-#         # 'insta_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png',
-#         # 'youtube_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png',
-#         # 'whatsapp_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png',
-#         # 'telegram_icon': '',
-#         # 'fb_url': '',
-#         # 'insta_url': '',
-#         # 'youtube_url': '',
-#         # 'whatsapp_url': '',
-#         # 'telegram_url': '',
-#         # 'main_currency': '֏'
-    
-#     }
-
-#     # SMAIL_API='http://localhost:8001/test'
-#     headers = {
-#         "X-API-KEY": SMAIL_API_KEY,
-#         "Content-Type": "application/json"
-#     }
-#     # resp = requests.post(SMAIL_API, headers=headers, json=data)
-#     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
-
-#     return render_template_string(resp.text)
-
-
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
@@ -371,11 +188,12 @@ def login():
     if request.method == "POST":
         session.clear()
         newCSRFtoken = generate_csrf()
+        TURNSTILE_SECRET = os.getenv('TURNSTILE_SECRET')
         token = request.form.get("cf-turnstile-response", "")
         resp = requests.post(
             "https://challenges.cloudflare.com/turnstile/v0/siteverify",
             data={
-                "secret": '0x4AAAAAABbxK-6wNJ8vUA0XomhmPextt2U',
+                "secret": TURNSTILE_SECRET,
                 # "secret": '2x0000000000000000000000000000000AA',
                 "response": token,
                 "remoteip": request.remote_addr
@@ -429,8 +247,8 @@ def login():
             setlang()
         if 'user_id' in session:
             return redirect(url_for('stuff'))
-        
-        return render_template("login.html", current_locale=get_locale())
+        TURNSTILE_SITE_KEY = os.getenv('TURNSTILE_SITE_KEY')
+        return render_template("login.html", TURNSTILE_SITE_KEY=TURNSTILE_SITE_KEY, current_locale=get_locale())
 
 
 @app.errorhandler(429)

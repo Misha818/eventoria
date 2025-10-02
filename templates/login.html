@@ -96,7 +96,7 @@
     <input type="text" id="username" class="input-field" name="username" placeholder="{{ _('Username') }}" required>
     <input type="password" class="input-field" name="password" placeholder="{{ _('Password') }}" id="password" autocomplete="current-password" required>
 
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAABbxK2q02dheGui4"></div>
+    <div class="cf-turnstile" data-sitekey="{{ TURNSTILE_SITE_KEY }}"></div>
     <div id="login" class="submit-button">{{ _('Log In') }}</div>
     <div id="saving" class="submit-button hidden">{{ _('Loading...') }}</div>
   </form>
