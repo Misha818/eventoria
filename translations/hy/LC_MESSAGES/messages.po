@@ -2800,7 +2800,7 @@ msgid "Accessibility"
 msgstr "Հասանելիություն"
 
 msgid "Ordering"
-msgstr "Հաջորդականություն"
+msgstr "Հերթականություն"
 
 msgid "Add teammate"
 msgstr "Ավելացնել աշխատակից"

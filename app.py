@@ -699,7 +699,7 @@ def get_products():
 
 
 @app.route('/add-slide', methods=['GET'])
-# @login_required
+@login_required
 def add_slide():
     languageID = getLangID()
     sqlQueryOrder = """SELECT *
@@ -719,7 +719,7 @@ def add_slide():
 
 
 @app.route('/add_slide', methods=['POST'])
-# @login_required
+@login_required
 @validate_request
 def add_slide_post():
     newCSRFtoken = generate_csrf()
@@ -814,7 +814,7 @@ def add_slide_post():
 
 
 @app.route('/slides', methods=['GET', 'POST'])
-# @login_required
+@login_required
 @validate_request
 def slides():
     languageID = getLangID()
@@ -1703,7 +1703,7 @@ def stuff_affiliate_orders(filter):
     
 
 @app.route('/ticket/<pdID>', methods=['GET'])
-# @login_required
+@login_required
 @validate_request
 def ticket(pdID):
     newCSRFtoken = generate_csrf()
