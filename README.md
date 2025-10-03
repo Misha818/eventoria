@@ -76,6 +76,7 @@ sudo -u eventoria git fetch origin
 
 # 2. Discard any staged changes in templates/ and reset them to origin/main
 sudo -u eventoria git restore --source=origin/main --staged -- templates/
+sudo -u eventoria git restore --source=origin/main --staged -- static/css/styles.css
 <!-- sudo -u eventoria git restore --source=origin/main --staged --worktree -- templates/ -->
 
 # 3. Discard any unstaged (working‐tree) changes in templates/

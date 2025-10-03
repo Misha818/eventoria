@@ -908,6 +908,7 @@
 
             .section {
                 padding: unset;
+                margin: unset;
                 /* padding: 4rem 0; */
             }
 

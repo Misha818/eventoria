@@ -2207,7 +2207,7 @@ msgstr "Եղեք առաջինը, ով կիմանա գալիք միջոցառու
 #: templates/index.html:239
  
 msgid "Subscribe"
-msgstr "Բաժանորդագրվել։"
+msgstr "Բաժանորդագրվել"
 
 #: templates/login.html:92 templates/login1.html:4
 msgid "Login"
