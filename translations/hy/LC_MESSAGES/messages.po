@@ -749,9 +749,7 @@ msgstr "Հարգելի՛"
 
 #: sysadmin.py:1686 templates/confirmation-page.html:311
 msgid "Thank you for shopping with us. We are preparing your order now!"
-msgstr ""
-"շնորհակալություն մեր ծառայություններից օգտվելու համար։ Ձեր պատվերը "
-"ընթացքի մեջ է։"
+msgstr "շնորհակալություն գրանցման համար։ Օգտվեք տոմսի ներբեռնման պատկերակից կամ «Ներբեռնել բոլորը» կոճակից, եթե ունեք մի քանի տոմս։"
 
 #: sysadmin.py:1687
 msgid "Delivery Information"
