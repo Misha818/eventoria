@@ -691,7 +691,7 @@ function formatInternationalNumber(phoneNumber) {
         const allBtn = document.createElement('button');
         allBtn.className = 'toolbar-btn';
         allBtn.dataset.ignore = 'true';
-        allBtn.textContent = 'Download all';
+        allBtn.textContent = `{{ _('Download all') }}`;
         allBtn.addEventListener('click', async () => {
           const items = Array.from(document.querySelectorAll('.ticket-container'));
           for (let i = 0; i < items.length; i++) {

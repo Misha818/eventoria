@@ -570,7 +570,7 @@ msgstr "Please specify service type!"
 
 #: app.py:6630 app.py:6785
 msgid "Please Specify Store"
-msgstr "Please Specify Spot"
+msgstr "Please Specify box office"
 
 #: app.py:6634 app.py:6789
 msgid "Please Specify Quantity"
@@ -730,7 +730,7 @@ msgstr "Ready"
 #: templates/affiliate-orders.html:263 templates/order-details
 #: templates/orders.html:230
 msgid "Delivered"
-msgstr "Delivered"
+msgstr "Entered"
 
 #: sysadmin.py:1678
 msgid "Payment Confirmation"
@@ -1129,7 +1129,7 @@ msgstr "An error occurred"
 #: templates/slideshow.html:219 templates/store.html:124
 #: templates/store.html:376
 msgid "Add To Store"
-msgstr "Add To Spot"
+msgstr "Add To Box Office"
 
 #: templates/add_to_store.html:65 templates/edit_store.html:62
 msgid "Choose a Product"
@@ -1158,7 +1158,7 @@ msgstr "Click on me to add a service"
 
 #: templates/add_to_store.html:405 templates/edit_store.html:410
 msgid "Choose Store"
-msgstr "Choose Spot"
+msgstr "Choose Box Office"
 
 #: templates/admin_panel.html:125
 msgid "Admin Panel"
@@ -1991,7 +1991,7 @@ msgstr "Slide updated successfully!"
 
 #: templates/edit_store.html:3 templates/edit_store.html:54
 msgid "Edit Store"
-msgstr "Edit Spot"
+msgstr "Edit Box Office"
 
 #: templates/emails.html:3
 msgid "Emails"
@@ -2613,7 +2613,7 @@ msgstr ""
 
 #: templates/store.html:3 templates/store.html:1017
 msgid "Store"
-msgstr "Spot"
+msgstr "Box Office"
 
 #: templates/store.html:123
 msgid "Filters"
@@ -2633,11 +2633,11 @@ msgstr "Outdated Quantity"
 
 #: templates/store.html:249
 msgid "The store(s) are empty."
-msgstr "The spot(s) are empty."
+msgstr "The box office(s) are empty."
 
 #: templates/store.html:375
 msgid "No Product Type Detected In Store"
-msgstr "No Service Type Detected In Spot"
+msgstr "No Service Type Detected In Box Office"
 
 #: templates/store.html:391
 msgid "in stock"
@@ -2649,7 +2649,7 @@ msgstr "expired"
 
 #: templates/store.html:625
 msgid "Shows From All Stores"
-msgstr "Shows From All Spots"
+msgstr "Shows From All Box Offices"
 
 #: templates/store.html:626
 msgid "Shows All Products"
@@ -2943,4 +2943,7 @@ msgstr "Edit Position"
 
 msgid "recipient"
 msgstr "recipient"
+
+msgid "Download all"
+msgstr "Download all"
 

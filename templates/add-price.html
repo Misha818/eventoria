@@ -57,9 +57,8 @@
     
     <div class="payment_methods" id="pm1">
     <div class="pm-toggle" role="combobox" aria-expanded="false" tabindex="0">{{ _('Select payment methods') }}</div>
-
     <ul class="pm-menu" aria-label="Payment methods">
-        {% for row in paymentMethods %}
+        {% for row in paymentMethods.data %}
             <li><label><input type="checkbox" value="{{ row['ID'] }}"> {{ row['method'] }}</label></li>
         {% endfor %}
     </ul>

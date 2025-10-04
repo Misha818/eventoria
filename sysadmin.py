@@ -1756,7 +1756,7 @@ def is_valid_url(url: str) -> bool:
 def get_payment_methods(columns, constructDict=True):
     sqlQuery = f"SELECT {columns} FROM `payment_methods` WHERE `Status` = 1;"
     result = sqlSelect(sqlQuery, (), constructDict)
-
+    
     return result
 
 def get_pt_payment_methods(ptRefKey):

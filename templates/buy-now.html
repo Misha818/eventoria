@@ -666,8 +666,10 @@ async function get_pt_quantity(ptID, quantity) {
                 }
     
                 aTag.href = window.location.origin + '/cart/' + Cart;
-                document.getElementById('fill-data-container').style.width = "100%";
-                
+                if (prData[0].Price == 0) {
+                  document.getElementById('fill-data-container').style.width = "100%";
+                }
+
                 const container = document.getElementById('fill-data-container')
                 // create an element
                 const h1 = document.createElement('h1');

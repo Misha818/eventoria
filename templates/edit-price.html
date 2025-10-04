@@ -59,7 +59,7 @@
 {% set ns = namespace(payments='') %}
 {% set ns = namespace(allActives='') %}
 
-{% for row in paymentMethods %}
+{% for row in paymentMethods.data %}
   {% if row.ID in active %}
     {% set checked = ' checked' %}
     {% set ns.allActives = ns.allActives ~ row.method + ', ' %}

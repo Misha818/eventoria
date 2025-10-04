@@ -243,11 +243,11 @@ msgstr "Կատեգորիայի անվանումը արդեն գոյությու�
 
 #: app.py:3617
 msgid "Product is published"
-msgstr "Ապրանքը հրապարակված է։"
+msgstr "Ծառայությունը հրապարակված է։"
 
 #: app.py:3619
 msgid "Product is unpublished"
-msgstr "Ապրանքը հրապարակումը դադարեցված է։"
+msgstr "Ծառայության հրապարակումը դադարեցված է։"
 
 #: app.py:3755 app.py:3957 app.py:4043 app.py:4049 app.py:4120 app.py:4261
 #: app.py:4333 app.py:4692 app.py:4698
@@ -554,7 +554,7 @@ msgstr "Գաղտնաբառը պետք է պարունակի առնվազն մե�
 msgid ""
 "You have already added this product to the basket. You can change the "
 "quantity if You would like to."
-msgstr "Դուք արդեն ավելացրել եք այս ապրանքը զամբյուղ։ Կարող եք փոխել քանակը։"
+msgstr "Դուք արդեն ավելացրել եք այս ծառայությունը զամբյուղ։ Կարող եք փոխել քանակը։"
 
 #: app.py:6462 app.py:7404 templates/buy-now.html:82 templates/buy-now.html:371
 #: templates/checkout.html:86 templates/checkout.html:486
@@ -575,7 +575,7 @@ msgstr "Խնդրում ենք մուտքագրել ծառայության տես
 
 #: app.py:6630 app.py:6785
 msgid "Please Specify Store"
-msgstr "Խնդրում ենք մուտքագրել տարածքը։"
+msgstr "Խնդրում ենք մուտքագրել տոմսարկղը։"
 
 #: app.py:6634 app.py:6789
 msgid "Please Specify Quantity"
@@ -627,7 +627,7 @@ msgstr "Առավելագույն հասանելի քանակը "
 
 #: app.py:7335
 msgid "item added to the cart"
-msgstr "ապրանքը ավելացվել է զամբյուղ։"
+msgstr "ծառայությունը ավելացվել է զամբյուղ։"
 
 #: app.py:7369
 msgid "site name"
@@ -737,7 +737,7 @@ msgstr "Պատրաստ է"
 #: templates/affiliate-orders.html:263 templates/order-details
 #: templates/orders.html:230
 msgid "Delivered"
-msgstr "Առաքված"
+msgstr "Մուտք"
 
 #: sysadmin.py:1678
 msgid "Payment Confirmation"
@@ -863,7 +863,7 @@ msgstr "Դուք դեռ չեք մուտքագրել որևէ ծառայությ�
 
 #: templates/add-price.html:118 templates/edit-price.html:147
 msgid "Click on the link below to add a product category!"
-msgstr "Սեղմեք ներքևի հղման վրա ապրանքային կատեգորիա ավելացնելու համար։"
+msgstr "Սեղմեք ներքևի հղման վրա ծառայության կատեգորիա ավելացնելու համար։"
 
 #: templates/add-price.html:119 templates/edit-price.html:148
 msgid "Add Product Type Specifications"
@@ -1064,7 +1064,7 @@ msgstr "Մուտքագրեք այլընտրանքային տեքստը"
 
 #: templates/add_product_lang.html:55
 msgid "Add Product in another lang"
-msgstr "Ավելացնել կամ թարգմանել ապրանքը հայերենով"
+msgstr "Ավելացնել կամ թարգմանել ծառայությունը հայերենով"
 
 #: copy.html:554 templates/add_product_lang.html:61 templates/product
 #: templates/product.html:715
@@ -1136,7 +1136,7 @@ msgstr "Սխալ է տեղի ունեցե"
 #: templates/slideshow.html:219 templates/store.html:124
 #: templates/store.html:376
 msgid "Add To Store"
-msgstr "Կցել տարածքին"
+msgstr "Կցել տոմսարկղին"
 
 #: templates/add_to_store.html:65 templates/edit_store.html:62
 msgid "Choose a Product"
@@ -1165,7 +1165,7 @@ msgstr "Սեղմեք ինձ վրա ծառայություն ավելացնելո
 
 #: templates/add_to_store.html:405 templates/edit_store.html:410
 msgid "Choose Store"
-msgstr "Ընտրեք տարածքը"
+msgstr "Ընտրեք տոմսարկղը"
 
 #: templates/admin_panel.html:125
 msgid "Admin Panel"
@@ -1233,7 +1233,7 @@ msgstr "Իվենտորիա"
 
 #: templates/admin_panel.html:197
 msgid "Chose the number of top products"
-msgstr "Ընտրեք լավագույն ապրանքների քանակը"
+msgstr "Ընտրեք լավագույն ծառայությունների քանակը"
 
 #: templates/admin_panel.html:198
 msgid "Top"
@@ -1543,7 +1543,7 @@ msgstr "Գնել հիմա"
 
 #: templates/buy-now.html:90
 msgid "Items in Cart"
-msgstr "Ապրանքներ զամբյուղում"
+msgstr "Ծառայություններ զամբյուղում"
 
 #: templates/buy-now.html:112 templates/buy-now.html:137
 #: templates/checkout.html:116 templates/checkout.html:141
@@ -1839,7 +1839,7 @@ msgstr "Խնդրում ենք ուղղել կարմիրով նշված բոլո�
 
 #: templates/create-promo-code.html:359 templates/edit-promo-code.html:371
 msgid "Please select at least one product type!"
-msgstr "Խնդրում ենք մուտքագրել առնվազն մեկ ապրանքատեսակ։"
+msgstr "Խնդրում ենք մուտքագրել առնվազն մեկ ծառայության տեսակ։"
 
 #: templates/create-promo-code.html:369 templates/edit-promo-code.html:381
 msgid "Please select expiration date!"
@@ -2001,7 +2001,7 @@ msgstr "Սլայդը հաջողությամբ խմբագրվեց"
 
 #: templates/edit_store.html:3 templates/edit_store.html:54
 msgid "Edit Store"
-msgstr "Խմբագրել տարածքը"
+msgstr "Խմբագրել տոմսարկղը"
 
 #: templates/emails.html:3
 msgid "Emails"
@@ -2505,7 +2505,7 @@ msgstr "Քաղաք, Նահանգ, 12345"
 
 #: templates/public.html:112
 msgid "Subscribe to us!"
-msgstr "Բաժանորդագրվեք մեզ։"
+msgstr "Բաժանորդագրվեք մեզ"
 
 #: templates/public.html:114 templates/public.html:489
 msgid "Please specify valid email address!"
@@ -2632,7 +2632,7 @@ msgstr "Թարգմանության ենքակա դաշտի անվանումը՝"
 
 #: templates/store.html:3 templates/store.html:1017
 msgid "Store"
-msgstr "Տարածք"
+msgstr "Տոմսարկղ"
 
 #: templates/store.html:123
 msgid "Filters"
@@ -2652,11 +2652,11 @@ msgstr "Ժամկետանց քանակը"
 
 #: templates/store.html:249
 msgid "The store(s) are empty."
-msgstr "Տարածք(ներ)ը դատարկ է(են)"
+msgstr "Տոմսարկղ(եր)ը դատարկ է(են)"
 
 #: templates/store.html:375
 msgid "No Product Type Detected In Store"
-msgstr "Տարածքում ծառայության տեսակ չի հայտնաբերվել"
+msgstr "Տոմսարկղում ծառայության տեսակ չի հայտնաբերվել"
 
 #: templates/store.html:391
 msgid "in stock"
@@ -2668,7 +2668,7 @@ msgstr "ժամկետանց"
 
 #: templates/store.html:625
 msgid "Shows From All Stores"
-msgstr "Ցուցադրում է բոլոր տարածքներից"
+msgstr "Ցուցադրում է բոլոր տոմսարկղերից"
 
 #: templates/store.html:626
 msgid "Shows All Products"
@@ -2972,3 +2972,5 @@ msgstr "Ավելացվում է"
 msgid "Buy now"
 msgstr "Գնել հիմա"
 
+msgid "Download all"
+msgstr "Ներբեռնել բոլորը"

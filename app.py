@@ -6408,12 +6408,12 @@ def get_pt_quantity():
             maxQuantity = result['data'][0]['maxQuantity']
             if float(maxQuantity) >= quantity:
                 if float(result['data'][0]['quantity']) >= quantity:
-                    result['price'] = quantity * float(result['data'][0]['Price'])
+                    result['price'] = quantity * float(result['data'][0].get('Price', 0))
             else:
                 message = gettext('The specified amount is unavailable.')        
         else:
             if float(result['data'][0]['quantity']) >= quantity:
-                result['price'] = quantity * float(result['data'][0]['Price'])
+                result['price'] = quantity * float(result['data'][0].get('Price', 0))
             else:
                 message = gettext('The specified amount is unavailable.')      
 
