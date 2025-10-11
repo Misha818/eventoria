@@ -1,11 +1,11 @@
-from flask import Flask, session, redirect, jsonify, request, g, abort
+from flask import session, redirect, jsonify, request, g, abort, url_for
 from eventoria_db import get_db
 from dotenv import load_dotenv
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from werkzeug.utils import secure_filename
 from functools import wraps
 from bs4 import BeautifulSoup
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
 from urllib.parse import urlparse
 import logging
 import mysql.connector
@@ -467,7 +467,7 @@ def checkForRedundantFiles(fileName, colonName, tableName):
     sqlValTuple = (fileName,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
-    if result['length'] > 0:
+    if result['length'] > 1:
         return True
     else:
         return False     
@@ -662,6 +662,13 @@ def validate_request(f):
     return wrapper
 
 
+def session_expired():
+    now = datetime.now(timezone.utc)
+    elapsed = now - session['started_at']
+    return elapsed > timedelta(minutes=session['exp_minutes'])
+
+
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -670,7 +677,12 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
+        if session.get("user_id") is None or session.get('started_at') == None:
+            session.clear()
+            return redirect("/login")
+        
+        if session_expired() == True:
+            session.clear()
             return redirect("/login")
         
         userID = session.get("user_id")
@@ -681,7 +693,8 @@ def login_required(f):
         if Action not in exeptionActions:
             if permissions(userID, Action) == False:
                 return redirect("/login")
-
+        
+        session['started_at'] = datetime.now(timezone.utc)
         return f(*args, **kwargs)
     
     return decorated_function
@@ -1634,8 +1647,9 @@ def send_confirmation_email(pdID, trackOrderUrl):
         `purchase_history`.`price`,
         `purchase_history`.`discount`
     FROM `payment_details` 
-            LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-            LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+            LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+            LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+            LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
             LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
             LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
             LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
@@ -1649,6 +1663,8 @@ def send_confirmation_email(pdID, trackOrderUrl):
     ORDER BY `product`.`Order`, `product_type`.`Order`;
 """
     result = sqlSelect(sqlQuery, (pdID, getLangID()), True)
+
+    print(json.dumps(result, indent=4))
     if result['length'] == 0:
         return False
     
@@ -1662,53 +1678,61 @@ def send_confirmation_email(pdID, trackOrderUrl):
     data = {
         "data": result['data'],
         "langPrefix": session.get('lang', 'en'),
-        "type": "mailersend",
-        "template": "dynemic.html",
+        "type": "gmail",
+        "template": "static.html",
         "subject": gettext("Payment Confirmation"),
-        "mail_from": "info@mammysbread.am",
+        "mail_from": "info@eventoria.am",
         "mail_from_user": gettext("company"),
         "mail_to": result['data'][0]['FirstName'] + ' ' + result['data'][0]['LastName'],
         "mail_to_email": result['data'][0]['email'],
         "main_url": get_full_website_name(),
-        "logo_url": get_full_website_name() + '/static/images/logo.jpg',
+        "logo_url": get_full_website_name() + '/static/images/logo.png',
         "logo_alt": gettext("company"),
-        "text_0": gettext("Dear") + ' ' + result['data'][0]['FirstName'] + ', ' + gettext("Thank you for shopping with us. We are preparing your order now!"),
-        "delivery_info": gettext("Delivery Information"),
-        "Order": gettext("Order"),
-        "order_number": "#" + str(pdID),
-        "order_details": gettext("Order Details"),
-        "product": gettext("Product"),
-        "price": gettext("Price"),
-        "total": gettext("Total"),
-        "discount": gettext("Discount"),
-        "discounted_price": gettext("Discounted Price"),
-        "display": display,
-        "cp_price": cp_price,
-        "payment_method": gettext("Payment Method"),
-        "continue_shopping": gettext("Continue Shopping"),
-        "continue_shopping_url": get_full_website_name() + '/products-client',
-        "contact_us": gettext("Contact US"),
-        "contact_us_url": get_full_website_name() + '/contacts',
-        "track_order": gettext("Track Your Order"),
-        "track_order_url": trackOrderUrl,
+        'btn_0_content': gettext('Click me'),
+        'btn_0_href': trackOrderUrl,
+        'greatings': gettext("Order Confirmed!"),
+        'text_0': gettext("Dear") + ' ' + result['data'][0]['FirstName'] + ', ' + gettext('thank you for applying'),
+        'text_1': gettext('Click the button below to view and download your ticket(s)'),
+        'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
+        'text_3': gettext("See you on the event"),
+        'text_4': gettext("Kind regards"),
+        'company_team': gettext("Mammy's Bread Team"),
+
+        # "text_0": gettext("Dear") + ' ' + result['data'][0]['FirstName'] + ', ' + gettext("Thank you for shopping with us. We are preparing your order now!"),
+        # "delivery_info": gettext("Delivery Information"),
+        # "Order": gettext("Order"),
+        # "order_number": "#" + str(pdID),
+        # "order_details": gettext("Order Details"),
+        # "product": gettext("Product"),
+        # "price": gettext("Price"),
+        # "total": gettext("Total"),
+        # "discount": gettext("Discount"),
+        # "discounted_price": gettext("Discounted Price"),
+        # "display": display,
+        # "cp_price": cp_price,
+        # "payment_method": gettext("Payment Method"),
+        # "continue_shopping": gettext("Continue Shopping"),
+        # "continue_shopping_url": get_full_website_name() + '/products-client',
+        # "contact_us": gettext("Contact US"),
+        # "contact_us_url": get_full_website_name() + '/contacts',
+        # "track_order": gettext("Track Your Order"),
+        # "track_order_url": trackOrderUrl,
         "title": gettext("Order Confirmed!"),
         "header": gettext("Order Confirmed!"),
         'company_name': gettext("company"),
         'company_rights': gettext("Your Company. All rights reserved."),
         "company_address": "",
-        "unsubscribe": gettext("unsubscribe"),
-        "unsubscribe_url": get_full_website_name() + '/unsubscribe',
+        # "unsubscribe": gettext("unsubscribe"),
+        # "unsubscribe_url": get_full_website_name() + '/unsubscribe',
         "year": datetime.now().year,
-        "fb_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png",
-        "insta_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png",
-        "youtube_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png",
-        "whatsapp_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png",
-        "telegram_icon": "",
-        "fb_url": "",
-        "insta_url": "",
-        "youtube_url": "",
-        "whatsapp_url": "",
-        "telegram_url": "",
+        'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+        'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+        'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+        'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+        'telegram_url': os.getenv('TG_URL'),
+        'fb_url': os.getenv('FB_URL'),
+        'insta_url': os.getenv('INS_URL'),
+        'linkedin_url': os.getenv('IN_URL'),
         "main_currency": MAIN_CURRENCY
     }
     # resp = {'status_code': None}

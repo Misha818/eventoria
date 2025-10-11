@@ -740,10 +740,6 @@ def get_article_category_images(RefKey):
                 """
     sqlValueTuple = (RefKey, langID)
     
-    # print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-    # print(sqlValueTuple)
-    # print('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB')
-
     result = sqlSelect(sqlQuery, sqlValueTuple, True)
 
     answer = {'imageList': [], 'image': False}

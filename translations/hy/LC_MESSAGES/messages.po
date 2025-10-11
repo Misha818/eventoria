@@ -2972,3 +2972,24 @@ msgstr "Գնել հիմա"
 
 msgid "Download all"
 msgstr "Ներբեռնել բոլորը"
+
+msgid "thank you for applying"
+msgstr "շնորհակալությու՜ն դիմելու համար:"
+
+msgid "See you on the event"
+msgstr "Կհանդիպենք միջոցառմանը"
+
+msgid "Kind regards"
+msgstr "Հարգանքով"
+
+msgid "Click the button below to view and download your ticket(s)"
+msgstr "Սեղմեք ներքևի կոճակը ձեր տոմս(երը) դիտելու և ներբեռնելու համար։"
+
+msgid "Click me"
+msgstr "Սեղմիր ինձ"
+
+msgid "Remember me"
+msgstr "Հիշի՛ր ինձ"
+
+msgid "Mailbox"
+msgstr "Փոստարկղ"

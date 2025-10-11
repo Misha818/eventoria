@@ -178,7 +178,9 @@
 
 <!-- Thumbnail image manipulations -->
 <script>
-    let csrfToken = "{{ csrf_token() }}"
+    let csrfToken = "{{ csrf_token() }}";
+    let xRatio = 1;
+    let yRatio = 1;
     // Create a FormData object to hold the files
     let formData = new FormData();
 
@@ -269,7 +271,7 @@
         let imageToEdit = document.getElementById('imageToEdit');
 
         cropper = new Cropper(imageToEdit, {
-            aspectRatio: 1 / 1,  // Set the aspect ratio to 1:1
+            aspectRatio: xRatio / yRatio,  // Set the aspect ratio. Default is 1:1
             viewMode: 1,
             ready: function () {
                 // Get the Cropper instance
@@ -496,6 +498,74 @@ saveButton.addEventListener('click', function (event) {
     xhr.send(formData);
 });
 
+
+if (document.getElementById('category-id')) {
+
+    document.getElementById('category-id').addEventListener('change', function (e) {
+        let categoryID = e.target.value;
+        if (categoryID) {
+            
+            const saveButton = document.getElementById('saveButton');
+            const saving = document.getElementById('saving');
+
+            saveButton.classList.add('hidden');
+            saving.classList.remove('hidden');
+
+            let formData = new FormData();
+            formData.append('categoryID', categoryID);
+
+            // Create a new XMLHttpRequest object
+            let xhr = new XMLHttpRequest();
+
+            // Configure the request
+            xhr.open('POST', '/get-category-ar');
+            xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+            // Define what happens on successful data submission
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    let response = JSON.parse(xhr.responseText);
+
+                    let mistakesDiv = document.getElementById('mistakes');
+                    mistakesDiv.innerHTML = ''; // Clear previous messages
+                    if (response.status === '0') {
+                        // Handle Unknown Error
+                        mistakesDiv.textContent = response.answer;
+                        mistakesDiv.style.color = 'red';
+                        mistakesDiv.style.display = 'flex';
+
+                        // Scroll the window to the mistakesDiv with smooth behavior
+                        mistakesDiv.scrollIntoView({ behavior: 'smooth' });
+
+                        saveButton.classList.remove('hidden');
+                        saving.classList.add('hidden');
+
+                    } 
+                    
+                    if (response.status === '1') {
+                        // Handle success
+                        xRatio = response.data.xRatio;
+                        yRatio = response.data.yRatio;    
+
+                        saveButton.classList.remove('hidden');
+                        saving.classList.add('hidden');
+                    }
+                } else {
+                    // Handle error response
+                    saveButton.classList.remove('hidden');
+                    saving.classList.add('hidden');
+
+                    console.error('Error adding category:', xhr.responseText);
+                }
+            };
+
+            // Send the request with the FormData object
+            xhr.send(formData);
+        }
+
+    });
+    
+}
 </script>
 <!-- End of thumbnail image manipulations -->
 

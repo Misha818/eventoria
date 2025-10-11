@@ -746,9 +746,31 @@ msgstr ""
 "thanks for applying. Use the ticket’s download icon—or <Download all> "
 "button for multiple tickets."
 
+
 #: sysadmin.py:1687
 msgid "Delivery Information"
 msgstr "Delivery Information"
+
+msgid "thank you for applying"
+msgstr "we appreciate your interest and participation."
+
+msgid "See you on the event"
+msgstr "Looking forward to seeing you on the event"
+
+msgid "Kind regards"
+msgstr "Kind regards"
+
+msgid "Click the button below to view and download your ticket(s)"
+msgstr "Click the button below to view and download your ticket(s)."
+
+msgid "Click me"
+msgstr "Click me"
+
+msgid "Remember me"
+msgstr "Remember me"
+
+msgid "Mailbox"
+msgstr "Mailbox"
 
 #: copy.html:180 sysadmin.py:1688 templates/add_slide.html:133
 #: templates/affiliate-order-details.html:161
@@ -2873,7 +2895,7 @@ msgid "show less"
 msgstr ""
 
 msgid "Mammys Bread Logo"
-msgstr "eventoria Logo"
+msgstr "Eventoria Logo"
 
 msgid "Our History"
 msgstr "About"

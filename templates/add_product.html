@@ -223,7 +223,7 @@ function openImageEditorModal(imageUrl, callback) {
 
        let imageToEdit = document.getElementById('imageToEdit');
        cropper = new Cropper(imageToEdit, {
-           aspectRatio: xRatio / yRatio,  // Set the aspect ratio to 1:1
+           aspectRatio: xRatio / yRatio,  // Set the aspect ratio. Default is 1:1
            viewMode: 1,
            ready: function () {
                // Get the Cropper instance

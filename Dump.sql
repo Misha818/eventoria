@@ -596,7 +596,7 @@ INSERT INTO `rol` (`Rol`, `ActionIDs`, `Status`)
 VALUES 
     ('Affiliate', '33,74,75,76,77,78,81', 1),
     ('Editor', '33,1,2,3,4,5,6,7,8,9,10,11,12,13,14,21,22,23,24,25,34,35,36,37,38,39,41,42,43,44,45,46,81,82,84,85,86,87', 1),
-    ('Manager', '33,15,16,17,18,19,20,40,59,60,61,62,66,67,81,82', 1),
+    ('Manager', '33,15,16,17,18,19,20,40,59,60,61,62,66,67,81,82,88', 1),
     ('Sales AND Marketing', '47,48,49,50,51,52,53,54,55,56,57,58,59,62,81,82,83', 1),
     ('HR', '26,27,28,29,63,69,64,65,68,70,71,72,73,81,82', 1),
     ('CEO', '33,30,31,32,79,80,81,82', 1);
@@ -680,7 +680,7 @@ VALUES
     ('transfer_funds', 'transfer-funds/', 'Transfer Funds', 13, 2, 'transfer-funds.png'), -- G/P
     ('get_transfer_details', 'get-transfer-details', 'Get Transfer Details', 13, 2, ''),
     
-    ('emails', 'emails/page=1', 'Emails', 14, 1, 'fas fa-envelopes-bulk'),
+    ('emails', 'emails/page=1', 'Mailbox', 14, 1, 'fas fa-envelopes-bulk'),
     ('create_email', 'create-email', 'Create Email', 14, 1, 'fas fa-envelope-circle-check'), -- G/P
     ('assign_email', 'assign-email', 'Assign Email', 14, 1, 'fas fa-at'), -- G/P
     ('send_email', 'send-email', 'Send Email', 14, 1, 'fas fa-paper-plane'), -- G/P
@@ -710,7 +710,8 @@ VALUES
     ('slides', 'slides', 'Slides', 0, 1, 'fas fa-sliders-h'),    
     ('add_slide', 'add-slide', 'Add Slide', 0, 1, 'fas fa-plus'),    
     ('add_slide_post', 'add_slide', 'Add Slide', 0, 2, 'fas fa-shopping-basket'),    
-    ('ticket', 'ticket/', 'ticket', 0, 2, 'fas fa-ticket')
+    ('edit_slide', 'edit-slide/', 'Edit Slide', 0, 2, 'fas fa-plus'),    
+    ('ticket', 'ticket/', 'Ticket', 0, 2, 'fas fa-ticket')
     ;
 
     INSERT INTO `position` (`Position`, `rolIDs`, `Status`)
@@ -743,12 +744,12 @@ INSERT INTO `spss_relatives` (`SPSS_ID`, `Ref_Key`, `Language_ID`, `User_ID`, `S
             (4, 1, 2, 0, 1);
 
 
-INSERT INTO `product_category` (`Product_Category_Name`, `User_ID`, `Product_Category_Status`, `spsID`) 
+INSERT INTO `product_category` (`Product_Category_Name`, `User_ID`, `Product_Category_Status`, `spsID`, `xRatio`, `yRatio`) 
     VALUES  
-        ('Միջոցառումներ', 0, 1, 1),
-        ('Նախաձեռնություններ', 0, 1, 1),
-        ('Events', 0, 1, 2),
-        ('Activities', 0, 1, 2);
+        ('Միջոցառումներ', 0, 1, 1, 16, 9),
+        ('Նախաձեռնություններ', 0, 1, 1, 4, 3),
+        ('Events', 0, 1, 2, 16, 9),
+        ('Activities', 0, 1, 2, 4, 3);
 
 
 INSERT INTO `product_c_relatives` (`PC_Ref_Key`, `PC_ID`, `Language_ID`, `User_ID`) 

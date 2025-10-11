@@ -13,7 +13,7 @@ from flask_wtf.csrf import CSRFError, generate_csrf
 from OpenSSL import SSL
 from flask_recaptcha import ReCaptcha
 from io import BytesIO
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
 from pytz import UTC
 import requests
 import os
@@ -82,24 +82,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
+    # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/1",  # Use Redis storage
+    storage_uri="memory://",  # explicitly using in-memory storage
     strategy="fixed-window"
 )
+
+# Initialize limiter with redis storage (for production)
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#    # default_limits=["200 per day", "50 per hour"],
+#     default_limits=[],
+#     storage_uri="redis://localhost:6379/1",  # Use Redis storage
+#     strategy="fixed-window"
+# )
 
 
 defLang = getDefLang()
@@ -228,6 +228,10 @@ def login():
         if result['length'] == 1:
             if check_password_hash(result['data'][0]["Password"], password): 
                 session['user_id'] = result['data'][0]['ID']
+                session['started_at'] = datetime.now(timezone.utc)
+                session['exp_minutes'] = 15
+                if request.form.get('remember') == '1':
+                    session['exp_minutes'] = 480
                 session['PositionID'] = result['data'][0]['PositionID']
                 session['lang'] = getLangdatabyID(result['data'][0]['LanguageID'])['Prefix']  
                 response = {'status': '1'}
@@ -410,6 +414,8 @@ def inject_locale():
 def inject_babel():
     return dict(_=gettext)
 
+def contact_urls():
+    return {'TG': os.getenv('TG_URL'), 'FB': os.getenv('FB_URL'), 'INS': os.getenv('INS_URL'), 'IN': os.getenv('IN_URL')}
 
 @app.route('/')
 @validate_request
@@ -420,7 +426,7 @@ def home():
     languageID = getLangID()
     # result = sqlSelect(sqlQuery, sqlValTuple, True)
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', result=[], contacts=contact_urls(),  languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 @app.route('/get_home_slides', methods=["POST"])
 @validate_request
@@ -450,6 +456,7 @@ def get_home_slides():
     return jsonify({'status': "1", 'data': result['data'], 'csrfToken': generate_csrf()}), 200
   
 @app.route('/edit-slide/<HS_Ref_Key>', methods=['GET', 'POST'])
+@login_required
 @validate_request
 def edit_slide(HS_Ref_Key):
     if session.get('lang') == None:
@@ -618,7 +625,7 @@ def edit_slide(HS_Ref_Key):
             sqlValTuple = (title, titleColor, subtitle, subtitleColor, eventLink, filename, altText, startDate, expDate, order, userID, status, slideID)
             oldImageName = getFileName("IMG", "home_slide", "ID", slideID)
             if oldImageName:
-                if checkForRedundantFiles(oldImageName, "IMG", "home_slide") == 0:
+                if checkForRedundantFiles(oldImageName, "IMG", "home_slide")  == False:
                     removeRedundantFiles(oldImageName, uploadDir)
         
         if state.get('status') == 1: # Image added from another language
@@ -1269,14 +1276,15 @@ def checkout():
             # answer = gettext('Payment passed successfully') + ' ' + str(amount) + ' ' + MAIN_CURRENCY
             purchseData = json.dumps(purchseData['answer'])
             uniqueURL = generate_random_unique_string('pd_buffer')
-            trackOrderUrl = get_full_website_name() + '/order-tracker/' + uniqueURL
+            trackOrderUrl = get_full_website_name() + '/confirmation-page/' + uniqueURL
 
             sqlInsertBuffer = "INSERT INTO `pd_buffer` (`pdID`, `Url`) VALUES (%s, %s);"
             sqlValTupleBuffer = (pdID, uniqueURL)
             resultBuffer = sqlInsert(sqlInsertBuffer, sqlValTupleBuffer)
             if resultBuffer['status'] == 0:
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-            if data.get('email') != '' and data.get('email') is not None:
+            
+            if data['contact_list'][0].get('email'):
                 send_confirmation_email(pdID, trackOrderUrl)
 
             return jsonify({'status': "1", 'pdID': uniqueURL, 'purchseData': purchseData, 'newCSRFtoken': newCSRFtoken})    
@@ -3095,7 +3103,7 @@ def edit_pr_thumbnail():
         if getFileName('Thumbnail', 'product', 'ID', productID):
             imageName = getFileName('Thumbnail', 'product', 'ID', productID)
 
-            if checkForRedundantFiles(imageName, 'Thumbnail', 'product'):
+            if checkForRedundantFiles(imageName, 'Thumbnail', 'product') == False:
                 removeRedundantFiles(imageName, 'images/pr_thumbnails')
 
         sqlQueryVal = (state['file'], altText, productID)
@@ -3103,10 +3111,9 @@ def edit_pr_thumbnail():
     if state['status'] == 2: # New image is uploaded   
         
         # Get Image name
-        if getFileName('Thumbnail', 'product', 'ID', productID):
-            imageName = getFileName('Thumbnail', 'product', 'ID', productID)
-        
-            if checkForRedundantFiles(imageName, 'Thumbnail', 'product'):
+        imageName = getFileName('Thumbnail', 'product', 'ID', productID)
+        if imageName:
+            if checkForRedundantFiles(imageName, 'Thumbnail', 'product') == False:
                 removeRedundantFiles(imageName, 'images/pr_thumbnails')
             
         file = request.files.get('file')
@@ -3355,7 +3362,7 @@ def edit_p_c():
         if getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID):
             imageName = getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID)
 
-            if checkForRedundantFiles(imageName, 'Product_Category_Images', 'product_category'):
+            if checkForRedundantFiles(imageName, 'Product_Category_Images', 'product_category') == False:
                 removeRedundantFiles(imageName, 'images/pc_uploads')
 
         sqlQueryVal = (state['file'], altText, categoryName, categoryStatus, spsID, xRatio, yRatio, productCategoryID)
@@ -3364,7 +3371,7 @@ def edit_p_c():
         if getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID):
             imageName = getFileName('Product_Category_Images', 'product_category', 'Product_Category_ID', productCategoryID)
     
-            if checkForRedundantFiles(imageName, 'Product_Category_Images', 'product_category'):
+            if checkForRedundantFiles(imageName, 'Product_Category_Images', 'product_category')  == False:
                 removeRedundantFiles(imageName, 'images/pc_uploads')
             
         file = request.files.get('file')
@@ -3995,11 +4002,11 @@ def add_teammate():
             answer = r['data'][0]['Url']
 
             data = {
-                "type": "mailersend",
+                "type": "gmail",
                 "langPrefix": session.get('lang', 'en'),
                 "template": "static.html",
                 "subject": gettext("Teammate Signup Invitation"),
-                "mail_from": "info@mammysbread.am",
+                "mail_from": "info@eventoria.am",
                 "mail_to_email": Email,
                 "main_url": get_full_website_name(),
                 "logo_url": get_full_website_name() + '/static/images/logo.png',
@@ -4011,6 +4018,7 @@ def add_teammate():
                 "text_1": gettext("Simply click the button below to finish setting up your profile and get started:"),
                 'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
                 'text_3': gettext("cheers"),
+                'text_4': '',
                 'company_team': gettext("Mammy's Bread Team"),
                 "title": gettext("Teammate Signup"),
                 "header": gettext("Teammate Signup"),
@@ -4018,20 +4026,16 @@ def add_teammate():
                 'company_rights': gettext("Your Company. All rights reserved."),
                 "company_address": "",                
                 "year": datetime.now().year,
-                "fb_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png",
-                "insta_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png",
-                "youtube_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png",
-                "whatsapp_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png",
-                "telegram_icon": "",
-                "fb_url": "",
-                "insta_url": "",
-                "youtube_url": "",
-                "whatsapp_url": "",
-                "telegram_url": ""
+                'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+                'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+                'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+                'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+                'telegram_url': os.getenv('TG_URL'),
+                'fb_url': os.getenv('FB_URL'),
+                'insta_url': os.getenv('INS_URL'),
+                'linkedin_url': os.getenv('IN_URL')
             }
 
-            # resp = requests.post(os.getenv('SMAIL_API'), json=data)
-       
             headers = {
                 "X-API-KEY": SMAIL_API_KEY,
                 "Content-Type": "application/json"
@@ -5701,10 +5705,10 @@ def send_email(filters=''):
         data = {
             "data": new_html,
             "langPrefix": session.get('lang', 'en'),
-            "type": "mailersend",
+            "type": "gmail",
             "template": "typed.html",
             "subject": request.form.get('subject'),
-            "mail_from": "info@mammysbread.am",
+            "mail_from": From,
             "mail_from_user": senderInitials,
             "mail_to_email": request.form.get('to'),
             "main_url": get_full_website_name(),
@@ -5713,22 +5717,21 @@ def send_email(filters=''):
             "continue_shopping": gettext("Continue Shopping"),
             "contact_us": gettext("Contact US"),
             "contact_us_url": get_full_website_name() + '/contacts',
-            "company_name": gettext("Your Company. All rights reserved."),
+            "company_name": gettext("company"),
+            "company_rights": gettext("Your Company. All rights reserved."),
             "company_address": "",
             'company_rights': gettext("Your Company. All rights reserved."),
             "unsubscribe": gettext("unsubscribe"),
             "unsubscribe_url": get_full_website_name() + '/unsubscribe',
             "year": datetime.now().year,
-            "fb_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png",
-            "insta_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png",
-            "youtube_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png",
-            "whatsapp_icon": "https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png",
-            "telegram_icon": "",
-            "fb_url": "",
-            "insta_url": "",
-            "youtube_url": "",
-            "whatsapp_url": "",
-            "telegram_url": "",
+            'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+            'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+            'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+            'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+            'telegram_url': os.getenv('TG_URL'),
+            'fb_url': os.getenv('FB_URL'),
+            'insta_url': os.getenv('INS_URL'),
+            'linkedin_url': os.getenv('IN_URL'),
             "main_currency": MAIN_CURRENCY
         }
 
@@ -5741,6 +5744,10 @@ def send_email(filters=''):
     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
 
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
+    print("Status code is ...")
+    print("Status code is .....")
+    print("Status code is .......")
+    print(resp.status_code)
     if resp.status_code == 200:
         return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
     else:
@@ -7644,6 +7651,189 @@ def get_activitis():
         return jsonify({'status': "0", 'answer': gettext('Nothing to show'), 'newCSRFtoken': newCSRFtoken})
 
     return jsonify({'status': "1", 'data': result['data'], 'newCSRFtoken': newCSRFtoken})
+
+
+from flask import render_template_string
+@app.route("/test", methods=["GET"])
+@validate_request
+def test():    
+
+    # result = [{'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': 'lalal', 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': "good@mail.com", 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 1', 'quantity': 3, 'price': 1000.0, 'discount': None}, {'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': None, 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': None, 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 2', 'quantity': 1, 'price': 2000.0, 'discount': None}]
+    # new_html = """<p style="margin: 0; padding: 0"><span style='font-size: 20px; font-family: "Montserrat", sans-serif'>Hola amigos</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(40, 252, 85); font-family: "Montserrat", sans-serif'><u>Amigios Muchachos ketanios</u></em></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(255, 255, 255); background-color: rgb(211, 26, 26); font-family: "Montserrat", sans-serif'><u>HaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<span></span></u></em></p>"""
+
+    data = {
+        # For add teammate
+        
+        'type': 'gmail', 
+        'langPrefix': 'hy',
+        'template': 'static.html',
+        'subject': 'Teammate Signup Invitation',
+        'mail_from': 'info@mammysbread.am',
+        'mail_from_user': 'CEO TEST',
+        'mail_to': 'Mishayil Movsisyan',
+        'mail_to_email': 'misha818m@gmail.com',
+        'main_url': url_for('home'),
+        'logo_url': url_for('static', filename="images/logo.png"),
+        'logo_alt': "Mammy's Bread",
+        'user_name': 'Test User',
+        'btn_0_content': gettext('Click me'),
+        'btn_0_href': 'http://127.0.0.1:5000/stuff-signup/jdsakjdkajdkasjdkjaskdjaskdkjafbas',
+        'greatings': gettext("Order Confirmed!"),
+        'text_0': gettext("Dear") + ' ' + 'Friend' + ', ' + gettext('thank you for applying'),
+        'text_1': gettext('Click the button below to view and download your ticket(s)'),
+        'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
+        'text_3': gettext("See you on the event"),
+        'text_4': gettext("Kind regards"),
+        'company_team': gettext("Mammy's Bread Team"),
+        'title': 'Teammate Signup',
+        'header': 'Teammate Signup',
+        'company_name': gettext("company"),
+        'company_rights': gettext("Your Company. All rights reserved."),
+        'company_address': '',       
+        'year': 2025,
+        'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+        'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+        'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+        'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+        'telegram_url': os.getenv('TG_URL'),
+        'fb_url': os.getenv('FB_URL'),
+        'insta_url': os.getenv('INS_URL'),
+        'linkedin_url': os.getenv('IN_URL')
+        
+        # For send email        
+        # 'data': '<p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>Hello dear Misha!</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>I am here to test some functionallity. So I am going to write some text.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: cursive, "Kurland"\'>In today’s fast-paced digital world, effective communication is more important than ever. Whether you\'re writing an email, crafting a blog post, or composing content for social media, clarity and conciseness can make your message stand out. Always consider your audience and choose language that resonates with them. Structure your text with short paragraphs and engaging headings. Proofread carefully to avoid errors. Great communication fosters trust, builds relationships, and drives success in any field.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Wish y<span>\ufeff</span>ou all the best,</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Sincerly</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Misha\xa0</span></p>',
+        # 'langPrefix': 'en',
+        # 'type': 'gmail',
+        # 'template': 'typed.html',
+
+        # 'subject': 'Testing typed email functionality',
+        # 'mail_from': 'info@eventoria.am',
+        # 'mail_from_user': 'Satti Matti',
+        # 'mail_to_email': 'mishatab7@gmail.com',
+        # 'main_url': 'http://127.0.0.1:5000',
+        # 'logo_url': 'http://127.0.0.1:5000/static/images/logo.png',
+        # 'logo_alt': gettext('Mammys Bread Logo'),
+        # 'continue_shopping': 'Continue Shopping',
+        # 'contact_us': 'Contact US',
+        # 'contact_us_url': 'http://127.0.0.1:5000/contacts',
+        # 'company_name': gettext('company'),
+        # 'company_rights': gettext("Your Company. All rights reserved."),
+        # 'company_address': '',
+        # 'unsubscribe': 'unsubscribe',
+        # 'unsubscribe_url': 'http://127.0.0.1:5000/unsubscribe',
+        # 'year': 2025,
+        # 'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+        # 'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+        # 'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+        # 'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+        # 'telegram_url': os.getenv('TG_URL'),
+        # 'fb_url': os.getenv('FB_URL'),
+        # 'insta_url': os.getenv('INS_URL'),
+        # 'linkedin_url': os.getenv('IN_URL'),
+        # 'main_currency': '֏'
+
+        # for payment-confirmetion email
+    #     'data': [
+    #         {
+    #             'ID': 17,
+    #             'payment_method': 'Visa',
+    #             'CMD': 4242,
+    #             'promo_code': None,
+    #             'final_price': 4000.0,
+    #             'FirstName': 'Jhon',
+    #             'LastName': 'Matti',
+    #             'phone': '37433151580',
+    #             'email': 'mishatab7@gmail.com',
+    #             'address': '182 KHUDYAKOV STREET',
+    #             'note': None,
+    #             'prTitle': 'Թեսթավորման պրոդուկտ',
+    #             'ptTitle': 'Գին 1',
+    #             'quantity': 2,
+    #             'price': 1000.0,
+    #             'discount': 10
+    #         },
+    #         {
+    #             'ID': 17,
+    #             'payment_method': 'Visa',
+    #             'CMD': 4242,
+    #             'promo_code': None,
+    #             'final_price': 4000.0,
+    #             'FirstName': 'Jhon',
+    #             'LastName': 'Matti',
+    #             'phone': '37433151580',
+    #             'email': 'mishatab7@gmail.com',
+    #             'address': '182 KHUDYAKOV STREET',
+    #             'note': None,
+    #             'prTitle': 'Թեսթավորման պրոդուկտ',
+    #             'ptTitle': 'Գին 2',
+    #             'quantity': 1,
+    #             'price': 2000.0,
+    #             'discount': 10
+    #         }
+    #     ],
+    #     'langPrefix': 'hy',
+    #     'type': 'gmail',
+    #     'template': 'dynemic.html',
+    #     'subject': 'Վճարման հաստատում',
+    #     'mail_from': 'info@mammysbread.am',
+    #     'mail_from_user': 'Մայրիկի Հացը',
+    #     'mail_to': 'Jhon Matti',
+    #     'mail_to_email': 'mishatab7@gmail.com',
+    #     'main_url': 'http://127.0.0.1:5000',
+    #     'logo_url': 'http://127.0.0.1:5000/static/images/logo.png',
+    #     'logo_alt': 'Մայրիկի Հացը',
+    #     'text_0': 'Շնորհակալություն մեր ծառայություններից օգտվելու համար։ Ձեր պատվերը ընթացքի մեջ է։',
+    #     'delivery_info': 'Առաքման տվյալներ',
+    #     'Order': 'Պատվեր',
+    #     'order_number': '#17',
+    #     'order_details': 'Պատվերի մանրամասներ',
+    #     'product': 'Ապրանք',
+    #     'price': 'Գին',
+    #     'total': 'Ընդհամենը',
+    #     'discount': 'Զեղչ',
+    #     'discounted_price': 'Զեղչված գին',
+    #     'display': '',
+    #     'cp_price': '3600',
+    #     'payment_method': 'Վճարման եղանակ',
+    #     'continue_shopping': 'Շարունակել գնումները',
+    #     'continue_shopping_url': 'http://127.0.0.1:5000/products-client',
+    #     'contact_us': 'Կապ',
+    #     'contact_us_url': 'http://127.0.0.1:5000/contacts',
+    #     'track_order': 'Հետևեք Ձեր պատվերին',
+    #     'track_order_url': 'http://127.0.0.1:5000/order-tracker/BEGIzENqLnWe2rTNAEbZBGK1uAQNTennq2ta2d85',
+    #     'title': 'Գնումը հաստատված է։',
+    #     'header': 'Գնումը հաստատված է։',
+    #     'company_name': 'Մայրիկի Հացը',
+    #     'company_rights': 'Մայրիկի Հացը։ Բոլորս իրավունքները պաշտպանված են։',
+    #     'company_address': '',
+    #     'unsubscribe': 'հրաժարվել բաժանորդագրությունից։',
+    #     'unsubscribe_url': 'http://127.0.0.1:5000/unsubscribe',
+    #     'year': 2025,
+    #     'fb_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-facebook-48.png',
+    #     'insta_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-instagram-48.png',
+    #     'youtube_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-youtube-48.png',
+    #     'whatsapp_icon': 'https://cdn-images.mailchimp.com/icons/social-block-v2/color-whatsapp-48.png',
+    #     'telegram_icon': '',
+    #     'fb_url': '',
+    #     'insta_url': '',
+    #     'youtube_url': '',
+    #     'whatsapp_url': '',
+    #     'telegram_url': '',
+    #     'main_currency': '֏'
+    
+    }
+
+    # SMAIL_API='http://localhost:8001/test'
+    headers = {
+        "X-API-KEY": SMAIL_API_KEY,
+        "Content-Type": "application/json"
+    }
+    print(json.dumps(data, indent=4))
+    # resp = requests.post(SMAIL_API, headers=headers, json=data)
+    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+
+    # print(resp)
+    return render_template_string(resp.text)
 
 
 

@@ -433,6 +433,13 @@
             gap: 1rem;
         }
 
+        .activities-grid > :last-child:nth-child(odd) {
+            grid-column: 1 / -1;      /* span the whole row */
+            justify-self: center;     /* center within that row */
+            max-width: 750px;         /* keep same card width */
+            width: 100%;
+            }
+
         /* Chrome/Edge/Safari support :has */
         /* .activities-grid:has(> .activity-card:last-child:nth-child(odd))
         > .activity-card:last-child {
@@ -611,7 +618,7 @@
 
         .about-features {
             display: grid;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         .about-features a {

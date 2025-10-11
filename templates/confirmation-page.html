@@ -58,7 +58,7 @@
         }
 
         .text-success {
-            color: #10B981!important;
+            color: #212529!important;
             margin-top: 15px!important;
         }
         .recommendation-card img {
@@ -107,6 +107,16 @@
         a {
             text-decoration: none;
             color: #333;
+        }
+
+        @media (min-width: 770px) and (max-width: 1200px) {
+          .card {
+                background-color: unset!important;
+                box-shadow: unset!important;
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+                width: 370px;
+            }
         }
 
         @media (max-width: 770px) {
@@ -263,7 +273,7 @@
     }
     .row { 
         display: grid; 
-        grid-template-columns: 110px 1fr; 
+        /* grid-template-columns: 110px 1fr;  */
         gap: 3px; 
         align-items: baseline; 
     }
