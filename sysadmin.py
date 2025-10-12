@@ -1725,10 +1725,10 @@ def send_confirmation_email(pdID, trackOrderUrl):
         # "unsubscribe": gettext("unsubscribe"),
         # "unsubscribe_url": get_full_website_name() + '/unsubscribe',
         "year": datetime.now().year,
-        'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
-        'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
-        'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
-        'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+        'fb_icon': get_full_website_name() + '/static/images/icons/color-facebook-48.png',
+        'insta_icon': get_full_website_name() + '/static/images/icons/color-instagram-48.png',
+        'telegram_icon': get_full_website_name() + '/static/images/icons/color-telegram-48.png',
+        'linkedin_icon': get_full_website_name() + '/static/images/icons/color-linkedin-48.png',
         'telegram_url': os.getenv('TG_URL'),
         'fb_url': os.getenv('FB_URL'),
         'insta_url': os.getenv('INS_URL'),
@@ -1784,6 +1784,7 @@ def get_payment_methods(columns, constructDict=True):
     return result
 
 def get_pt_payment_methods(ptRefKey):
+    languageID = getLangID()
     sqlQuery = """
             SELECT 
                 `payment_methods`.`ID`, 
@@ -1791,10 +1792,10 @@ def get_pt_payment_methods(ptRefKey):
             FROM `payment_methods` 
                 LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = %s
                 LEFT JOIN `product_type` ON `product_type`.`ID` = `product_type_relatives`.`PT_ID`
-            WHERE `payment_methods`.`Status` = 1 
+            WHERE `payment_methods`.`Status` = 1 AND `product_type_relatives`.`Language_ID` = %s
                 AND find_in_set(`payment_methods`.`ID`, `product_type`.`payment_methods`);
             """
-    result = sqlSelect(sqlQuery, (ptRefKey,), True)
+    result = sqlSelect(sqlQuery, (ptRefKey, languageID), True)
     return result
 
 # Usage
