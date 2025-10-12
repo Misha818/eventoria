@@ -907,7 +907,7 @@ def contacts():
     languageID = getLangID()
     # result = sqlSelect(sqlQuery, sqlValTuple, True)
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', scrollTo='contacts', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', scrollTo='contacts', result=[], contacts=contact_urls(), languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/events')
@@ -918,7 +918,7 @@ def events():
         
     languageID = getLangID()
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', scrollTo='events', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', scrollTo='events', result=[], contacts=contact_urls(), languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/activities')
@@ -929,7 +929,7 @@ def activities():
         
     languageID = getLangID()
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', scrollTo='activities', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', scrollTo='activities', result=[], contacts=contact_urls(), languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/about')
@@ -940,43 +940,43 @@ def about():
         
     languageID = getLangID()
     newCSRFtoken = generate_csrf()
-    return render_template('index.html', scrollTo='about', result=[], languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+    return render_template('index.html', scrollTo='about', result=[], contacts=contact_urls(), languageID=languageID, supported_langs=json.dumps(supported_langs()), ensure_ascii=False, MAIN_CURRENCY=MAIN_CURRENCY, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
-@app.route('/favorites')
-@validate_request
-def favorites():
-    languageID = getLangID()
-    sqlQuery =  f"""SELECT * FROM `product` 
-                    LEFT JOIN `product_relatives`
-                      ON  `product_relatives`.`P_ID` = `product`.`ID`
-                    WHERE `product_relatives`.`Language_ID` = %s
-                    AND `Product_Status` = 2
-                    ORDER BY `product`.`Order` ASC
-                """
+# @app.route('/favorites')
+# @validate_request
+# def favorites():
+#     languageID = getLangID()
+#     sqlQuery =  f"""SELECT * FROM `product` 
+#                     LEFT JOIN `product_relatives`
+#                       ON  `product_relatives`.`P_ID` = `product`.`ID`
+#                     WHERE `product_relatives`.`Language_ID` = %s
+#                     AND `Product_Status` = 2
+#                     ORDER BY `product`.`Order` ASC
+#                 """
     
-    sqlValTuple = (languageID,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
+#     sqlValTuple = (languageID,)
+#     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
-    return render_template('index.html', result=result, scrollTo='favorites', current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+#     return render_template('index.html', result=result, scrollTo='favorites', contacts=contact_urls(), current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
-@app.route('/products-client')
-@validate_request
-def products_client():
-    languageID = getLangID()
-    sqlQuery =  f"""SELECT * FROM `product` 
-                    LEFT JOIN `product_relatives`
-                      ON  `product_relatives`.`P_ID` = `product`.`ID`
-                    WHERE `product_relatives`.`Language_ID` = %s
-                    AND `Product_Status` = 2
-                    ORDER BY `product`.`Order` ASC
-                """
+# @app.route('/products-client')
+# @validate_request
+# def products_client():
+#     languageID = getLangID()
+#     sqlQuery =  f"""SELECT * FROM `product` 
+#                     LEFT JOIN `product_relatives`
+#                       ON  `product_relatives`.`P_ID` = `product`.`ID`
+#                     WHERE `product_relatives`.`Language_ID` = %s
+#                     AND `Product_Status` = 2
+#                     ORDER BY `product`.`Order` ASC
+#                 """
     
-    sqlValTuple = (languageID,)
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
+#     sqlValTuple = (languageID,)
+#     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
-    return render_template('index.html', result=result, scrollTo='card-container-user', current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
+#     return render_template('index.html', result=result, scrollTo='card-container-user', current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
 @app.route('/order-tracker/<pdID>')
