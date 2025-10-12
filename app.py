@@ -4026,10 +4026,10 @@ def add_teammate():
                 'company_rights': gettext("Your Company. All rights reserved."),
                 "company_address": "",                
                 "year": datetime.now().year,
-                'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
-                'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
-                'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
-                'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+                'fb_icon': get_full_website_name() + '/static/images/icons/color-facebook-48.png',
+                'insta_icon': get_full_website_name() + '/static/images/icons/color-instagram-48.png',
+                'telegram_icon': get_full_website_name() + '/static/images/icons/color-telegram-48.png',
+                'linkedin_icon': get_full_website_name() + '/static/images/icons/color-linkedin-48.png',
                 'telegram_url': os.getenv('TG_URL'),
                 'fb_url': os.getenv('FB_URL'),
                 'insta_url': os.getenv('INS_URL'),
@@ -5724,10 +5724,10 @@ def send_email(filters=''):
             "unsubscribe": gettext("unsubscribe"),
             "unsubscribe_url": get_full_website_name() + '/unsubscribe',
             "year": datetime.now().year,
-            'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
-            'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
-            'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
-            'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+            'fb_icon': get_full_website_name() + '/static/images/icons/color-facebook-48.png',
+            'insta_icon': get_full_website_name() + '/static/images/icons/color-instagram-48.png',
+            'telegram_icon': get_full_website_name() + '/static/images/icons/color-telegram-48.png',
+            'linkedin_icon': get_full_website_name() + '/static/images/icons/color-linkedin-48.png',
             'telegram_url': os.getenv('TG_URL'),
             'fb_url': os.getenv('FB_URL'),
             'insta_url': os.getenv('INS_URL'),
@@ -5744,9 +5744,6 @@ def send_email(filters=''):
     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True)
 
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
-    print("Status code is ...")
-    print("Status code is .....")
-    print("Status code is .......")
     print(resp.status_code)
     if resp.status_code == 200:
         return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
