@@ -7823,7 +7823,7 @@ def test():
     
     }
 
-    SMAIL_API='http://localhost:8000/test'
+    SMAIL_API='http://localhost:8001/test'
     headers = {
         "X-API-KEY": SMAIL_API_KEY,
         "Content-Type": "application/json"
