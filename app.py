@@ -7650,52 +7650,52 @@ def get_activitis():
     return jsonify({'status': "1", 'data': result['data'], 'newCSRFtoken': newCSRFtoken})
 
 
-from flask import render_template_string
-@app.route("/test", methods=["GET"])
-@validate_request
-def test():    
+# from flask import render_template_string
+# @app.route("/test", methods=["GET"])
+# @validate_request
+# def test():    
 
-    # result = [{'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': 'lalal', 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': "good@mail.com", 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 1', 'quantity': 3, 'price': 1000.0, 'discount': None}, {'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': None, 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': None, 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 2', 'quantity': 1, 'price': 2000.0, 'discount': None}]
-    # new_html = """<p style="margin: 0; padding: 0"><span style='font-size: 20px; font-family: "Montserrat", sans-serif'>Hola amigos</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(40, 252, 85); font-family: "Montserrat", sans-serif'><u>Amigios Muchachos ketanios</u></em></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(255, 255, 255); background-color: rgb(211, 26, 26); font-family: "Montserrat", sans-serif'><u>HaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<span></span></u></em></p>"""
+#     # result = [{'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': 'lalal', 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': "good@mail.com", 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 1', 'quantity': 3, 'price': 1000.0, 'discount': None}, {'ID': 5, 'payment_method': 'Visa', 'CMD': 4242, 'promo_code': None, 'final_price': 5000.0, 'FirstName': 'kljkhkj', 'LastName': 'hkjhkjh', 'phone': '37433151580', 'email': None, 'address': '182 KHUDYAKOV STREET', 'note': None, 'prTitle': 'Թեսթավորման պրոդուկտ', 'ptTitle': 'Գին 2', 'quantity': 1, 'price': 2000.0, 'discount': None}]
+#     # new_html = """<p style="margin: 0; padding: 0"><span style='font-size: 20px; font-family: "Montserrat", sans-serif'>Hola amigos</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(40, 252, 85); font-family: "Montserrat", sans-serif'><u>Amigios Muchachos ketanios</u></em></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><em style='font-size: 20px; color: rgb(255, 255, 255); background-color: rgb(211, 26, 26); font-family: "Montserrat", sans-serif'><u>HaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<span></span></u></em></p>"""
 
-    data = {
-        # For add teammate
+#     data = {
+#         # For add teammate
         
-        'type': 'gmail', 
-        'langPrefix': 'hy',
-        'template': 'static.html',
-        'subject': 'Teammate Signup Invitation',
-        'mail_from': 'info@eventoria.am',
-        'mail_from_user': 'CEO TEST',
-        'mail_to': 'Mishayil Movsisyan',
-        'mail_to_email': 'misha818m@gmail.com',
-        'main_url': url_for('home'),
-        'logo_url': url_for('static', filename="images/logo.png"),
-        'logo_alt': "Eventoria",
-        'user_name': 'Test User',
-        'btn_0_content': gettext('Click me'),
-        'btn_0_href': 'http://127.0.0.1:5000/stuff-signup/jdsakjdkajdkasjdkjaskdjaskdkjafbas',
-        'greatings': gettext("Order Confirmed!"),
-        'text_0': gettext("Dear") + ' ' + 'Friend' + ', ' + gettext('thank you for applying'),
-        'text_1': gettext('Click the button below to view and download your ticket(s)'),
-        'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
-        'text_3': gettext("See you on the event"),
-        'text_4': gettext("Kind regards"),
-        'company_team': gettext("Mammy's Bread Team"),
-        'title': 'Teammate Signup',
-        'header': 'Teammate Signup',
-        'company_name': gettext("company"),
-        'company_rights': gettext("Your Company. All rights reserved."),
-        'company_address': '',       
-        'year': 2025,
-        'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
-        'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
-        'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
-        'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
-        'telegram_url': os.getenv('TG_URL'),
-        'fb_url': os.getenv('FB_URL'),
-        'insta_url': os.getenv('INS_URL'),
-        'linkedin_url': os.getenv('IN_URL')
+#         'type': 'gmail', 
+#         'langPrefix': 'hy',
+#         'template': 'static.html',
+#         'subject': 'Teammate Signup Invitation',
+#         'mail_from': 'info@eventoria.am',
+#         'mail_from_user': 'CEO TEST',
+#         'mail_to': 'Mishayil Movsisyan',
+#         'mail_to_email': 'misha818m@gmail.com',
+#         'main_url': url_for('home'),
+#         'logo_url': url_for('static', filename="images/logo.png"),
+#         'logo_alt': "Eventoria",
+#         'user_name': 'Test User',
+#         'btn_0_content': gettext('Click me'),
+#         'btn_0_href': 'http://127.0.0.1:5000/stuff-signup/jdsakjdkajdkasjdkjaskdjaskdkjafbas',
+#         'greatings': gettext("Order Confirmed!"),
+#         'text_0': gettext("Dear") + ' ' + 'Friend' + ', ' + gettext('thank you for applying'),
+#         'text_1': gettext('Click the button below to view and download your ticket(s)'),
+#         'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
+#         'text_3': gettext("See you on the event"),
+#         'text_4': gettext("Kind regards"),
+#         'company_team': gettext("Mammy's Bread Team"),
+#         'title': 'Teammate Signup',
+#         'header': 'Teammate Signup',
+#         'company_name': gettext("company"),
+#         'company_rights': gettext("Your Company. All rights reserved."),
+#         'company_address': '',       
+#         'year': 2025,
+#         'fb_icon': url_for('static', filename='images/icons/color-facebook-48.png'),
+#         'insta_icon': url_for('static', filename='images/icons/color-instagram-48.png'),
+#         'telegram_icon': url_for('static', filename='images/icons/color-telegram-48.png'),
+#         'linkedin_icon': url_for('static', filename='images/icons/color-linkedin-48.png'),
+#         'telegram_url': os.getenv('TG_URL'),
+#         'fb_url': os.getenv('FB_URL'),
+#         'insta_url': os.getenv('INS_URL'),
+#         'linkedin_url': os.getenv('IN_URL')
         
         # For send email        
         # 'data': '<p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>Hello dear Misha!</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 20px; font-family: "Montserrat", sans-serif\'>I am here to test some functionallity. So I am going to write some text.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: cursive, "Kurland"\'>In today’s fast-paced digital world, effective communication is more important than ever. Whether you\'re writing an email, crafting a blog post, or composing content for social media, clarity and conciseness can make your message stand out. Always consider your audience and choose language that resonates with them. Structure your text with short paragraphs and engaging headings. Proofread carefully to avoid errors. Great communication fosters trust, builds relationships, and drives success in any field.</span></p><p style="margin: 0; padding: 0"><br/></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Wish y<span>\ufeff</span>ou all the best,</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Sincerly</span></p><p style="margin: 0; padding: 0"><span style=\'font-size: 18px; font-family: "Montserrat", sans-serif\'>Misha\xa0</span></p>',
@@ -7818,19 +7818,20 @@ def test():
     #     'telegram_url': '',
     #     'main_currency': '֏'
     
-    }
+    # }
 
-    SMAIL_API='http://localhost:8001/test'
-    headers = {
-        "X-API-KEY": SMAIL_API_KEY,
-        "Content-Type": "application/json"
-    }
-    print(json.dumps(data, indent=4))
-    # resp = requests.post(SMAIL_API, headers=headers, json=data)
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True) # '/etc/ssl/eventoria_mail/ca.crt'
+    # SMAIL_API='http://localhost:8001/test' # For production
+    # SMAIL_API='http://localhost:8000/test'
+    # headers = {
+    #     "X-API-KEY": SMAIL_API_KEY,
+    #     "Content-Type": "application/json"
+    # }
+    # print(json.dumps(data, indent=4))
+    # # resp = requests.post(SMAIL_API, headers=headers, json=data)
+    # resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True) # '/etc/ssl/eventoria_mail/ca.crt'
 
-    # print(resp)
-    return render_template_string(resp.text)
+    # # print(resp)
+    # return render_template_string(resp.text)
 
 
 
