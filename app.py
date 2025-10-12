@@ -4041,7 +4041,7 @@ def add_teammate():
                 "Content-Type": "application/json"
             }
             # resp = requests.post(SMAIL_API, headers=headers, json=data)
-            resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
+            resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True)
 
             if resp.status_code == 200:
                 return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
@@ -5741,7 +5741,7 @@ def send_email(filters=''):
     }
     # resp = requests.post(SMAIL_API, headers=headers, json=data)
 
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
+    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True)
 
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
     print("Status code is ...")
@@ -7830,7 +7830,7 @@ def test():
     }
     print(json.dumps(data, indent=4))
     # resp = requests.post(SMAIL_API, headers=headers, json=data)
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
+    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True) # '/etc/ssl/eventoria_mail/ca.crt'
 
     # print(resp)
     return render_template_string(resp.text)

@@ -1744,7 +1744,7 @@ def send_confirmation_email(pdID, trackOrderUrl):
         "Content-Type": "application/json"
     }
     # resp = requests.post(smailUrl, headers=headers, json=data)
-    # resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
+    # resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True)
 
     resp = jsonify({'status_code': None})
     try:
@@ -1753,7 +1753,7 @@ def send_confirmation_email(pdID, trackOrderUrl):
             headers=headers,
             json=data,
             timeout=(2, 5),
-            verify='/etc/ssl/eventoria_mail/ca.crt'
+            verify=True
         )
         resp.raise_for_status()  # raise if non-200 status
     except requests.exceptions.ConnectTimeout:
