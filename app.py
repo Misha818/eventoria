@@ -4041,7 +4041,7 @@ def add_teammate():
                 "Content-Type": "application/json"
             }
             # resp = requests.post(SMAIL_API, headers=headers, json=data)
-            resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+            resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
 
             if resp.status_code == 200:
                 return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
@@ -5741,7 +5741,7 @@ def send_email(filters=''):
     }
     # resp = requests.post(SMAIL_API, headers=headers, json=data)
 
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
 
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
     print("Status code is ...")
@@ -7668,13 +7668,13 @@ def test():
         'langPrefix': 'hy',
         'template': 'static.html',
         'subject': 'Teammate Signup Invitation',
-        'mail_from': 'info@mammysbread.am',
+        'mail_from': 'info@eventoria.am',
         'mail_from_user': 'CEO TEST',
         'mail_to': 'Mishayil Movsisyan',
         'mail_to_email': 'misha818m@gmail.com',
         'main_url': url_for('home'),
         'logo_url': url_for('static', filename="images/logo.png"),
-        'logo_alt': "Mammy's Bread",
+        'logo_alt': "Eventoria",
         'user_name': 'Test User',
         'btn_0_content': gettext('Click me'),
         'btn_0_href': 'http://127.0.0.1:5000/stuff-signup/jdsakjdkajdkasjdkjaskdjaskdkjafbas',
@@ -7775,7 +7775,7 @@ def test():
     #     'type': 'gmail',
     #     'template': 'dynemic.html',
     #     'subject': 'Վճարման հաստատում',
-    #     'mail_from': 'info@mammysbread.am',
+    #     'mail_from': 'info@eventoria.am',
     #     'mail_from_user': 'Մայրիկի Հացը',
     #     'mail_to': 'Jhon Matti',
     #     'mail_to_email': 'mishatab7@gmail.com',
@@ -7823,14 +7823,14 @@ def test():
     
     }
 
-    # SMAIL_API='http://localhost:8001/test'
+    SMAIL_API='http://localhost:8000/test'
     headers = {
         "X-API-KEY": SMAIL_API_KEY,
         "Content-Type": "application/json"
     }
     print(json.dumps(data, indent=4))
     # resp = requests.post(SMAIL_API, headers=headers, json=data)
-    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/certs/smail.crt')
+    resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify='/etc/ssl/eventoria_mail/ca.crt')
 
     # print(resp)
     return render_template_string(resp.text)
