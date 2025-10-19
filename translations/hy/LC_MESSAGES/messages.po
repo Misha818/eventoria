@@ -2051,7 +2051,10 @@ msgstr "Միջոցառումներ"
 #: templates/index.html:34 templates/public.html:181
  
 msgid "Activities"
-msgstr "Նախաձեռնություններ"
+msgstr "Թրեյնինգներ"
+
+msgid "Add more products?"
+msgstr "Քանակը հաջողությամբ ավելացվեց։ Ցանկանու՞մ եք ավելացնել այլ ծառայությունների քանակներ"
 
 #: templates/index.html:38
 msgid "Collaboration"

@@ -4,7 +4,7 @@ from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from products import email_text, submit_notes_text, get_pr_order, slidesToEdit, checkCategoryName, checkProductCategoryName, get_RefKey_LangID_by_link, get_article_category_images, get_product_category_images, edit_p_h, submit_reach_text, submit_product_text, add_p_c_sql, edit_p_c_view, edit_a_c_view, edit_p_c_sql, get_product_categories, get_ar_thumbnail_images, get_pr_thumbnail_images, add_product, productDetails, constructPrData, add_product_lang
-from sysadmin import get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
+from sysadmin import jsonSanitaizer, get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
@@ -82,24 +82,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
+    # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/1",  # Use Redis storage
+    storage_uri="memory://",  # explicitly using in-memory storage
     strategy="fixed-window"
 )
+
+# Initialize limiter with redis storage (for production)
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#    # default_limits=["200 per day", "50 per hour"],
+#     default_limits=[],
+#     storage_uri="redis://localhost:6379/1",  # Use Redis storage
+#     strategy="fixed-window"
+# )
 
 
 defLang = getDefLang()
@@ -117,6 +117,9 @@ MAIN_CURRENCY = os.getenv('MAIN_CURRENCY')
 SMAIL_API_KEY = os.getenv('SMAIL_API_KEY')
 SMAIL_API = os.getenv('SMAIL_API')
 
+INVALID_CHARS_IN_JSON = {'\n': '', '\r': '', '\t': '', '\b': '', '\f': '', '\v': '', '\0': '',  '`': '_unwanted_backthick_', '"': '_unwanted_doublequate_', "'": '_unwanted_singlequate_'}
+
+
 # basedir = os.path.abspath(os.path.dirname(__file__))
 # SSL context creation
 # context = SSL.Context(SSL.TLSv1_2_METHOD)
@@ -131,7 +134,6 @@ orderStatusList = get_order_status_list()
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
-
 
 def side_bar_stuff():
     stuffID = session.get("user_id")
@@ -2828,6 +2830,8 @@ def upload_slides():
     
     ProductID = request.form.get('ProductID')
     productType = request.form.get('Type')
+    PT_Ref_Key = ''
+
      # 1 ==> product, 2 ==> subproduct e.g. product type
     if productType == '1':
         imgDir = 'images/product_slider'
@@ -3051,7 +3055,7 @@ def upload_slides():
                 return jsonify({'status': '0', 'answer': delResult['answer'], 'newCSRFtoken': newCSRFtoken}) 
    
     answer = gettext('Done!')
-    return jsonify({'status': '1', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
+    return jsonify({'status': '1', 'answer': answer, 'PT_Ref_Key': PT_Ref_Key, 'newCSRFtoken': newCSRFtoken}) 
 
 
 # Edit product'd thumbnail client-server transaction
@@ -4901,8 +4905,20 @@ def store():
                     ;               
                     """
         
+        # sqlValTuple = (getLangID(),)
+        # result = sqlSelect(sqlQuery, sqlValTuple, True)
+
+        # sqlQueryStore = "SELECT `ID`, `Name` FROM `store` WHERE `Status` = 1;"
+        # resultStore = sqlSelect(sqlQueryStore, (), False)
+        # storeData = json.dumps(resultStore['data'])
+
+        # sqlQueryProducts = "SELECT `ID`, `Title` FROM `product` WHERE `Language_ID` = %s;"
+        # resultStore = sqlSelect(sqlQueryProducts, (languageID,), False)
+        # productsData = json.dumps(resultStore['data'])
+
         sqlValTuple = (getLangID(),)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
+        result['data'] = jsonSanitaizer(result['data'], INVALID_CHARS_IN_JSON)
 
         sqlQueryStore = "SELECT `ID`, `Name` FROM `store` WHERE `Status` = 1;"
         resultStore = sqlSelect(sqlQueryStore, (), False)
@@ -4910,7 +4926,7 @@ def store():
 
         sqlQueryProducts = "SELECT `ID`, `Title` FROM `product` WHERE `Language_ID` = %s;"
         resultStore = sqlSelect(sqlQueryProducts, (languageID,), False)
-        productsData = json.dumps(resultStore['data'])
+        productsData = json.dumps(jsonSanitaizer(resultStore['data'], INVALID_CHARS_IN_JSON))
 
         sideBar = side_bar_stuff()
         return render_template('store.html', result=result, storeData=storeData, productsData=productsData, languageID=languageID, mainCurrency=MAIN_CURRENCY,  sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
@@ -6549,7 +6565,8 @@ def edit_store(quantity_pt_IDs=None):
         
         sqlValTuple = (languageID,)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
-        prData = json.dumps(result['data']) 
+        sanitizedData = jsonSanitaizer(result['data'], INVALID_CHARS_IN_JSON)
+        prData = json.dumps(sanitizedData)
 
         sqlQueryStore = "SELECT `ID`, `Name` FROM `store` WHERE `Status` = 1;"
         resultStore = sqlSelect(sqlQueryStore, (), True)
@@ -6585,7 +6602,8 @@ def add_to_store(ptID=None):
                     """
         sqlValTuple = (languageID,)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
-        prData = json.dumps(result['data']) 
+        sanitizedData = jsonSanitaizer(result['data'], INVALID_CHARS_IN_JSON)
+        prData = json.dumps(sanitizedData)   
 
         sqlQueryStore = "SELECT `ID`, `Name` FROM `store` WHERE `Status` = 1;"
         resultStore = sqlSelect(sqlQueryStore, (), True)
@@ -6656,9 +6674,19 @@ def add_to_store(ptID=None):
         if result['status'] == 0:
             return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!'),  'newCSRFtoken': newCSRFtoken})
 
-        answer = 'Done!'
-        return jsonify({'status': '1', 'answer': answer,  'newCSRFtoken': newCSRFtoken})
+        sqlQueryPR_RefKey = """
+                        SELECT `product_relatives`.`P_Ref_Key`
+                        FROM `product_type`
+                            LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = %s
+                            LEFT JOIN `product_relatives` ON `product_relatives`.`P_ID` = `product_type`.`Product_ID`
+                        WHERE `product_type`.`ID` = `product_type_relatives`.`PT_ID` 
+                        LIMIT 1;
+        """
+        resultPR_RefKey = sqlSelect(sqlQueryPR_RefKey, (ptID,), True)
+        prRefKey = resultPR_RefKey['data'][0]['P_Ref_Key']
+        answer = gettext('Add more products?')
 
+        return jsonify({'status': '1', 'answer': answer, 'prRefKey': prRefKey, 'newCSRFtoken': newCSRFtoken})
 
 
 @app.route("/create-promo-code", methods=["GET", "POST"])

@@ -7,6 +7,7 @@ from functools import wraps
 from bs4 import BeautifulSoup
 from datetime import datetime, date, timezone, timedelta
 from urllib.parse import urlparse
+from copy import deepcopy
 import logging
 import mysql.connector
 from mysql.connector import pooling, Error
@@ -1797,6 +1798,34 @@ def get_pt_payment_methods(ptRefKey):
             """
     result = sqlSelect(sqlQuery, (ptRefKey, languageID), True)
     return result
+
+
+def jsonSanitaizer(data, invalidChars):
+    if type(data[0]) is tuple:
+        myList = list(deepcopy(data))
+        index = 0
+        for row in data:
+            if row[1] is not None:
+                for key, val in invalidChars.items():
+                    if key in row[1]:
+                        rowList = list(row) 
+                        newRow = (rowList[0], rowList[1].replace(key, val))
+                        myList[index] = newRow
+            index += 1
+
+        data = tuple(myList)
+
+    if type(data[0]) is dict:
+        for row in data:
+            if row.get('Title') is not None:
+                for key, val in invalidChars.items():
+                    row['Title'] = row['Title'].replace(key, val)
+            
+            if row.get('ptTitle') is not None:
+                for key, val in invalidChars.items():
+                    row['ptTitle'] = row['ptTitle'].replace(key, val)
+    return data
+
 
 # Usage
 # msg_id = send_email_mailgun()

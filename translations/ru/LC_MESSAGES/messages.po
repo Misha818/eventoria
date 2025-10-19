@@ -323,6 +323,9 @@ msgstr "Пожалуйста, укажите должность"
 msgid "Please choose at least on role"
 msgstr "Пожалуйста, выберите хотя бы одну роль!"
 
+msgid "Add more products?"
+msgstr "Сервис успешно добавлен. Хотите добавить еще один сервис?"
+
 #: app.py:4107 templates/affiliates.html:23 templates/affiliates.html:67
 #: templates/affiliates.html:74 templates/confirmation-page.html:351
 #: templates/product-categories-copy.html:49

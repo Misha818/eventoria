@@ -491,12 +491,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
     ptIDs.forEach(ptID => {
         get_max_prch_qty(ptID.value, function(maxPrchQty) {
+            console.log(maxPrchQty);
 
             select = document.getElementById('select-quantity-'+ptID.value)
             if (maxPrchQty.length > 0) {
                 if (maxPrchQty.data[0].quantity > 0) {
 
+                    
                     num = maxPrchQty.data[0].maxQuantity;
+                    if (num == null) {
+                        num = maxPrchQty.data[0].quantity;
+                    }
                     if (maxPrchQty.data[0].maxQuantity > maxPrchQty.data[0].quantity) {
                         num = maxPrchQty.data[0].quantity;
                     }

@@ -2064,7 +2064,7 @@ msgstr ""
 #: templates/index.html:34 templates/public.html:181
 
 msgid "Activities"
-msgstr "Activities"
+msgstr "Trainings"
 
 #: templates/index.html:38
 msgid "Collaboration"
@@ -2092,11 +2092,11 @@ msgstr "Apply"
 
 #: templates/index.html:65
 msgid "New events comming soon."
-msgstr ""
+msgstr "New events comming soon"
 
 #: templates/index.html:66
 msgid "Subscribe and follow not to miss them."
-msgstr ""
+msgstr "Subscribe and follow not to miss them"
 
 #: copy.html:189 copy.html:546 copy.html:1119 templates/index.html:73
 #: templates/login.html:101 templates/order-details
@@ -2108,7 +2108,7 @@ msgstr "Loading..."
 
 #: templates/index.html:108
 msgid "About Eventoria"
-msgstr ""
+msgstr "About Eventoria"
 
 #: templates/index.html:109
 msgid "aboutText1"
@@ -2968,4 +2968,7 @@ msgstr "recipient"
 
 msgid "Download all"
 msgstr "Download all"
+
+msgid "Add more products?"
+msgstr "Add another price?"
 
