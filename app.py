@@ -82,24 +82,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-limiter = Limiter(
-    app=app,
-    key_func=get_remote_address,
-    # default_limits=["200 per day", "50 per hour"],
-    default_limits=[],
-    storage_uri="memory://",  # explicitly using in-memory storage
-    strategy="fixed-window"
-)
-
-# Initialize limiter with redis storage (for production)
 # limiter = Limiter(
 #     app=app,
 #     key_func=get_remote_address,
-#    # default_limits=["200 per day", "50 per hour"],
+#     # default_limits=["200 per day", "50 per hour"],
 #     default_limits=[],
-#     storage_uri="redis://localhost:6379/1",  # Use Redis storage
+#     storage_uri="memory://",  # explicitly using in-memory storage
 #     strategy="fixed-window"
 # )
+
+# Initialize limiter with redis storage (for production)
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+   # default_limits=["200 per day", "50 per hour"],
+    default_limits=[],
+    storage_uri="redis://localhost:6379/1",  # Use Redis storage
+    strategy="fixed-window"
+)
 
 
 defLang = getDefLang()
@@ -3147,8 +3147,8 @@ def add_pr():
     if not request.form.get('productName'):
         answer = gettext('Title is empty!')
         return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
-    elif len(request.form.get('productName')) > 20:
-        answer = gettext('Max allowed number of chars for title is 20')
+    elif len(request.form.get('productName')) > 40:
+        answer = gettext('Max allowed number of chars for title is 20') + '40'
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})  
     elif not request.form.get('productLink'): 
         answer = gettext('Link is empty!')

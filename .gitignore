@@ -27,7 +27,7 @@ nginx-conf.txt
 /static/images/stuff/
 /static/images/sub_product_slider/
 /static/images/thumbnails/
-# /static/images/uploads/
+/static/images/uploads/
 # /static/images/uploads/home_slides/
 
 
