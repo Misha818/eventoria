@@ -2483,7 +2483,7 @@ def editprice():
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
     
     
-    if len(request.form.get('title')) > 40:
+    if len(request.form.get('title')) > 50:
         answer = gettext('Max allowed number of chars for title is 20')
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
@@ -2842,7 +2842,7 @@ def upload_slides():
             answer = gettext('Please specify title!')
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
         
-        if len(request.form.get('title')) > 40:
+        if len(request.form.get('title')) > 50:
             answer = gettext('Max allowed number of chars for title is 20')
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
