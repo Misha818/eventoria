@@ -149,7 +149,7 @@ msgstr "Please specify the title!"
 
 #: app.py:2662 app.py:3019 app.py:3325 app.py:3376
 msgid "Max allowed number of chars for title is 20"
-msgstr "Max allowed number of chars for title is "
+msgstr "Max allowed number of chars for title is 40"
 
 #: app.py:2675 app.py:3028
 msgid "Product Type Title Already Exists!"
@@ -848,7 +848,7 @@ msgstr "Edit Service Type Title"
 #: templates/add_product_lang.html:60 templates/edit-price.html:48
 #: templates/product.html:711
 msgid "Max allowed number of chars is 20"
-msgstr ""
+msgstr "Max allowed number of chars is 40"
 
 #: templates/add-price.html:50
 msgid "Add Product Type Price"

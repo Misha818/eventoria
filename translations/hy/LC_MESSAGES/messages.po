@@ -154,7 +154,7 @@ msgstr "Խնդրում ենք մուտքագրել անվանումը։"
 
 #: app.py:2662 app.py:3019 app.py:3325 app.py:3376
 msgid "Max allowed number of chars for title is 20"
-msgstr "Տառերի առավելագույն թույլատրելի քանակն է "
+msgstr "Ծառայության անվան տառերի առավելագույն թույլատրելի քանակը 40 է"
 
 #: app.py:2675 app.py:3028
 msgid "Product Type Title Already Exists!"
@@ -831,7 +831,7 @@ msgstr "Ավելացնել ծառայության տեսակի անվանում�
 #: templates/add_product_lang.html:60 templates/edit-price.html:48
 #: templates/product.html:711
 msgid "Max allowed number of chars is 20"
-msgstr "Առավելագույն թույլատրելի նիշերի քանակը 20 է։"
+msgstr "Առավելագույն թույլատրելի նիշերի քանակը 40 է։"
 
 #: templates/add-price.html:50
 msgid "Add Product Type Price"

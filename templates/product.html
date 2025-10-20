@@ -81,6 +81,19 @@
         display: none;
     }
 
+    #add-product-form input, textarea, select {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 10px;
+        font-size: 14px;
+        width: 350px;
+        box-sizing: border-box;
+    }
+
+    #headerEditorModal {
+        overflow-y: scroll !important;
+    }
+
     /* #editorContent {
         margin-top: 100px;
     } */
@@ -701,10 +714,10 @@ function closeImageEditorModal(modal) {
         <h5 class="modal-title">{{ _('Edit Header') }}</h5>
     </div>
     <div class="modal-body">
-        <div class="form-group row">
-            <p id="mistakes_modal"></>
-        </div>    
         <form id="add-product-form" class="form">
+            <div class="form-group row">
+                <p id="mistakes_modal" style="width: 350px;"></>
+            </div>    
             <div class="form-group row">
                 <label for="product-name" class="col-sm-3 col-form-label">{{ _('Product name') }}</label>
                 <div class="col-sm-9">
@@ -728,7 +741,7 @@ function closeImageEditorModal(modal) {
             <div class="form-group row">
                 <label for="long-description" class="col-sm-3 col-form-label">{{ _('Long Description') }}</label>
                 <div class="col-sm-9">
-                    <textarea id="long-description" class="form-control" placeholder="{{ _('Suggested max number of chars is 125') }}" style="padding: 21px; font-family: Arial, sans-serif;">${LongDescription}</textarea>
+                    <textarea id="long-description" class="form-control" placeholder="{{ _('Suggested max number of chars is 125') }}" style="padding: 21px; border: 1px solid; font-family: Arial, sans-serif;">${LongDescription}</textarea>
                 </div>
             </div>
 
