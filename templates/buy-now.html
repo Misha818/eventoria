@@ -182,9 +182,227 @@ body {
 <script>
 
 let prDataGlobal = JSON.parse('{{ prDataGlobal | tojson | safe }}');
-
+let totalPriceGlobal = 1;
 let prData = []
 let ptQuantity;
+
+
+  // let promoFlag = 0;   
+  // function submit_promo() {
+  //   return new Promise((resolve, reject) => {
+  //     const submitPromo = document.querySelector('.submit-promo');
+  //     const promo = document.querySelector('#promo');
+      
+  //     if (promoFlag == 1) {
+  //       return;
+  //     }
+  //     promoFlag = 1;
+  //     if (document.querySelectorAll('.product-list h6')) {
+  //       document.querySelectorAll('.product-list h6').forEach(item => {
+  //         item.style.color = '#212529';
+  //       });
+  //     }
+
+  //     submitPromo.textContent = "{{ _('Louding...') }}";
+
+      
+  //     const promoCodeParent = document.querySelector('#promo-value-parent');
+  //     if (!promo.value) {
+  //         promo.placeholder = "{{ _('Enter Promo Code') }}";
+  //         promo.classList.add('red-placeholder'); 
+  //         promo.style.borderColor = 'red';
+  //         promoCodeParent.style.setProperty("display", "none", "important");
+  //         document.querySelector('#discount-info').style.setProperty("display", "none", "important");
+  //         document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
+
+          
+  //         submitPromo.textContent = "{{ _('Submit') }}";
+  //         promoFlag = 0;
+  //         return;
+  //       }
+
+                
+  //       let formData = new FormData();
+  //       formData.append('products', JSON.stringify([prDataGlobal]));
+  //       formData.append('promo', promo.value);
+
+  //       // Create a new XMLHttpRequest object
+  //       let xhr = new XMLHttpRequest();
+
+  //       // Configure the request
+  //       xhr.open('POST', '/get-promo-discounts');
+  //       xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+  //       // Define what happens on successful data submission
+  //       xhr.onload = function () {
+  //           if (xhr.status === 200) {
+  //               let response = JSON.parse(xhr.responseText);
+
+  //               let mistakes = document.getElementById('invalid-promo');
+  //               mistakes.style.setProperty("display", "none", "important");
+
+  //               if (response.status === '1') {
+
+  //                   response.data.forEach(item => {
+  //                     if (document.querySelector('#product_' + item.ptID.toString())) {
+  //                       document.querySelector('#product_' + item.ptID.toString()).style.color = 'green';
+  //                     }
+  //                   });
+
+  //                   let totalPriceText = document.querySelector('#checkout-total-price').textContent;
+  //                   let arr = totalPriceText.split(' ');
+  //                   let totalPrice = parseFloat(response.totalPrice);
+  //                   let newTotalPrice = totalPrice - parseFloat(response.discountPrice)
+  //                   totalPriceGlobal = newTotalPrice;
+
+  //                   document.querySelector('#discount-total-price').textContent = "{{ mainCurrency }} " + newTotalPrice;
+  //                   document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'line-through', 'important');
+  //                   document.querySelector('#discount-info').style.display = 'block';
+  //                   document.querySelector('#promo-code-value').textContent = promo.value;
+  //                   document.querySelector('#promo-code-success').textContent = "{{ mainCurrency }} " + '-' + response.discountPrice;
+  //                   submitPromo.textContent = "{{ _('Submit') }}";
+  //                   promoCodeParent.style.display = 'block'; 
+  //               }
+
+  //               if (response.status === '0') {
+  //                   // Handle empty product name
+  //                   mistakes.querySelector('h6').textContent = response.answer;
+  //                   mistakes.style.setProperty("display", "block", "important");
+
+
+
+  //                   promoCodeParent.style.setProperty("display", "none", "important");
+  //                   document.querySelector('#discount-info').style.setProperty("display", "none", "important");
+  //                   document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
+
+  //                   submitPromo.textContent = "{{ _('Submit') }}";
+
+  //               } 
+
+  //           } else {
+  //               // Handle error response
+  //               submitPromo.textContent = "{{ _('Submit') }}";
+
+  //               console.error('Error adding category:', xhr.responseText);
+  //           }
+  //       };
+
+  //       // Send the request with the FormData object
+  //       xhr.send(formData);
+        
+  //       promoFlag = 0;
+  //     });  
+  // } 
+
+  let promoFlag = 0;
+
+function submit_promo() {
+  return new Promise((resolve, reject) => {
+    const submitPromo = document.querySelector('.submit-promo');
+    const promo = document.querySelector('#promo');
+    const promoCodeParent = document.querySelector('#promo-value-parent');
+    const mistakes = document.getElementById('invalid-promo');
+
+    if (!promo) return resolve({ skipped: true, reason: 'no input' });
+    if (promoFlag === 1) return resolve({ skipped: true, reason: 'in-flight' });
+
+    promoFlag = 1;
+
+    // optional UI reset
+    document.querySelectorAll('.product-list h6')?.forEach(item => {
+      item.style.color = '#212529';
+    });
+
+    submitPromo.textContent = "{{ _('Loading...') }}";
+
+    if (!promo.value) {
+      // empty promo → show UI and resolve (don’t leave Promise pending)
+      promo.placeholder = "{{ _('Enter Promo Code') }}";
+      promo.classList.add('red-placeholder');
+      promo.style.borderColor = 'red';
+      promoCodeParent.style.setProperty("display", "none", "important");
+      document.querySelector('#discount-info').style.setProperty("display", "none", "important");
+      document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
+      submitPromo.textContent = "{{ _('Submit') }}";
+      promoFlag = 0;
+      return resolve({ ok: false, reason: 'empty' });
+    }
+
+    const formData = new FormData();
+    formData.append('products', JSON.stringify([prDataGlobal]));
+    formData.append('promo', promo.value);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/get-promo-discounts', true);
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+    xhr.onload = function () {
+      try {
+        submitPromo.textContent = "{{ _('Submit') }}";
+
+        if (xhr.status !== 200) {
+          promoFlag = 0;
+          return reject(new Error('HTTP ' + xhr.status));
+        }
+
+        const response = JSON.parse(xhr.responseText);
+
+        mistakes.style.setProperty("display", "none", "important");
+
+        if (response.status === '1') {
+          // success UI
+          response.data.forEach(item => {
+            const el = document.querySelector('#product_' + item.ptID);
+            if (el) el.style.color = 'green';
+          });
+
+          const totalPrice = parseFloat(response.totalPrice);
+          const newTotalPrice = totalPrice - parseFloat(response.discountPrice);
+          totalPriceGlobal = newTotalPrice;
+
+          document.querySelector('#discount-total-price').textContent = "{{ mainCurrency }} " + newTotalPrice;
+          document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'line-through', 'important');
+          document.querySelector('#discount-info').style.display = 'block';
+          document.querySelector('#promo-code-value').textContent = promo.value;
+          document.querySelector('#promo-code-success').textContent = "{{ mainCurrency }} -" + response.discountPrice;
+          promoCodeParent.style.display = 'block';
+
+          promoFlag = 0;
+          return resolve({ ok: true, data: response });
+        } else {
+          // invalid code UI
+          mistakes.querySelector('h6').textContent = response.answer;
+          mistakes.style.setProperty("display", "block", "important");
+          promoCodeParent.style.setProperty("display", "none", "important");
+          document.querySelector('#discount-info').style.setProperty("display", "none", "important");
+          document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
+
+          promoFlag = 0;
+          return resolve({ ok: false, data: response, reason: 'invalid' });
+        }
+      } catch (e) {
+        promoFlag = 0;
+        return reject(e);
+      }
+    };
+
+    xhr.onerror = function () {
+      submitPromo.textContent = "{{ _('Submit') }}";
+      promoFlag = 0;
+      reject(new Error('Network error'));
+    };
+
+    xhr.onabort = function () {
+      submitPromo.textContent = "{{ _('Submit') }}";
+      promoFlag = 0;
+      reject(new Error('Request aborted'));
+    };
+
+    xhr.send(formData);
+  });
+}
+
+
     document.addEventListener('DOMContentLoaded', function() {
 
       oddBasket();
@@ -197,6 +415,8 @@ let ptQuantity;
           });
           
         }
+
+
 
     window.addEventListener('load', () => {
       document.querySelector('body').classList.add('loaded');
@@ -673,7 +893,7 @@ async function get_pt_quantity(ptID, quantity) {
                 const container = document.getElementById('fill-data-container')
                 // create an element
                 const h1 = document.createElement('h1');
-                h1.textContent = prData[0].prTitle + ' ' + prData[0].prTitle;
+                h1.textContent = prData[0].prTitle + ' ' + prData[0].ptTitle;
                 
                 // insert before the first child
                 container.insertBefore(h1, container.firstChild);
@@ -1117,8 +1337,9 @@ async function get_pt_quantity(ptID, quantity) {
         ['firstname', 'First name'],
         ['lastname',  'Last name'],
         ['phone',     'Phone Number'],
-        ['confirm-phone','Confirm Phone Number'],
-        ['email',     'Email']
+        ['confirm_phone','Confirm Phone Number'],
+        ['email',     'Email'],
+        ['match-control', 'Phone numbers do not match!']
       ];
       pairs.forEach(([base]) => {
         const input = blk.querySelector(`[id^="${base}_"]`);
@@ -1135,15 +1356,31 @@ async function get_pt_quantity(ptID, quantity) {
         get_pt_quantity(prDataGlobal.ptID, totalQuantity + 1)
           .then(response => {
             if (response.status === 1) {
-              if (response.data.data[0].maxQuantity >= totalQuantity + 1) {
+              let maxAllowdQuantity = response.data.data[0].maxQuantity;
+              if (maxAllowdQuantity === null) {
+                maxAllowdQuantity = parseInt(response.data.data[0].quantity);
+              }
+              if (maxAllowdQuantity >= totalQuantity + 1) {
                 totalQuantity = totalQuantity + 1;
                 addBlock(totalQuantity);
                 let old_quantity = document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent;
                 let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
                 document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent = new_quantity;
                 document.querySelector('.text-muted').textContent = totalQuantity * response.data.data[0].Price;
-              } else {
-                alert(`{{ _('Max allowed quantity to purchase') }} ${response.data.data[0].maxQuantity}`)
+
+                prDataGlobal.quantity = totalQuantity;
+
+                if (document.querySelector('#promo')) {
+                  if (document.querySelector('#promo').value) {
+                    submit_promo();
+                  }
+                }
+
+              } 
+              
+              else {
+                totalQuantity = maxAllowdQuantity;
+                alert(`{{ _('Max allowed quantity to purchase') }} ${maxAllowdQuantity}`)
               }
             } 
           }) 
@@ -1163,6 +1400,14 @@ async function get_pt_quantity(ptID, quantity) {
         let new_quantity = old_quantity.split('(')[0] + ` (${totalQuantity})`;
         document.querySelector('#product_' + prDataGlobal.ptID.toString()).textContent = new_quantity;
         document.querySelector('.text-muted').textContent = totalQuantity * ptQuantity.Price;
+
+        prDataGlobal.quantity = totalQuantity;
+
+        if (document.querySelector('#promo')) {
+          if (document.querySelector('#promo').value) {
+            submit_promo();
+          }
+        }
       }
 
       if (!document.querySelector('.tkt-add')) {
@@ -1185,13 +1430,20 @@ async function get_pt_quantity(ptID, quantity) {
     .then(response => {
       if (response.status === 1) {
         ptQuantity = response.data.data[0]; 
-        if (response.data.data[0].maxQuantity >= totalQuantity) {
+        
+        let maxAllowdQuantity = response.data.data[0].maxQuantity;
+        if (maxAllowdQuantity === null) {
+          maxAllowdQuantity = parseInt(response.data.data[0].quantity);
+        }
+          
+        if (maxAllowdQuantity >= totalQuantity) {
           for(let i = 0; i < prDataGlobal.quantity; i++) {
             addBlock(i+1);
           }
         } else {
-          alert(`{{ _('Max allowed quantity to purchase') }} ${totalQuantity - 1}`)
-          for(let i = 0; i < totalQuantity - 1; i++) {
+          totalQuantity = maxAllowdQuantity;
+          alert(`{{ _('Max allowed quantity to purchase') }} ${maxAllowdQuantity}`)
+          for(let i = 0; i < maxAllowdQuantity; i++) {
             addBlock(i+1);
           }
         }
@@ -1242,113 +1494,12 @@ async function get_pt_quantity(ptID, quantity) {
 
     headerScroll();
 
-   const promo = document.querySelector('#promo');
-   let promoFlag = 0;   
-   const submitPromo = document.querySelector('.submit-promo');
-   submitPromo.addEventListener('click', function(event) {
+   document.querySelector('.submit-promo').addEventListener('click', function(event) {
       event.preventDefault;
-      if (promoFlag == 1) {
-        return;
-      }
-
-      promoFlag = 1;
-      if (document.querySelectorAll('.product-list h6')) {
-        document.querySelectorAll('.product-list h6').forEach(item => {
-          item.style.color = '#212529';
-        });
-      }
-
-      submitPromo.textContent = "{{ _('Louding...') }}";
-
-      
-      const promoCodeParent = document.querySelector('#promo-value-parent');
-      if (!promo.value) {
-          promo.placeholder = "{{ _('Enter Promo Code') }}";
-          promo.classList.add('red-placeholder'); 
-          promo.style.borderColor = 'red';
-          promoCodeParent.style.setProperty("display", "none", "important");
-          document.querySelector('#discount-info').style.setProperty("display", "none", "important");
-          document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
-
-          
-          submitPromo.textContent = "{{ _('Submit') }}";
-          promoFlag = 0;
-          return;
-        }
-
-                
-        let formData = new FormData();
-
-        formData.append('products', JSON.stringify([prDataGlobal]));
-        formData.append('promo', promo.value);
-
-        // Create a new XMLHttpRequest object
-        let xhr = new XMLHttpRequest();
-
-        // Configure the request
-        xhr.open('POST', '/get-promo-discounts');
-        xhr.setRequestHeader('X-CSRFToken', csrfToken);
-
-        // Define what happens on successful data submission
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                let response = JSON.parse(xhr.responseText);
-
-                let mistakes = document.getElementById('invalid-promo');
-                mistakes.style.setProperty("display", "none", "important");
-
-                if (response.status === '1') {
-
-                    response.data.forEach(item => {
-                      if (document.querySelector('#product_' + item.ptID.toString())) {
-                        document.querySelector('#product_' + item.ptID.toString()).style.color = 'green';
-                      }
-                    });
-
-                    let totalPriceText = document.querySelector('#checkout-total-price').textContent;
-                    let arr = totalPriceText.split(' ');
-                    let totalPrice = parseFloat(arr[1]);
-                    let newTotalPrice = totalPrice - parseFloat(response.discountPrice)
-                    
-                    document.querySelector('#discount-total-price').textContent = "{{ mainCurrency }} " + newTotalPrice;
-                    document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'line-through', 'important');
-                    document.querySelector('#discount-info').style.display = 'block';
-                    document.querySelector('#promo-code-value').textContent = promo.value;
-                    document.querySelector('#promo-code-success').textContent = "{{ mainCurrency }} " + '-' + response.discountPrice;
-                    submitPromo.textContent = "{{ _('Submit') }}";
-                    promoCodeParent.style.display = 'block'; 
-                }
-
-                if (response.status === '0') {
-                    // Handle empty product name
-                    mistakes.querySelector('h6').textContent = response.answer;
-                    mistakes.style.setProperty("display", "block", "important");
-
-
-
-                    promoCodeParent.style.setProperty("display", "none", "important");
-                    document.querySelector('#discount-info').style.setProperty("display", "none", "important");
-                    document.querySelector('#checkout-total-price').style.setProperty('text-decoration', 'unset');
-
-                    submitPromo.textContent = "{{ _('Submit') }}";
-
-                } 
-
-            } else {
-                // Handle error response
-                submitPromo.textContent = "{{ _('Submit') }}";
-
-                console.error('Error adding category:', xhr.responseText);
-            }
-        };
-
-        // Send the request with the FormData object
-        xhr.send(formData);
-        
-        promoFlag = 0;
-        
-    });
-
+      submit_promo();
+     
+   });
+    
       
   promo.addEventListener('input', function(event) {
       event.preventDefault;
@@ -1493,6 +1644,7 @@ $(document).ready(function() {
     const phones = document.querySelectorAll('.my-phone-control');
     if (phones) {
       for (let i =0; i < phones.length / 2; i++) {
+
         let state = handleInput(i + 1);
         if (state === false) {
           flag = false;
@@ -1525,7 +1677,7 @@ $(document).ready(function() {
     if (lastname.value === '') {
       mistakes.style.display = 'block';
       lastname.parentNode.querySelector('.invalid-feedback').style.display = 'block'
-      lastname.style.borderColor = 'red'
+      lastname.style.borderColor = 'red';
       flag = false;
     } else {
       mistakes.style.display = 'none';
@@ -1535,7 +1687,7 @@ $(document).ready(function() {
     
     if (isValidPhoneString(phone.value) === false || phone.value === '') {
       phone.parentNode.querySelector('.invalid-feedback-p').style.display = 'block'
-      phone.style.borderColor = 'red'
+      phone.style.borderColor = 'red';
       flag = false;
       // return flag;
     } else {
@@ -1548,7 +1700,9 @@ $(document).ready(function() {
     if (confirmPhone.value === '') {
       mistakes.style.display = 'block';
       confirmPhone.parentNode.querySelector('.invalid-feedback-phone').style.display = 'block';
-      confirmPhone.style.borderColor = 'red'
+      // confirmPhone.style.borderColor = 'red';
+      confirmPhone.style.setProperty('border-color', 'red', 'important');
+
       flag = false;
     } else {
       mistakes.style.display = 'none';
@@ -1660,58 +1814,87 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
       });
     }
 
-    if (ptQuantity.Price > 0) {
-      paymentMethod = document.getElementById('payment_methods');
-      if (paymentMethod.value) {
-        data['payment_method'] = paymentMethod.value;
-        paymentMethod.style.borderColor = '#212529';
-          // Collect all input and select elements
-          let form = document.querySelector('#payment_container');
-          let elements = form.querySelectorAll('input, select');
+    data['contact_list'] = contactList;
+    
+    
+    console.log(totalPriceGlobal)
+    console.log(typeof totalPriceGlobal)    
 
-          // Iterate over each element and store its id and value (if it has an id)
-          elements.forEach(function(el) {
-            if (el.id) {
-              if (el.type === 'radio') {
-                if (el.checked === true) {
-                  data[el.id] = true;
+    function pay_or_not() {
+      if (ptQuantity.Price > 0 && totalPriceGlobal > 0) {
+        console.log('PAYMENT NEEDED')
+        paymentMethod = document.getElementById('payment_methods');
+        if (paymentMethod.value) {
+          data['payment_method'] = paymentMethod.value;
+          paymentMethod.style.borderColor = '#212529';
+            // Collect all input and select elements
+            let form = document.querySelector('#payment_container');
+            let elements = form.querySelectorAll('input, select');
+
+            // Iterate over each element and store its id and value (if it has an id)
+            elements.forEach(function(el) {
+              if (el.id) {
+                if (el.type === 'radio') {
+                  if (el.checked === true) {
+                    data[el.id] = true;
+                  } else {
+                    data[el.id] = false;
+                  }
                 } else {
-                  data[el.id] = false;
-                }
-              } else {
-                if (!el.value) {
-                  el.style.borderColor = 'red';
-                  flag = false;
-                } else {
-                  el.style.borderColor = '#212529';
-                  data[el.id] = el.value;
+                  if (!el.value) {
+                    el.style.borderColor = 'red';
+                    flag = false;
+                  } else {
+                    el.style.borderColor = '#212529';
+                    data[el.id] = el.value;
+                  }
                 }
               }
-            }
-          });
-      } else {
-        paymentMethod.style.borderColor = 'red';
-        flag = false;
+            });
+        } else {
+          paymentMethod.style.borderColor = 'red';
+          flag = false;
+        }
       }
+      console.log(`flag in pay_or_not is ${flag}`)
+
     }
 
-  
+    function check_flag() {
       if (flag === false) {
         mistakes.textContent = "{{ _('Please improve all field marked in red') }}";
         mistakes.style.display = 'block';
         mistakes.scrollIntoView({ behavior: 'smooth' });
-
+        
         clickedButton.classList.toggle('hidden');    
         loaderBtn.classList.toggle('hidden');    
         gearElement.remove();
-
-        return;
-      }
-
-       
-      data['contact_list'] = contactList;
         
-      
+        return;
+      } else {
+        send_data()
+      }
+    }
+
+    if (document.querySelector('#promo')) {
+      if (document.querySelector('#promo').value) {
+        console.log('HEREEEEEEEE')
+        submit_promo()
+          .finally(() => {
+            pay_or_not();
+            check_flag();
+          });
+
+      } else {
+        pay_or_not();
+        check_flag();
+      }
+    } else {
+      pay_or_not();
+      check_flag();
+    }
+        
+    function send_data() {
       let formData = new FormData();
       console.log(data)
 
@@ -1796,6 +1979,8 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
         
         // Send the request with the FormData object
         xhr.send(formData);
+    }
+
 
         
         

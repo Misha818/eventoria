@@ -1337,7 +1337,7 @@ msgstr "Revard per service"
 
 #: templates/affiliate-order-details.html:286
 msgid "Revard value"
-msgstr ""
+msgstr "Revard value"
 
 #: templates/affiliate-order-details.html:297
 msgid "Total revard"
@@ -2092,7 +2092,7 @@ msgstr "Apply"
 
 #: templates/index.html:65
 msgid "New events comming soon."
-msgstr "New events comming soon"
+msgstr "From Ideas to Impact - Together"
 
 #: templates/index.html:66
 msgid "Subscribe and follow not to miss them."

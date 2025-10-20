@@ -1154,7 +1154,7 @@ msgstr "Մեկնարկի ամսաթիվ"
 #: templates/buy-now.html:1144 templates/buy-now.html:1191
 #: templates/edit_store.html:115 templates/edit_store.html:116
 msgid "Max allowed quantity to purchase"
-msgstr "Առավելագույն թույլատրելի քանակը գնումների համար"
+msgstr "Առավելագույն թույլատրելի քանակը գնումների համար -"
 
 #: templates/add_to_store.html:298 templates/create-promo-code.html:1412
 #: templates/edit-promo-code.html:1443 templates/edit_store.html:304
@@ -1604,7 +1604,7 @@ msgstr "Խնդրում ենք մուտքագրել վավեր հեռախոսահ
 
 #: templates/buy-now.html:1060 templates/checkout.html:173
 msgid "Confirm Phone Number"
-msgstr "Հաստատել հեռախոսահամարը"
+msgstr "Հաստատել համարը"
 
 #: templates/buy-now.html:1064 templates/checkout.html:177
 msgid "Phone numbers do not match!"
@@ -2996,3 +2996,6 @@ msgstr "Հիշի՛ր ինձ"
 
 msgid "Mailbox"
 msgstr "Փոստարկղ"
+
+msgid "Add Discount Rate"
+msgstr "Նշել զեղչի տոկոսադրույքը"

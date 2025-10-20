@@ -447,7 +447,7 @@ saveButton.addEventListener('click', function (event) {
 </script>
 <!-- End of thumbnail image manipulations -->
 
-<!-- Include jQuery library -->
+<script type="text/javascript" src="{{ url_for('static', filename='JS/custom.js')}}"></script>
 <script type="text/javascript">
  
     // Dynemically creat drop-down elements
@@ -460,14 +460,14 @@ saveButton.addEventListener('click', function (event) {
         
         let flag = prData[0].ID;
         let firstElse = 0;
-        let newDivTitle = prData[0].Title;
+        let newDivTitle = restoreUnwantedJsonChars(prData[0].Title);
         let childerenData = '';
       
         prData.forEach((row) => {
             
             if (flag === row['ID']) {
 
-                childerenData = childerenData + row['ptID'] + '_sp_' + row['ptTitle'] + '_sppr_';
+                childerenData = childerenData + row['ptID'] + '_sp_' + restoreUnwantedJsonChars(row['ptTitle']) + '_sppr_';
             } else {
 
                 if (firstElse == 0) {
@@ -516,7 +516,7 @@ saveButton.addEventListener('click', function (event) {
                     input.classList = "form-control parent-discount";
                     input.setAttribute('aria-label', "Username");
                     input.setAttribute('aria-describedby', "addon-wrapping");
-                    input.setAttribute('title', "Add Discount Rate");
+                    input.setAttribute('title', `{{ _("Add Discount Rate") }}`);
 
                     input.addEventListener('input', function() {
                         
@@ -530,38 +530,17 @@ saveButton.addEventListener('click', function (event) {
 
                         const childDiscountValues = document.querySelectorAll('.parent-discount');
 
-                        if (valFloat > 99 || valFloat < 1) {
+                        if (valFloat < 101 && valFloat > 0) {                            
+                            childDiscountValues.forEach(input => {
+                                input.value = this.value;
+                            });
+                            return;
+                        } else {
                             input.value = this.value.slice(0, -1); 
-                            if (valFloat === '' && valFloat !== 0) {
-                                if(confirm("{{ _('All discount values will be changed to') }} " + this.value + ' ')) {
-                                    childDiscountValues.forEach(input => {
-                                        input.value = this.value;
-                                    });
-                                }
-                            }
                             return;
-                        }
-                                            
-                        let flag = 0;
-                        childDiscountValues.forEach(input => {
-                            if (input.value !== '') {
-                            flag = 1; 
-                            return;
-                            }
-                        });
-
-                        if (flag === 1) {                        
-                            if(!confirm("{{ _('All discount values will be changed to') }} " + this.value)) {
-                                input.value = this.value.slice(0, -1); 
-                                return;
-                            }
-                        }
+                        }                                            
 
                         input.style.border = "1px solid #dee2e6";
-                        
-                        childDiscountValues.forEach(input => {
-                            input.value = this.value;
-                        });
 
                     });
 
@@ -589,7 +568,7 @@ saveButton.addEventListener('click', function (event) {
                     inputElement.classList = "form-control revard-input-parent";
                     inputElement.setAttribute('aria-label', 'Username');
                     inputElement.setAttribute('aria-describedby', 'addon-wrapping');
-                    inputElement.title = "Revard Value";
+                    inputElement.title = `{{ _("Revard value") }}`;
                     // inputElement.id = "parent_revard_value_" + row.ID;
 
                 
@@ -820,10 +799,43 @@ saveButton.addEventListener('click', function (event) {
                 input.id = row.ID;
                 input.setAttribute('aria-label', "Username");
                 input.setAttribute('aria-describedby', "addon-wrapping");
-                input.setAttribute('title', "Add Discount Rate");
+                input.setAttribute('title', `{{ _("Add Discount Rate") }}`);
 
                 input.addEventListener('input', function() {
                     
+                    // Check if input is numeric
+                    // if (!/^\d*\.?\d+$/.test(this.value) && this.value !== '') {
+                    //     input.value = this.value.replace(/\D/g, ''); 
+                    //     return;
+                    // }
+
+                    // const valFloat = parseFloat(this.value);
+                    // alert(valFloat);
+
+                    // const bigDeddy = this.parentNode.parentNode;
+                    // const childDiscountValues = bigDeddy.querySelectorAll('.child-options .child-discount');
+
+                    // if (valFloat > 99 || valFloat < 1) {
+                    //     input.value = this.value.slice(0, -1); 
+                    //     if (valFloat === '' && valFloat !== 0) {
+                    //         if(confirm("{{ _('All discount values in current Product Type fields will be changed to') }} " + this.value)) {
+                    //             childDiscountValues.forEach(input => {
+                    //                 input.value = this.value;
+                    //             });
+                    //         }
+                    //     }
+                    //     return;
+                    // }
+                             
+                    const bigDeddy = this.parentNode.parentNode;
+                    const childDiscountValues = bigDeddy.querySelectorAll('.child-options .child-discount');
+                    if (this.value === '') {
+                        childDiscountValues.forEach(input => {
+                            input.value = this.value;
+                        });
+                        return;
+                    }
+
                     // Check if input is numeric
                     if (!/^\d*\.?\d+$/.test(this.value) && this.value !== '') {
                         input.value = this.value.replace(/\D/g, ''); 
@@ -832,21 +844,17 @@ saveButton.addEventListener('click', function (event) {
 
                     const valFloat = parseFloat(this.value);
 
-                    const bigDeddy = this.parentNode.parentNode;
-                    const childDiscountValues = bigDeddy.querySelectorAll('.child-options .child-discount');
+                    if (valFloat < 101 && valFloat > 0) {
+                        childDiscountValues.forEach(input => {
+                            input.value = this.value;
+                        });
+                        return;
 
-                    if (valFloat > 99 || valFloat < 1) {
+                    } else {
                         input.value = this.value.slice(0, -1); 
-                        if (valFloat === '' && valFloat !== 0) {
-                            if(confirm("{{ _('All discount values in current Product Type fields will be changed to') }} " + this.value)) {
-                                childDiscountValues.forEach(input => {
-                                    input.value = this.value;
-                                });
-                            }
-                        }
                         return;
                     }
-                                        
+
                     let flag = 0;
                     childDiscountValues.forEach(input => {
                         if (input.value !== '') {
@@ -894,7 +902,7 @@ saveButton.addEventListener('click', function (event) {
                 inputElement.classList = "form-control revard-input-parent";
                 inputElement.setAttribute('aria-label', 'Username');
                 inputElement.setAttribute('aria-describedby', 'addon-wrapping');
-                inputElement.title = "Revard Value";
+                inputElement.title = `{{ _("Revard value") }}`;
                 inputElement.id = "parent_revard_value_" + row.ID;
 
                
@@ -1075,8 +1083,8 @@ saveButton.addEventListener('click', function (event) {
                 dropDownContent.append(newDiv);
 
                 flag = row['ID']
-                newDivTitle = row['Title']
-                childerenData = row['ptID'] + '_sp_' + row['ptTitle'] + '_sppr_';
+                newDivTitle = restoreUnwantedJsonChars(row['Title'])
+                childerenData = row['ptID'] + '_sp_' + restoreUnwantedJsonChars(row['ptTitle']) + '_sppr_';
 
             }               
 
@@ -1130,10 +1138,20 @@ saveButton.addEventListener('click', function (event) {
                 input.id = flag;
                 input.setAttribute('aria-label', "Username");
                 input.setAttribute('aria-describedby', "addon-wrapping");
-                input.setAttribute('title', "Add Discount Rate");
+                input.setAttribute('title', `{{ _("Add Discount Rate") }}`);
 
                 input.addEventListener('input', function() {
-                    
+
+                    const bigDeddy = this.parentNode.parentNode;
+                    const childDiscountValues = bigDeddy.querySelectorAll('.child-options .child-discount');
+                   
+                    if (this.value === '') {
+                        childDiscountValues.forEach(input => {
+                            input.value = this.value;
+                        });
+                        return;
+                    }
+
                     // Check if input is numeric
                     if (!/^\d*\.?\d+$/.test(this.value) && this.value !== '') {
                         input.value = this.value.replace(/\D/g, ''); 
@@ -1142,18 +1160,16 @@ saveButton.addEventListener('click', function (event) {
 
                     const valFloat = parseFloat(this.value);
 
-                    const bigDeddy = this.parentNode.parentNode;
-                    const childDiscountValues = bigDeddy.querySelectorAll('.child-options .child-discount');
 
-                    if (valFloat > 99 || valFloat < 1) {
+                    // if (valFloat > 99 || valFloat < 1) {
+                    if (valFloat < 101 && valFloat > 0) {
+                        childDiscountValues.forEach(input => {
+                            input.value = this.value;
+                        });
+                        return;
+
+                    } else {
                         input.value = this.value.slice(0, -1); 
-                        if (valFloat === '' && valFloat !== 0) {
-                            if(confirm("{{ _('All discount values in current Product Type fields will be changed to') }} " + this.value)) {
-                                childDiscountValues.forEach(input => {
-                                    input.value = this.value;
-                                });
-                            }
-                        }
                         return;
                     }
                                         
@@ -1204,7 +1220,7 @@ saveButton.addEventListener('click', function (event) {
                 inputElement.classList = "form-control revard-input-parent";
                 inputElement.setAttribute('aria-label', 'Username');
                 inputElement.setAttribute('aria-describedby', 'addon-wrapping');
-                inputElement.title = "Revard Value";
+                inputElement.title = `{{ _("Revard value") }}`;
                 inputElement.id = "parent_revard_value_" + flag;
 
                
@@ -1430,7 +1446,7 @@ saveButton.addEventListener('click', function (event) {
         prData.forEach((row) => {
             if (parseInt(ptID) === row['ptID']) {
                 
-                const parentDiv = document.querySelector(`[data-parent="${row['Title']}"]`);
+                const parentDiv = document.querySelector(`[data-parent="${restoreUnwantedJsonChars(row['Title'])}"]`);
                 const childContainer = parentDiv.querySelector('.child-options');
                 const children = parentDiv.getAttribute('data-children').split('_sppr_');
                 children.forEach((childInfo) => {
@@ -1454,7 +1470,7 @@ saveButton.addEventListener('click', function (event) {
 
 
                 const selectedLabel = document.getElementById('selected-label');
-                    selectedLabel.textContent = row['Title'] + ': ' + row['ptTitle'];
+                    selectedLabel.textContent = restoreUnwantedJsonChars(row['Title']) + ': ' + restoreUnwantedJsonChars(row['ptTitle']);
                     selectedLabel.dataset.value = row['ptID'];
 
                 childContainer.classList.remove('hidden');    

@@ -82,24 +82,24 @@ def is_digit(value):
 
 
 # Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
+    # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/1",  # Use Redis storage
+    storage_uri="memory://",  # explicitly using in-memory storage
     strategy="fixed-window"
 )
+
+# Initialize limiter with redis storage (for production)
+# limiter = Limiter(
+#     app=app,
+#     key_func=get_remote_address,
+#    # default_limits=["200 per day", "50 per hour"],
+#     default_limits=[],
+#     storage_uri="redis://localhost:6379/1",  # Use Redis storage
+#     strategy="fixed-window"
+# )
 
 
 defLang = getDefLang()
@@ -4206,7 +4206,7 @@ def assign_email():
         sqlQuery = """
                     SELECT 
                         `stuff`.`ID`,
-                        CONCAT(' ', `stuff`.`Firstname`, `stuff`.`Lastname`) AS `Initials`,
+                        CONCAT(' ', `stuff`.`Firstname`, ' ', `stuff`.`Lastname`) AS `Initials`,
                         `position`.`Position`
                     FROM `stuff`
                     LEFT JOIN `position` ON `position`.`ID` = `stuff`.`PositionID`
@@ -6710,7 +6710,8 @@ def create_promo_code():
                     """
         sqlValTuple = (languageID,)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
-        prData = json.dumps(result['data']) 
+        sanitizedData = jsonSanitaizer(result['data'], INVALID_CHARS_IN_JSON)
+        prData = json.dumps(sanitizedData)  
 
         sqlQueryAffiliate = """SELECT 
                                 `stuff`.`ID`, 
@@ -6756,7 +6757,7 @@ def create_promo_code():
                 if value == '':
                     return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})    
 
-            if int(row['discount']) > 99:
+            if int(row['discount']) > 100:
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken}) 
                 
             if row.get('revard_option') == '0':
@@ -6866,7 +6867,7 @@ def edit_promo():
             if value == '':
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})    
 
-        if int(row['discount']) > 99:
+        if int(row['discount']) > 100:
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken}) 
             
         if row.get('revard_option') == '0':
@@ -7016,7 +7017,9 @@ def edit_promo_code(promoID):
         return render_template('error.html', current_locale=get_locale())
 
 
-    discounts = json.dumps(discountsResult['data']) 
+    # discounts = json.dumps(discountsResult['data']) 
+    sanitizedDiscounts = jsonSanitaizer(discountsResult['data'], INVALID_CHARS_IN_JSON)
+    discounts = json.dumps(sanitizedDiscounts) 
 
 
     sqlQueryAffiliate = """SELECT 
@@ -7043,7 +7046,8 @@ def edit_promo_code(promoID):
                 """
     sqlValTuple = (languageID,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
-    prData = json.dumps(result['data']) 
+    sanitizedData = jsonSanitaizer(result['data'], INVALID_CHARS_IN_JSON)
+    prData = json.dumps(sanitizedData) 
 
     newCSRFtoken = generate_csrf()
     sideBar = side_bar_stuff()
@@ -7112,7 +7116,8 @@ def get_promo_discounts():
         for r in products:
             if row['ptID'] == r['ptID']:
                 discountPrice = discountPrice + (row['Price'] * int(r['quantity']) * row['discount'] / 100)
-
+            totalPrice = totalPrice + row['Price'] * int(r['quantity'])
+          
     return jsonify({'status': "1", 'data': result['data'], 'discountPrice': discountPrice, 'totalPrice': totalPrice, 'newCSRFtoken': newCSRFtoken})
 
 

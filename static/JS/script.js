@@ -642,16 +642,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             slideData = [
                                     {
                                         "Alt_Text": "",
-                                        "IMG": "coming.png",
-                                        "Subtitle": newEventsText1,
-                                        "Subtitle_Color": "rgb(208, 15, 15)",
+                                        "IMG": "defauld_bg.png",
+                                        "Subtitle": '',
+                                        "Subtitle_Color": "rgb(43, 39, 39, 1)",
                                         "Title": newEventsText,
-                                        "Title_Color": "rgb(18, 179, 126)",
-                                        "URL": "/contacts"
+                                        "Title_Color": "rgb(43, 39, 39, 1)",
+                                        "URL": "/about"
                                     }
                                 ]
                             slideImages.push(slideData[0].IMG);
                             totalImages = 1;
+                            // font-family: 'Kurland', cursive, Georgia, 'Times New Roman', Times, serif;
+                            document.querySelector('.hero-title').style.fontFamily = "'Kurland', cursive, Georgia, 'Times New Roman', Times, serif";    
                         } else {
 
                             slideData = response.data
