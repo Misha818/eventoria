@@ -1190,7 +1190,6 @@ def checkout():
         if paymentMethod == False and priceState == True or paymentMethod and priceState == False:
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
         
-        
         # End of checking payment availbility and methods
         # End of Validation
 
@@ -1248,7 +1247,7 @@ def checkout():
         # This also checks if specified amount of product exists
         buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID, paymentMethod, priceState)
         if buffer['status'] == "0":
-            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!') + 'sdsds', 'newCSRFtoken': newCSRFtoken})
+            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
         
         if buffer['status'] == "2":
             return jsonify({'status': "0", 'answer': gettext("Invalid Promo Code"), 'newCSRFtoken': newCSRFtoken})
@@ -5760,7 +5759,6 @@ def send_email(filters=''):
     resp = requests.post(SMAIL_API, headers=headers, json=data, timeout=(2,5), verify=True)
 
     # resp = requests.post(os.getenv('SMAIL_API'), json=data)
-    print(resp.status_code)
     if resp.status_code == 200:
         return jsonify({'status': "1", 'answer': gettext('Email sent successfully!'), 'newCSRFtoken': newCSRFtoken})
     else:

@@ -5,7 +5,8 @@
             /* --soft-beige: #e1d7cc; */
             /* --mist-gray: #bfc6ce; */
             /* --mist-gray: #597ee3; */
-            --mist-gray: #e1d7cc;
+            /* --mist-gray: #e1d7cc; */
+            --mist-gray: #e3e1e1;
             --secondary-black: #2a2a2a;
             --accent-blue: #0066cc;
             --accent-blue-hover: #0052a3;
@@ -329,9 +330,10 @@
         }
 
         .btn-outline {
-            background: transparent;
+            background: #ebe9ea;
             color: var(--text-primary);
             border: 2px solid var(--text-primary);
+            box-shadow: 0 8px 25px rgb(191 186 186);
         }
 
         .btn-outline:hover {

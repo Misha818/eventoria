@@ -1060,12 +1060,14 @@ def calculate_price(products):
         return {'status': "2"}
 
     # Calculate total price prices with discount
+    # This part works incorrectly
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!
     totalPrice = 0
     for row in result['data']:
         for r in products:
             if row['ptID'] == r['ptID']:
                 totalPrice = totalPrice + row['Price'] * int(r['quantity'])
-    
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!
     return {'status': "1", 'answer': totalPrice}
 
 
@@ -1085,9 +1087,6 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
             if not data['cc-cvv']:
                 return {'status': '3', 'amswer': gettext("Security code required.")}
         
-
-    if paymentMethod == False and priceState == False: #checkout without paying
-        pass
 
     bufferQuantities = []
     bufferInsertRows = ''
@@ -1207,6 +1206,10 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                             'payment_details_id': pdID
                         })
                     
+    if paymentMethod == False and totalPrice > 0: #checkout without paying
+        return {'status': "0", 'answer': smthWrong}  
+
+
 
     # insert into `buffer_store` bufferQuantities
     bufferInsertRows = "(%s, %s, %s, %s, %s, %s, %s, %s, %s)," * len(bufferQuantities)
@@ -1665,7 +1668,6 @@ def send_confirmation_email(pdID, trackOrderUrl):
 """
     result = sqlSelect(sqlQuery, (pdID, getLangID()), True)
 
-    print(json.dumps(result, indent=4))
     if result['length'] == 0:
         return False
     

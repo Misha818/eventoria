@@ -2082,7 +2082,7 @@ msgstr "Գրանցվել"
 
 #: templates/index.html:65
 msgid "New events comming soon."
-msgstr "Սպասեք մեր նոր միջոցառումներին"
+msgstr "Գաղափարից արդյունք - միասին"
 
 #: templates/index.html:66
 msgid "Subscribe and follow not to miss them."
