@@ -154,7 +154,7 @@ msgstr "Խնդրում ենք մուտքագրել անվանումը։"
 
 #: app.py:2662 app.py:3019 app.py:3325 app.py:3376
 msgid "Max allowed number of chars for title is 20"
-msgstr "Ծառայության անվան տառերի առավելագույն թույլատրելի քանակը 40 է"
+msgstr "Ծառայության անվան տառերի առավելագույն թույլատրելի քանակ - "
 
 #: app.py:2675 app.py:3028
 msgid "Product Type Title Already Exists!"

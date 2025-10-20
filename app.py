@@ -2484,7 +2484,7 @@ def editprice():
     
     
     if len(request.form.get('title')) > 50:
-        answer = gettext('Max allowed number of chars for title is 20')
+        answer = gettext('Max allowed number of chars for title is 20') + '50'
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
     # Check weather Product Type Title exists for current product
@@ -2843,7 +2843,7 @@ def upload_slides():
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
         
         if len(request.form.get('title')) > 50:
-            answer = gettext('Max allowed number of chars for title is 20')
+            answer = gettext('Max allowed number of chars for title is 20') + '50'
             return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
         # Check weather Product Type Title exists for current product
@@ -3148,7 +3148,7 @@ def add_pr():
         answer = gettext('Title is empty!')
         return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
     elif len(request.form.get('productName')) > 40:
-        answer = gettext('Max allowed number of chars for title is 20')
+        answer = gettext('Max allowed number of chars for title is 20') + '40'
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})  
     elif not request.form.get('productLink'): 
         answer = gettext('Link is empty!')
@@ -3199,7 +3199,7 @@ def edit_pr_headers():
         answer = gettext('Product name is empty!')
         return jsonify({'status': '2', 'answer': answer, 'newCSRFtoken': newCSRFtoken}) 
     elif len(request.form.get('productName')) > 40:
-        answer = gettext('Max allowed number of chars for title is 20')
+        answer = gettext('Max allowed number of chars for title is 20') + '40'
         return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken})  
     elif not request.form.get('productLink'):
         answer = gettext('Product link is empty!')

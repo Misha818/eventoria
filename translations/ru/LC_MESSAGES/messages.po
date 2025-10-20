@@ -844,7 +844,7 @@ msgstr "Добавить название типа продукта"
 #: templates/add_product_lang.html:60 templates/edit-price.html:48
 #: templates/product.html:711
 msgid "Max allowed number of chars is 20"
-msgstr "Максимально допустимое количество символов — 40."
+msgstr "Максимально допустимое количество символов — "
 
 #: templates/add-price.html:50
 msgid "Add Product Type Price"
