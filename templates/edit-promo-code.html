@@ -211,8 +211,8 @@
     </form>
 </div>
 
-<script type="text/javascript" src="{{ url_for('static', filename='JS/custom.js')}}"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/custom.js')}}"></script>
+<script nonce="{{ csp_nonce() }}">
 
 let csrfToken = "{{ csrf_token() }}";
 const languageID = `{{ languageID }}`;
@@ -434,7 +434,7 @@ saveButton.addEventListener('click', function (event) {
 
             if (response.status === '0') {
                 // Handle empty product name
-                mistakesDiv.innerHTML = response.answer;
+                mistakesDiv.innerHTML = safeMessage(response.answer);
                 mistakesDiv.style.color = 'red';
                 mistakesDiv.style.display = 'flex';
 
@@ -463,7 +463,7 @@ saveButton.addEventListener('click', function (event) {
 <!-- End of thumbnail image manipulations -->
 
 <!-- Include jQuery library -->
-<script type="text/javascript">
+<script nonce="{{ csp_nonce() }}" type="text/javascript">
 
     
                             
@@ -471,10 +471,10 @@ saveButton.addEventListener('click', function (event) {
 
  
     // Dynemically creat drop-down elements
-    const ptID = "{{ ptID|safe }}" 
-    const dataLength = "{{ dataLength|safe }}"
-    const prData = JSON.parse(`{{ prData|safe }}`);
-    const discounts = JSON.parse(`{{ discounts|safe }}`);
+    const ptID = "{{ ptID }}" 
+    const dataLength = "{{ dataLength }}"
+    const prData = JSON.parse({{ prData | tojson }});
+    const discounts = JSON.parse({{ discounts | tojson }});
  
     let dropDownContent = document.createElement('span');
     if (parseInt(dataLength) > 0) {
@@ -1991,18 +1991,18 @@ saveButton.addEventListener('click', function (event) {
 
 </script>
 
-<script type="text/javascript" src="{{ url_for('static', filename='JS/drop-down-tree-edit-promo-code.js')}}"></script>
+<script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/drop-down-tree-edit-promo-code.js')}}"></script>
 
 <!-- 3. Bootstrap 5 JS (Popper included) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- 4. jQuery (Required by bootstrap-datepicker 1.x) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
 <!-- 5. Bootstrap Datepicker JS (uxsolutions) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
   // Initialize the date picker on our input
   $(function() {
     $('#expDate').datepicker({
@@ -2010,7 +2010,7 @@ saveButton.addEventListener('click', function (event) {
       autoclose: true,      // Close the picker automatically after selecting a date
       todayHighlight: true,  // Highlight today's date
       startDate: new Date() 
-    }).datepicker('setDate', "{{ expDate | safe }}");
+    }).datepicker('setDate', "{{ expDate }}");
   });
 
 

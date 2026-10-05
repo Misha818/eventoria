@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, g, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, g, url_for, make_response
 from eventoria_db import get_db, close_db
+from mysql.connector.pooling import PoolError
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from products import email_text, submit_notes_text, get_pr_order, slidesToEdit, checkCategoryName, checkProductCategoryName, get_RefKey_LangID_by_link, get_article_category_images, get_product_category_images, edit_p_h, submit_reach_text, submit_product_text, add_p_c_sql, edit_p_c_view, edit_a_c_view, edit_p_c_sql, get_product_categories, get_ar_thumbnail_images, get_pr_thumbnail_images, add_product, productDetails, constructPrData, add_product_lang
-from sysadmin import jsonSanitaizer, get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
+from sysadmin import sanitize_html, jsonSanitaizer, get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, countRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError, generate_csrf
 from OpenSSL import SSL
@@ -20,16 +22,24 @@ import os
 import json
 import re
 import copy
+import secrets
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
+# Behind nginx (and Cloudflare) request.remote_addr is the proxy's address, so every
+# visitor would share one rate-limit bucket. ProxyFix takes the visitor's IP from
+# X-Forwarded-For and the scheme from X-Forwarded-Proto, trusting exactly PROXY_COUNT
+# proxies in front of the app: 0 = reached directly (local dev), 1 = nginx only,
+# 2 = Cloudflare + nginx. A wrong (too high) value lets visitors fake their IP.
+PROXY_COUNT = int(os.getenv('PROXY_COUNT', '0'))
+if PROXY_COUNT > 0:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=PROXY_COUNT, x_proto=1)
+
 # Register teardown so every request returns its connection
 app.teardown_appcontext(close_db)
-
-limiter = Limiter(get_remote_address, app=app)
 
 init_sysadmin_context(app)
 
@@ -37,6 +47,51 @@ init_sysadmin_context(app)
 def init_template_data():
     g.rolls = []
     g.activeRoleID = None
+
+def get_csp_nonce():
+    # One random value per request; every <script> tag in the templates carries it
+    if 'csp_nonce' not in g:
+        g.csp_nonce = secrets.token_urlsafe(16)
+    return g.csp_nonce
+
+
+# Content-Security-Policy: the browser only runs <script> tags that carry this
+# request's nonce, so script injected through HTML (including onclick= and
+# similar attributes) is refused. Scripts loaded by trusted scripts (e.g. the
+# Turnstile widget) are allowed through 'strict-dynamic'.
+# "https: 'unsafe-inline'" are ignored by current browsers when a nonce is present;
+# they only keep very old browsers working.
+# Set CSP_REPORT_ONLY=1 in .env to only log violations in the browser console.
+CSP_POLICY = "; ".join([
+    "default-src 'self'",
+    "script-src 'nonce-{nonce}' 'strict-dynamic' https: 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net "
+    "https://fonts.googleapis.com https://stackpath.bootstrapcdn.com https://cdn.quilljs.com",
+    "font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com "
+    "https://fonts.gstatic.com https://challenges.cloudflare.com",
+    "frame-src https://challenges.cloudflare.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    "report-uri /csp-report",
+])
+CSP_HEADER = ('Content-Security-Policy-Report-Only' if os.getenv('CSP_REPORT_ONLY') == '1'
+              else 'Content-Security-Policy')
+
+@app.after_request
+def set_security_headers(response):
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+    response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault(CSP_HEADER, CSP_POLICY.format(nonce=get_csp_nonce()))
+    return response
+
+@app.context_processor
+def inject_csp_nonce():
+    return {'csp_nonce': get_csp_nonce}
 
 @app.context_processor
 def inject_dynamic_data():
@@ -81,23 +136,17 @@ def is_digit(value):
 # recaptcha = ReCaptcha(app)
 
 
-# Initialize limiter with in-memory storage explicitly
-# limiter = Limiter(
-#     app=app,
-#     key_func=get_remote_address,
-#     # default_limits=["200 per day", "50 per hour"],
-#     default_limits=[],
-#     storage_uri="memory://",  # explicitly using in-memory storage
-#     strategy="fixed-window"
-# )
-
-# Initialize limiter with redis storage (for production)
+# Rate-limit counters live in shared storage so all gunicorn workers count together
+# (with "memory://" every worker keeps its own count, so "5 per minute" becomes
+# 5 per worker). Production: RATELIMIT_STORAGE_URI=redis://localhost:6379/1 in .env.
+# The memory default is only meant for local development.
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-   # default_limits=["200 per day", "50 per hour"],
     default_limits=[],
-    storage_uri="redis://localhost:6379/1",  # Use Redis storage
+    storage_uri=os.getenv('RATELIMIT_STORAGE_URI', 'memory://'),
+    # If Redis is unreachable, keep limiting per process instead of failing every request
+    in_memory_fallback_enabled=True,
     strategy="fixed-window"
 )
 
@@ -105,11 +154,19 @@ limiter = Limiter(
 defLang = getDefLang()
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+# Session cookie: not readable from JS, not sent on cross-site requests, HTTPS only
+# (set SESSION_COOKIE_SECURE=0 in .env when running locally over plain http)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', '1') == '1'
+
+# Upper bound for a whole request (slider uploads send several images at once)
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 app.config['BABEL_DEFAULT_LOCALE'] = defLang['Prefix']
 app.config['BABEL_SUPPORTED_LOCALES'] = getSupportedLangs()  # Supported languages here
 
 csrf = CSRFProtect(app)
-babel = Babel(app)
 PAGINATION = os.getenv('PAGINATION')
 PAGINATION_BUTTONS_COUNT = os.getenv('PAGINATION_BUTTONS_COUNT')
 MAIN_CURRENCY = os.getenv('MAIN_CURRENCY')
@@ -134,6 +191,38 @@ orderStatusList = get_order_status_list()
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     return render_template('csrf_error.html', reason=e.description), 400
+
+
+# All database connections stayed busy for MYSQL_POOL_TIMEOUT seconds (see eventoria_db.py)
+@app.errorhandler(PoolError)
+def handle_db_busy(e):
+    answer = gettext('The server is busy right now. Please try again in a moment.')
+    if request.method == 'GET':
+        response = make_response(render_template('error.html', setUrlText=answer, current_locale=get_locale()), 503)
+    else:
+        response = make_response(jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': generate_csrf()}), 503)
+    response.headers['Retry-After'] = '5'
+    return response
+
+
+# Browsers POST a JSON report here whenever the Content-Security-Policy blocks
+# something (see "report-uri" in CSP_POLICY). Logged so blocked features show up
+# in the server log instead of failing silently in a visitor's browser.
+@app.route('/csp-report', methods=['POST'])
+@csrf.exempt
+@limiter.limit("60 per minute")
+def csp_report():
+    report = request.get_json(force=True, silent=True) or {}
+    body = report.get('csp-report', report) if isinstance(report, dict) else {}
+    app.logger.warning(
+        'CSP violation: %s blocked %s on %s (%s:%s)',
+        str(body.get('violated-directive') or body.get('effective-directive'))[:100],
+        str(body.get('blocked-uri'))[:200],
+        str(body.get('document-uri'))[:200],
+        str(body.get('source-file'))[:200],
+        body.get('line-number'),
+    )
+    return '', 204
 
 def side_bar_stuff():
     stuffID = session.get("user_id")
@@ -184,7 +273,7 @@ def side_bar_stuff():
 
 
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+@limiter.limit("5 per minute", methods=["POST"])  # login attempts; viewing the page is not counted
 @validate_request
 def login():
     if request.method == "POST":
@@ -411,10 +500,6 @@ def inject_babel():
 def inject_locale():
     # This makes the function available directly, allowing you to call it in the template
     return {'get_locale': get_locale}
-
-@app.context_processor
-def inject_babel():
-    return dict(_=gettext)
 
 def contact_urls():
     return {'TG': os.getenv('TG_URL'), 'FB': os.getenv('FB_URL'), 'INS': os.getenv('INS_URL'), 'IN': os.getenv('IN_URL')}
@@ -1427,6 +1512,17 @@ def orders(filter):
 
     sqlValTuple = tuple(protoTuple)
 
+    # Shared by the listing and its row count, so filters on clients/phones/emails work in both
+    ordersFrom = """`payment_details` 
+                LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
+                LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
+                LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
+                LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
+                LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
+                LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
+                LEFT JOIN `notes` ON `payment_details`.`notesID` = `notes`.`ID`
+                LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`"""
+
     sqlQuery = f"""
             SELECT 
                 `payment_details`.`ID`,
@@ -1437,15 +1533,7 @@ def orders(filter):
                 `clients`.`LastName`,
                 `phones`.`phone`,
                 `emails`.`email`
-            FROM `payment_details` 
-                LEFT JOIN `event_clients` ON `event_clients`.`payment_details_id` = `payment_details`.`ID` 
-                LEFT JOIN `clients` ON `event_clients`.`clientID` = `clients`.`ID`
-                LEFT JOIN `client_contacts` ON `event_clients`.`contactID` = `client_contacts`.`ID`
-                LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
-                LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
-                LEFT JOIN `addresses` ON `client_contacts`.`addressID` = `addresses`.`ID`
-                LEFT JOIN `notes` ON `payment_details`.`notesID` = `notes`.`ID`
-                LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
+            FROM {ordersFrom}
             {where}
                 -- GROUP BY `payment_details`.`ID`
                 ORDER BY `payment_details`.`ID` DESC
@@ -1454,7 +1542,7 @@ def orders(filter):
     result = sqlSelect(sqlQuery, sqlValTuple, True)
     sideBar = side_bar_stuff()
 
-    numRows = totalNumRows('payment_details', where, sqlValTuple)
+    numRows = countRows(ordersFrom, where, sqlValTuple)
     
     orderStatusList = get_order_status_list()
 
@@ -1520,6 +1608,12 @@ def affiliate_orders(filter):
 
     sqlValTuple = tuple(protoTuple)
 
+    # Shared by the listing and its row count
+    affiliateOrdersFrom = """`payment_details`
+                LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
+                LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`"""
+
     sqlQuery = f"""
              SELECT
                 `payment_details`.`ID`,
@@ -1564,10 +1658,7 @@ def affiliate_orders(filter):
                     AND `product_type_relatives`.`Language_ID` = %s
                     AND `purchase_history`.`discount` is not null
                 GROUP BY `payment_details`.`ID`) AS `Discounted_Price`
-            FROM `payment_details`
-                LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
-                LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`            
+            FROM {affiliateOrdersFrom}
                 {where}
             GROUP BY `payment_details`.`ID`
             ORDER BY `payment_details`.`ID` DESC
@@ -1579,8 +1670,9 @@ def affiliate_orders(filter):
     result = sqlSelect(sqlQuery, sqlValTuple, True)
     sideBar = side_bar_stuff()
 
-    numRows = totalNumRows('payment_details', where, sqlValTuple)
-    # numRows = totalNumRows('payment_details')
+    # The first 4 parameters belong to the listing's subqueries (affiliate, language, affiliate, language);
+    # the WHERE clause uses the rest. The listing groups by order, so orders are counted.
+    numRows = countRows(affiliateOrdersFrom, where, sqlValTuple[4:], distinctColumn='`payment_details`.`ID`')
 
     return render_template('affiliate-orders.html', result=result, filters=filters, orderStatusList=orderStatusList, numRows=numRows, page=int(page), pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
 
@@ -1636,7 +1728,7 @@ def stuff_affiliate_orders(filter):
     if filters.get('status') == 'pending':
         where = where + 'AND `payment_details`.`Status` in (2,3,4) '
     
-    if filters.get('affiliate') is None or filters.get('affiliate') == '':
+    if not filters.get('affiliate', '').isdigit():
         return render_template('error.html', current_locale=get_locale())
 
     page = filters['page']
@@ -1644,6 +1736,13 @@ def stuff_affiliate_orders(filter):
 
     protoTuple = [filters['affiliate'], languageID, filters['affiliate'], languageID, filters['affiliate']] + protoTuple
     sqlValTuple = tuple(protoTuple)
+
+    # Shared by the listing and its row count
+    affiliateOrdersFrom = """`payment_details`
+                    LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
+                    LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                    LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
+                    LEFT JOIN `stuff` ON `stuff`.`ID` = `payment_details`.`affiliateID`"""
 
     sqlQuery = f"""
                 SELECT
@@ -1690,11 +1789,7 @@ def stuff_affiliate_orders(filter):
                         AND `product_type_relatives`.`Language_ID` = %s
                         AND `purchase_history`.`discount` is not null
                     GROUP BY `payment_details`.`ID`) AS `Discounted_Price`
-                FROM `payment_details`
-                    LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                    LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
-                    LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
-                    LEFT JOIN `stuff` ON `stuff`.`ID` = `payment_details`.`affiliateID`    
+                FROM {affiliateOrdersFrom}
                 {where} 
                 GROUP BY `payment_details`.`ID`
                 ORDER BY pdID DESC
@@ -1704,7 +1799,8 @@ def stuff_affiliate_orders(filter):
     result = sqlSelect(sqlQuery, sqlValTuple, True)
     sideBar = side_bar_stuff()
 
-    numRows = totalNumRows('payment_details', where, sqlValTuple)
+    # The first 4 parameters belong to the listing's subqueries; the WHERE clause uses the rest
+    numRows = countRows(affiliateOrdersFrom, where, sqlValTuple[4:], distinctColumn='`payment_details`.`ID`')
 
     orderStatusList = get_order_status_list()
 
@@ -1923,7 +2019,9 @@ def get_affiliate_transfer_details():
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': result['error'], 'newCSRFtoken': newCSRFtoken})
 
-    return jsonify({'status': "1", 'row': result['data'][0], 'newCSRFtoken': newCSRFtoken})
+    row = result['data'][0]
+    row['note'] = sanitize_html(row['note'])
+    return jsonify({'status': "1", 'row': row, 'newCSRFtoken': newCSRFtoken})
         
 
 @app.route('/get-transfer-details', methods=['POST'])
@@ -1941,7 +2039,9 @@ def get_transfer_details():
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
-    return jsonify({'status': "1", 'row': result['data'][0], 'newCSRFtoken': newCSRFtoken})
+    row = result['data'][0]
+    row['note'] = sanitize_html(row['note'])
+    return jsonify({'status': "1", 'row': row, 'newCSRFtoken': newCSRFtoken})
     
 
 @app.route('/get-email-content', methods=['POST'])
@@ -3475,11 +3575,9 @@ def product_categories():
     return render_template('product-categories.html', sideBar=sideBar, result=result, current_locale=get_locale())
 
 
-@app.route('/team', methods=['GET'])
-@login_required
-@validate_request
-def team():
-    languageID = getLangID()
+def render_team_page(page):
+    # Shared by /team and /team/<page>
+    rowsToSelect = (page - 1) * int(PAGINATION)
     sqlQuery = f"""
                 SELECT 
                     `stuff`.`ID`,
@@ -3492,23 +3590,35 @@ def team():
                     `position`.`Position` AS `Rol`
                 FROM `stuff`
                 LEFT JOIN `position` ON `position`.`ID` = `stuff`.`positionID` 
-                -- LEFT JOIN `rol` ON `rol`.`ID` = `stuff`.`RolID` 
-                LIMIT 0, {int(PAGINATION)}
+                ORDER BY `stuff`.`ID`
+                LIMIT {rowsToSelect}, {int(PAGINATION)}
                 ; 
                """
-    sqlValTuple = ()
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-    numRows = totalNumRows('stuff')
+    result = sqlSelect(sqlQuery, (), True)
+    numRows = countRows('`stuff`')
     sideBar = side_bar_stuff()
 
-    return render_template('team.html', result=result, sideBar=sideBar, numRows=numRows, page=1,  pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), current_locale=get_locale())
+    return render_template('team.html', result=result, sideBar=sideBar, numRows=numRows, page=page, pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), current_locale=get_locale())
+
+
+@app.route('/team', methods=['GET'])
+@login_required
+@validate_request
+def team():
+    return render_team_page(1)
 
 
 @app.route('/affiliates', methods=['GET'])
+@app.route('/affiliates/<int:page>', methods=['GET'])
 @login_required
 @validate_request
-def affiliates():
-    
+def affiliates(page=1):
+    if page < 1:
+        return render_template('error.html', current_locale=get_locale())
+
+    rowsToSelect = (page - 1) * int(PAGINATION)
+    # Shared by the listing and its row count
+    affiliatesFrom = "`stuff` LEFT JOIN `position` ON `position`.`ID` = `stuff`.`PositionID`"
     where = "WHERE find_in_set('1', `position`.`rolIDs`) AND `stuff`.`Status` = 1 "
     sqlQuery = f"""
                 SELECT 
@@ -3520,53 +3630,27 @@ def affiliates():
                     `stuff`.`Avatar`,
                     `stuff`.`AltText`,
                     `position`.`Position`
-                FROM `stuff`
-                    LEFT JOIN `position` ON `position`.`ID` = `stuff`.`PositionID`                
+                FROM {affiliatesFrom}
                 {where} 
-                LIMIT 0, {int(PAGINATION)}
+                ORDER BY `stuff`.`ID`
+                LIMIT {rowsToSelect}, {int(PAGINATION)}
                 ; 
                """
-    sqlValTuple = ()
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-    numRows = totalNumRows('payment_details', where, sqlValTuple)
-    # numRows = totalNumRows('stuff')
+    result = sqlSelect(sqlQuery, (), True)
+    numRows = countRows(affiliatesFrom, where)
     sideBar = side_bar_stuff()
 
-    return render_template('affiliates.html', result=result, sideBar=sideBar, numRows=numRows, page=1,  pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), current_locale=get_locale())
-
+    return render_template('affiliates.html', result=result, sideBar=sideBar, numRows=numRows, page=page,  pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), current_locale=get_locale())
 
 
 @app.route('/team/<page>', methods=['Get'])
 @login_required
 @validate_request
 def teampage(page): 
-    languageID = getLangID()
-    newCSRFtoken = generate_csrf()
-    rowsToSelect = (int(page) - 1) * int(PAGINATION)
-    sqlQuery = f"""
-                SELECT 
-                    `stuff`.`ID`,
-                    `stuff`.`Firstname`,
-                    `stuff`.`Lastname`,
-                    `stuff`.`Email`,
-                    `stuff`.`Status`,
-                    `stuff`.`Avatar`,
-                    `stuff`.`AltText`,
-                    `rol`.`Rol`
-                FROM `stuff`
-                LEFT JOIN `rol` ON `rol`.`ID` = `stuff`.`RolID` 
-                LIMIT {rowsToSelect}, {PAGINATION}; 
-               """
-    sqlValTuple = ()
-    result = sqlSelect(sqlQuery, sqlValTuple, True)
-    sideBar = side_bar_stuff()
-    numRows = totalNumRows('stuff')
+    if not page.isdigit() or int(page) < 1:
+        return render_template('error.html', current_locale=get_locale())
 
-
-    return render_template('team.html', result=result, sqlQuery=sqlQuery, numRows=numRows, page=int(page), pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), sideBar=sideBar, current_locale=get_locale())
-    # return jsonify({'status': '1', 'answer': result['data'], 'newCSRFtoken': newCSRFtoken})
-
-
+    return render_team_page(int(page))
 
 
 @app.route('/edit-teammate/<teammateID>', methods=['GET', 'POST'])
@@ -4022,7 +4106,7 @@ def add_teammate():
                 'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
                 'text_3': gettext("cheers"),
                 'text_4': '',
-                'company_team': gettext("Mammy's Bread Team"),
+                'company_team': gettext("Eventoria Team"),
                 "title": gettext("Teammate Signup"),
                 "header": gettext("Teammate Signup"),
                 "company_name": gettext("company"),
@@ -4680,6 +4764,9 @@ def stuff():
 @login_required
 @validate_request
 def affiliate(affID):
+    if not affID.isdigit():
+        return render_template('error.html', current_locale=get_locale())
+
     supportedLangsData = supported_langs()
     
     sqlQuery = f"""
@@ -5178,7 +5265,7 @@ def edit_pts():
     sqlQuery = f"""SELECT `sub_product_specification`.`ID`
                     FROM `sub_product_specification`
                     LEFT JOIN `sps_relatives` ON `sps_relatives`.`SPS_ID` = `sub_product_specification`.`ID`
-                    WHERE `sub_product_specification`.`Name` = %s AND `sps_relatives`.`Language_ID` = %s AND `sub_product_specification`.`ID` != %;"""
+                    WHERE `sub_product_specification`.`Name` = %s AND `sps_relatives`.`Language_ID` = %s AND `sub_product_specification`.`ID` != %s;"""
     
     sqlValTuple = (spsName, languageID, spsID)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
@@ -7129,7 +7216,7 @@ def check_promo_code():
     
     # Check weather promo code exists in db
     promo = request.form.get('promo')
-    sqlQuery = "SELECT `promo` FROM `promo_code` WHERE BINARY `promo` = %;"
+    sqlQuery = "SELECT `promo` FROM `promo_code` WHERE BINARY `promo` = %s;"
     sqlValTuple = (promo,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
     if result['length'] > 0:
@@ -7637,7 +7724,7 @@ def get_category_ar():
     return jsonify({'status': "1", 'data': result['data'][0]})
 
 @app.route("/get-activities", methods=["POST"])
-def get_activitis():    
+def get_activities():    
     newCSRFtoken = generate_csrf()
     languageID = getLangID()
     if request.form.get('languageID'):
@@ -7668,13 +7755,15 @@ def get_activitis():
                     ON  `product_c_relatives`.`PC_ID` = `product_category`.`Product_Category_ID`
                 WHERE `product_relatives`.`Language_ID` = %s
                     AND `product`.`Product_Status` = 2
-                    AND `product_c_relatives`.`PC_Ref_Key` = %s
                     AND `product_c_relatives`.`Language_ID` = %s
                 ORDER BY `product`.`Order` ASC
                 LIMIT %s, %s
             """
-    sqlValTuple = (languageID, RefKey, languageID, int(start), int(limit))
+            # AND `product_c_relatives`.`PC_Ref_Key` = %s
+    # sqlValTuple = (languageID, RefKey, languageID, int(start), int(limit))
+    sqlValTuple = (languageID, languageID, int(start), int(limit))
     result = sqlSelect(sqlQuery, sqlValTuple, True)
+    print(result)
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext('Nothing to show'), 'newCSRFtoken': newCSRFtoken})
 
@@ -7712,7 +7801,7 @@ def get_activitis():
 #         'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
 #         'text_3': gettext("See you on the event"),
 #         'text_4': gettext("Kind regards"),
-#         'company_team': gettext("Mammy's Bread Team"),
+#         'company_team': gettext("Eventoria Team"),
 #         'title': 'Teammate Signup',
 #         'header': 'Teammate Signup',
 #         'company_name': gettext("company"),
@@ -7867,4 +7956,6 @@ def get_activitis():
 
 
 if __name__ == '__main__':
+    # The dev server runs over plain http, where a Secure cookie would never be sent back
+    app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', '0') == '1'
     app.run(debug=True)

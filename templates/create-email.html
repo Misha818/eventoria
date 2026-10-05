@@ -54,7 +54,7 @@
 </div>
 
 
-<script>
+<script nonce="{{ csp_nonce() }}">
 
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.status === '0') {
                     // Handle empty product name
-                    mistakesDiv.innerHTML = response.answer;
+                    mistakesDiv.innerHTML = safeMessage(response.answer);
                     mistakesDiv.style.color = 'red';
                     mistakesDiv.style.display = 'flex';
 

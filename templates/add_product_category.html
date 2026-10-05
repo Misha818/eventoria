@@ -113,12 +113,12 @@
 </div>
 
 <!-- Script for Dropzone (image upload) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <!-- Thumbnail image manipulations -->
-<script>
+<script nonce="{{ csp_nonce() }}">
     let csrfToken = "{{ csrf_token() }}"
         
     let cropperState = 1;
@@ -240,7 +240,7 @@
             imageEditorModal.id = 'imageEditorModal';
             imageEditorModal.className = 'modal open';
             imageEditorModal.innerHTML = `
-                <img id="imageToEdit" src="${imageUrl}" alt="Image to edit">
+                <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
                 <br>
                 <button id="saveEditedImage">{{ _('Crop') }}</button>
                 <button id="cancelEdit">{{ _('Done') }}</button>
@@ -354,7 +354,7 @@
 
                 if (response.status === '2' || response.status === '3') {
                     // Handle empty product name
-                    mistakesDiv.innerHTML = response.answer;
+                    mistakesDiv.innerHTML = safeMessage(response.answer);
                     mistakesDiv.style.color = 'red';
                     mistakesDiv.style.display = 'flex';
 

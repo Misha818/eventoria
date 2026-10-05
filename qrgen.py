@@ -52,7 +52,7 @@ def load_font(size, bold=False):
         default = ImageFont.load_default()
         default.font_path = "default"
         if size > 20:
-        return default
+            return default
     except:
         default = ImageFont.load_default()
         default.font_path = "default"

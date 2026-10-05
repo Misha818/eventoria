@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='JS/security.js') }}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta property="og:title"       content="{{ _('metaTitle') }}" />
@@ -13,7 +14,7 @@
     <meta property="og:site_name"   content="{{ _('site name') }}" />
 
     <link rel="canonical" href="{{ url_for('home', _external=True) }}" />
-    <script type="application/ld+json">
+    <script nonce="{{ csp_nonce() }}" type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -347,10 +348,10 @@
             </div>
         </div>
     </footer>
-    <script type="text/javascript">
+    <script nonce="{{ csp_nonce() }}" type="text/javascript">
         let csrfToken = "{{ newCSRFtoken }}";
         let scrollTo = "{{ scrollTo }}";  
-        let supported_langs = JSON.parse(`{{ supported_langs | safe }}`);
+        let supported_langs = JSON.parse({{ supported_langs | tojson }});
         let languageID = "{{ languageID }}";
         let current_locale = "{{ current_locale }}";
 
@@ -390,4 +391,4 @@
 
         container.append(btn, dropdown);
     </script>
-    <script type="text/javascript" src="{{ url_for('static', filename='JS/script.js') }}"></script>
+    <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/script.js') }}"></script>

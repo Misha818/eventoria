@@ -3,6 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="UTF-8">
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='JS/security.js') }}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
       
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
@@ -20,20 +21,21 @@
     </style> 
 
      <!-- Bootstrap JS bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>
         {% block title %}
 
         {% endblock %}
     </title>
-    <script type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
-    <script>
+    <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
+    <script nonce="{{ csp_nonce() }}">
 
     window.addEventListener('load', () => {
       document.querySelector('body').classList.add('loaded');
     });
-        
+
+
       // Function to get the CSRF token from the meta tag
       // function getCsrfToken() {
       //     return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -58,10 +60,10 @@
         {% endif %}
 
       <div class="flex avatar-stuff" style="gap: 10px;">
-        <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" onclick="toggleSidebar()" alt="{{ _('Tools') }}" class="avatar" style="cursor: pointer; width: 70px; height: 70px;">
+        <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" data-onclick='["toggleSidebar"]' alt="{{ _('Tools') }}" class="avatar" style="cursor: pointer; width: 70px; height: 70px;">
         <span style="font-size: 20px; font-weight: bold; color: #ffffff;"> {{ role + ' | ' + actionName }}</span>
       </div>
-        <!-- <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" onclick="toggleSidebar()" alt="{{ _('Tools') }}" style="cursor: pointer; width: 70px; height: 70px;" > -->
+        <!-- <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" data-onclick='["toggleSidebar"]' alt="{{ _('Tools') }}" style="cursor: pointer; width: 70px; height: 70px;" > -->
       {% else %}
         {% if rolls[0]['Avatar'] %}
           <div 
@@ -101,7 +103,7 @@
         {% if rolls | length > 1 %}
         
           {% if rolls | length > 3 %}
-          <select onchange="location = '/setroll/' + this.value;" class="lang-drop-down" style="margin-right: 5px;">
+          <select data-onchange='["navigate", "/setroll/", "$value"]' class="lang-drop-down" style="margin-right: 5px;">
             {% for row in rolls %}
             <option value="{{ row['rolID'] }}" {{ 'selected' if activeRoleID ==  row['rolID']  else '' }}>{{ _(row['Rol']) }}</option>
             {% endfor %}
@@ -125,7 +127,7 @@
         {% endif %}
 
         {% if supportedLangsData | length > 1 %}     
-        <select onchange="location = '/setlang?lang=' + this.value;" class="lang-drop-down">
+        <select data-onchange='["navigate", "/setlang?lang=", "$value"]' class="lang-drop-down">
           {% for lang in supportedLangsData %}
           <option value="{{ lang['Prefix'] }}" {{ 'selected' if get_locale() ==  lang['Prefix']  else '' }}>{{ lang['Language'] }}</option>
           {% endfor %}
@@ -156,7 +158,7 @@
 
 
     
-    <script>
+    <script nonce="{{ csp_nonce() }}">
       if (document.getElementById("sidebar")) {
 
         let closedNav = true;

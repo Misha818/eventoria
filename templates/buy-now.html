@@ -8,10 +8,10 @@
 {% block head %}
 <meta name="robots" content="noindex, nofollow" />
 <!-- jQuery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 <!-- International Telephone Input JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
 
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -112,17 +112,17 @@ body {
                     <h6 class="my-0" style="text-align: left;">{{ _('Promo code') }}</h6>
                     <small id="promo-code-value">{{ _('Example') }}</small>
                   </div>
-                  <span class="text-success" id="promo-code-success">{{ mainCurrency|safe }} -5</span>
+                  <span class="text-success" id="promo-code-success">{{ mainCurrency }} -5</span>
                 </li>
 
 
                   <li class="list-group-item d-flex justify-content-between" style="border-top-width: 1px; border-radius: inherit; display: none!important;">
                     <span>{{ _('Total') }} </span>
-                    <strong id="checkout-total-price">{{ mainCurrency|safe }} 0</strong>
+                    <strong id="checkout-total-price">{{ mainCurrency }} 0</strong>
                   </li>
                   <li class="list-group-item d-flex justify-content-between" id="discount-info" style="border-top-width: 1px; border-radius: inherit; display: none!important;">
                     <span></span>
-                    <strong id="discount-total-price">{{ mainCurrency|safe }} 0</strong>
+                    <strong id="discount-total-price">{{ mainCurrency }} 0</strong>
                   </li>
                 </ul>
 
@@ -178,8 +178,8 @@ body {
       </div>
   </main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script nonce="{{ csp_nonce() }}">
 
 let prDataGlobal = JSON.parse('{{ prDataGlobal | tojson | safe }}');
 let totalPriceGlobal = 1;
@@ -1917,7 +1917,7 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
               let answerArr = response.answer.split('\n');
               answerArr.forEach(answer => {
                 if (answer != ' ') {
-                  elements += `<p>- ${answer}</p>`;
+                  elements += `<p>- ${escapeHtml(answer)}</p>`;
                 }
               });
 

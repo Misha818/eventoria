@@ -22,7 +22,7 @@
         
         <input type="text" name="text_{{ loop.index }}" value="{{ row['Text']}}">
         <input type="hidden" name="spssID" value="{{ row['spssID'] }}">
-        <div class="remove" onclick="handleRemoveClick(this)">-</div>
+        <div class="remove" data-onclick='["handleRemoveClick", "$this"]'>-</div>
                    
     </div>
     {% endfor %}
@@ -34,12 +34,12 @@
 
 <div class="containerH" style="width: 100%;">
 
-    <div id="plusDiv" class="plusDiv toRight tableDaddy" onclick="handlePlusClick(this)" >+</div>
+    <div id="plusDiv" class="plusDiv toRight tableDaddy" data-onclick='["handlePlusClick", "$this"]' >+</div>
     <div class="pcButtonS toRight tableDaddy" id="submit">{{ _('Submit')}}</div>
     <div class="pcButtonS hidden toRight tableDaddy" id="saving">{{ _('Saving...')}}</div>
 </div>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         const container = document.getElementById('myForm');
 
         container.addEventListener('dragstart', (e) => {
@@ -85,7 +85,7 @@
         }
     </script>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
         let csrfToken = "{{ csrf_token() }}";
             document.getElementById('submit').onclick = function() {
                 event.preventDefault(); // Prevent form submission

@@ -156,12 +156,12 @@
     </form>
 </div>
 <!-- Script for Dropzone (image upload) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <!-- Thumbnail image manipulations -->
-<script>
+<script nonce="{{ csp_nonce() }}">
     let csrfToken = "{{ csrf_token() }}"
     // Create a FormData object to hold the files
     let formData = new FormData();
@@ -266,7 +266,7 @@
         imageEditorModal.id = 'imageEditorModal';
         imageEditorModal.className = 'modal open';
         imageEditorModal.innerHTML = `
-           <img id="imageToEdit" src="${imageUrl}" alt="Image to edit">
+           <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
            <br>
            <button id="saveEditedImage">{{ _('Crop') }}</button>
            <button id="cancelEdit" style="${dzCancel}">{{ _('Done') }}</button>
@@ -481,8 +481,8 @@
 <!-- End of thumbnail image manipulations -->
 
 <!-- Include jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script nonce="{{ csp_nonce() }}">
 
     // const inputElement = document.getElementById("product-link");
 
@@ -497,8 +497,8 @@
 </script>
 
 <!-- Pickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/@simonwep/pickr"></script>
+<script nonce="{{ csp_nonce() }}">
     function initColorPicker(pickerId, inputId, defColor) {
         return Pickr.create({
             el: pickerId,
@@ -537,8 +537,8 @@
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script nonce="{{ csp_nonce() }}">
     flatpickr("#startDate", {
         dateFormat: "Y-m-d"
     });

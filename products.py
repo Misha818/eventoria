@@ -1,6 +1,7 @@
 from flask import session, redirect, jsonify
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
-from sysadmin import get_full_website_name, checkForRedundantFiles, removeRedundantFiles, get_pr_id_by_lang, get_ar_id_by_lang, sqlInsert, sqlSelect, sqlUpdate, getLangID, getDefLang, getSupportedLangs, getUserID, get_pc_ref_key, get_pc_id_by_lang, pr_name_check, pr_url_check, fileUpload
+from sysadmin import sanitize_html, get_full_website_name, checkForRedundantFiles, removeRedundantFiles, get_pr_id_by_lang, get_ar_id_by_lang, sqlInsert, sqlSelect, sqlUpdate, getLangID, getDefLang, getSupportedLangs, getUserID, get_pc_ref_key, get_pc_id_by_lang, pr_name_check, pr_url_check, fileUpload
+from werkzeug.utils import secure_filename
 import os
 import re
 import base64
@@ -13,81 +14,85 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 static_folder_path = os.path.join(current_dir, 'static')
 
 
-def submit_product_text(html_content, productID):
-    # Regular expression to extract the base64 string from the <img> tag
-    pattern = r'<img\s+[^>]*src="data:image/([^;]+);filename=([^;]+);base64,([^"]+)"[^>]*>'
-    matches = re.findall(pattern, html_content)
-    target_directory = os.path.join(static_folder_path, 'images', 'products')
+# Quill embeds pasted images as <img src="data:image/<type>;filename=<name>;base64,<data>">
+INLINE_IMAGE_PATTERN = r'<img\s+[^>]*src="data:image/([^;]+);filename=([^;]+);base64,([^"]+)"[^>]*>'
+INLINE_IMAGE_TYPES = {'png', 'jpeg', 'jpg', 'gif', 'webp'}
+IMG_SRC_PATTERN = r'<img[^>]+src="([^">]+)"'
+
+
+def unique_file_name(target_directory, filename):
+    # Appends/increments a _N suffix until the name is free: photo.png -> photo_1.png -> photo_2.png
+    while os.path.exists(os.path.join(target_directory, filename)):
+        name, ext = os.path.splitext(filename)
+        arr = name.rsplit('_', 1)
+        if len(arr) == 2 and arr[1].isdigit():
+            filename = f"{arr[0]}_{int(arr[1]) + 1}{ext}"
+        else:
+            filename = f"{name}_1{ext}"
+    return filename
+
+
+def save_inline_images(html_content, imageDir, urlPrefix):
+    """
+    Saves Quill's base64 images into static/<imageDir> and replaces each data URI
+    with urlPrefix + saved file name. Images with a disallowed type or broken data
+    are left as data URIs, which sanitize_html() then strips.
+    """
+    target_directory = os.path.join(static_folder_path, imageDir)
     os.makedirs(target_directory, exist_ok=True)
 
-    # Placeholder for the modified HTML content
     modified_html = html_content
-    
-    for idx, match in enumerate(matches):
-        # Match contains (image_type, base64_string)
-        image_type, filename, base64_string = match
+    for image_type, filename, base64_string in re.findall(INLINE_IMAGE_PATTERN, html_content):
+        if image_type.lower() not in INLINE_IMAGE_TYPES:
+            continue
 
-        # Check if the filename already exists
-        image_filename = filename
-        old_file_name = filename
-        
-        # Check if the filename exists and create a unique filename if it does
-        file_path = os.path.join(target_directory, image_filename)
-        while os.path.exists(file_path):
-            name, ext = os.path.splitext(filename)
-            if '_' in name: # Check if the name contains an underscore
-                arr = name.rsplit('_', 1)  # Split the name from the last underscore
-                if arr[-1].isdigit(): # Check if the part after the underscore is a digit
-                    # Increment the number and create a new unique filename
-                    last_num = int(arr[-1]) + 1
-                    unique_filename = f"{arr[0]}_{last_num}{ext}"
-                   
-                else:
-                    unique_filename = f"{name}_1{ext}" # Append '_1' to the name to create a new unique filename
-            else:
-                unique_filename = f"{name}_1{ext}"  # Append '_1' to the name to create a new unique filename
-            
-            filename = unique_filename
-            image_filename = unique_filename
-            
-            # Update the file path with the new unique filename
-            file_path = os.path.join(target_directory, unique_filename)
+        try:
+            image_data = base64.b64decode(base64_string, validate=True)
+        except (ValueError, TypeError):
+            continue
 
-        # Create the image path
-        image_path = os.path.join(target_directory, image_filename)
-        
-        # Decode the base64 string and write the image file
-        image_data = base64.b64decode(base64_string)
-        with open(image_path, 'wb') as image_file:
+        # secure_filename() drops "../" and other path parts; non-Latin names come back empty.
+        # The extension always comes from the allowed image type, never from the submitted name.
+        name = secure_filename(os.path.splitext(filename)[0]) or 'image'
+        ext = '.jpg' if image_type.lower() == 'jpeg' else '.' + image_type.lower()
+        image_filename = unique_file_name(target_directory, name + ext)
+
+        with open(os.path.join(target_directory, image_filename), 'wb') as image_file:
             image_file.write(image_data)
-        
-        
-        # image_url = os.path.join(target_directory, image_filename)
-        image_url = f'/static/images/products/{image_filename}'
-        
-        base64_pattern = re.escape(f'data:image/{image_type};filename={old_file_name};base64,') + '([^"]+)'
-        modified_html = re.sub(base64_pattern, image_url, modified_html, 1)
-    
-    img_src_pattern = r'<img[^>]+src="([^">]+)"'
 
-    new_img_urls = set(re.findall(img_src_pattern, modified_html))
+        image_url = urlPrefix + image_filename
+        data_uri_pattern = re.escape(f'data:image/{image_type};filename={filename};base64,') + '([^"]+)'
+        modified_html = re.sub(data_uri_pattern, lambda m: image_url, modified_html, count=1)
+
+    return modified_html
+
+
+def remove_unused_inline_images(old_html, new_html, imageDir):
+    # Deletes files that the previous version of the text used and the new one no longer does.
+    # Only URLs pointing into our own static/<imageDir> folder are considered.
+    if not old_html:
+        return
+
+    ownPrefix = f'/static/{imageDir}/'
+    old_img_urls = set(re.findall(IMG_SRC_PATTERN, old_html))
+    new_img_urls = set(re.findall(IMG_SRC_PATTERN, new_html))
+
+    for url in old_img_urls - new_img_urls:
+        if url.startswith(ownPrefix):
+            removeRedundantFiles(os.path.basename(url), imageDir)
+
+
+def submit_product_text(html_content, productID):
+    modified_html = save_inline_images(html_content, 'images/products', '/static/images/products/')
+    modified_html = sanitize_html(modified_html)
 
     # Check for unused files and remove them
     sqlQueryOld = "SELECT `Text` FROM `product` WHERE `ID` = %s;"
     sqlQueryOldVal = (productID,)
     result = sqlSelect(sqlQueryOld, sqlQueryOldVal, True)
 
-    if result['data'][0]['Text'] is not None:
-        old_img_urls = set(re.findall(img_src_pattern, result['data'][0]['Text']))
-
-        imgs_to_remove = list(old_img_urls - new_img_urls)
-
-        for url in imgs_to_remove:
-            arr = url.split('/')
-            fileName = arr[4]
-            fileDir = arr[2] + '/' + arr[3]
-        
-            removeRedundantFiles(fileName, fileDir)
+    if result['length'] > 0:
+        remove_unused_inline_images(result['data'][0]['Text'], modified_html, 'images/products')
                 
     # Insert the content into the MySQL database
     sqlUpdateRT =   f"""UPDATE `product` SET
@@ -102,63 +107,8 @@ def submit_product_text(html_content, productID):
 
 
 def submit_notes_text(html_content, type, refID, addresseeType):
-    # Regular expression to extract the base64 string from the <img> tag
-    pattern = r'<img\s+[^>]*src="data:image/([^;]+);filename=([^;]+);base64,([^"]+)"[^>]*>'
-    matches = re.findall(pattern, html_content)
-    target_directory = os.path.join(static_folder_path, 'images', 'documents')
-    os.makedirs(target_directory, exist_ok=True)
-
-    # Placeholder for the modified HTML content
-    modified_html = html_content
-    
-    for idx, match in enumerate(matches):
-        # Match contains (image_type, base64_string)
-        image_type, filename, base64_string = match
-
-        # Check if the filename already exists
-        image_filename = filename
-        old_file_name = filename
-        
-        # Check if the filename exists and create a unique filename if it does
-        file_path = os.path.join(target_directory, image_filename)
-        while os.path.exists(file_path):
-            name, ext = os.path.splitext(filename)
-            if '_' in name: # Check if the name contains an underscore
-                arr = name.rsplit('_', 1)  # Split the name from the last underscore
-                if arr[-1].isdigit(): # Check if the part after the underscore is a digit
-                    # Increment the number and create a new unique filename
-                    last_num = int(arr[-1]) + 1
-                    unique_filename = f"{arr[0]}_{last_num}{ext}"
-                   
-                else:
-                    unique_filename = f"{name}_1{ext}" # Append '_1' to the name to create a new unique filename
-            else:
-                unique_filename = f"{name}_1{ext}"  # Append '_1' to the name to create a new unique filename
-            
-            filename = unique_filename
-            image_filename = unique_filename
-            
-            # Update the file path with the new unique filename
-            file_path = os.path.join(target_directory, unique_filename)
-
-        # Create the image path
-        image_path = os.path.join(target_directory, image_filename)
-        
-        # Decode the base64 string and write the image file
-        image_data = base64.b64decode(base64_string)
-        with open(image_path, 'wb') as image_file:
-            image_file.write(image_data)
-        
-        
-        # image_url = os.path.join(target_directory, image_filename)
-        image_url = f'/static/images/documents/{image_filename}'
-        
-        base64_pattern = re.escape(f'data:image/{image_type};filename={old_file_name};base64,') + '([^"]+)'
-        modified_html = re.sub(base64_pattern, image_url, modified_html, 1)
-    
-    img_src_pattern = r'<img[^>]+src="([^">]+)"'
-
-    new_img_urls = set(re.findall(img_src_pattern, modified_html))
+    modified_html = save_inline_images(html_content, 'images/documents', '/static/images/documents/')
+    modified_html = sanitize_html(modified_html)
 
     sqlInsertQuery =   "INSERT INTO `notes` (`note`, `type`, `refID`, `addressee_type`, `add_user_id`, `Status`) VALUES (%s, %s, %s, %s, %s, %s)"
     sqlInsertValTuple = (modified_html, type, refID, addresseeType, session['user_id'], 1)
@@ -168,63 +118,9 @@ def submit_notes_text(html_content, type, refID, addresseeType):
 
 
 def email_text(html_content, fieldType, refID, addresseeType):
-    # Regular expression to extract the base64 string from the <img> tag
-    pattern = r'<img\s+[^>]*src="data:image/([^;]+);filename=([^;]+);base64,([^"]+)"[^>]*>'
-    matches = re.findall(pattern, html_content)
-    target_directory = os.path.join(static_folder_path, 'images', 'uploads')
-    os.makedirs(target_directory, exist_ok=True)
-
-    # Placeholder for the modified HTML content
-    modified_html = html_content
-    
-    for idx, match in enumerate(matches):
-        # Match contains (image_type, base64_string)
-        image_type, filename, base64_string = match
-
-        # Check if the filename already exists
-        image_filename = filename
-        old_file_name = filename
-        
-        # Check if the filename exists and create a unique filename if it does
-        file_path = os.path.join(target_directory, image_filename)
-        while os.path.exists(file_path):
-            name, ext = os.path.splitext(filename)
-            if '_' in name: # Check if the name contains an underscore
-                arr = name.rsplit('_', 1)  # Split the name from the last underscore
-                if arr[-1].isdigit(): # Check if the part after the underscore is a digit
-                    # Increment the number and create a new unique filename
-                    last_num = int(arr[-1]) + 1
-                    unique_filename = f"{arr[0]}_{last_num}{ext}"
-                   
-                else:
-                    unique_filename = f"{name}_1{ext}" # Append '_1' to the name to create a new unique filename
-            else:
-                unique_filename = f"{name}_1{ext}"  # Append '_1' to the name to create a new unique filename
-            
-            filename = unique_filename
-            image_filename = unique_filename
-            
-            # Update the file path with the new unique filename
-            file_path = os.path.join(target_directory, unique_filename)
-
-        # Create the image path
-        image_path = os.path.join(target_directory, image_filename)
-        
-        # Decode the base64 string and write the image file
-        image_data = base64.b64decode(base64_string)
-        with open(image_path, 'wb') as image_file:
-            image_file.write(image_data)
-        
-        
-        # image_url = os.path.join(target_directory, image_filename)
-        image_url = f'{get_full_website_name()}/static/images/uploads/{image_filename}'
-        
-        base64_pattern = re.escape(f'data:image/{image_type};filename={old_file_name};base64,') + '([^"]+)'
-        modified_html = re.sub(base64_pattern, image_url, modified_html, 1)
-    
-    img_src_pattern = r'<img[^>]+src="([^">]+)"'
-
-    new_img_urls = set(re.findall(img_src_pattern, modified_html))
+    # Emails need absolute image URLs
+    modified_html = save_inline_images(html_content, 'images/uploads', f'{get_full_website_name()}/static/images/uploads/')
+    modified_html = sanitize_html(modified_html)
 
     sqlInsertQuery =   "INSERT INTO `notes` (`note`, `type`, `refID`, `addressee_type`, `add_user_id`, `Status`) VALUES (%s, %s, %s, %s, %s, %s)"
     sqlInsertValTuple = (modified_html, fieldType, refID, addresseeType, session['user_id'], 1)
@@ -234,82 +130,16 @@ def email_text(html_content, fieldType, refID, addresseeType):
     
 
 def submit_reach_text(html_content, productID):
-    
-    # Regular expression to extract the base64 string from the <img> tag
-    pattern = r'<img\s+[^>]*src="data:image/([^;]+);filename=([^;]+);base64,([^"]+)"[^>]*>'
-    matches = re.findall(pattern, html_content)
-    target_directory = os.path.join(static_folder_path, 'images/articles')
-    os.makedirs(target_directory, exist_ok=True)
-
-    # Placeholder for the modified HTML content
-    modified_html = html_content
-    
-    for idx, match in enumerate(matches):
-        # Match contains (image_type, base64_string)
-        image_type, filename, base64_string = match
-
-        # Check if the filename already exists
-        image_filename = filename
-        old_file_name = filename
-        
-        # Check if the filename exists and create a unique filename if it does
-        file_path = os.path.join(target_directory, image_filename)
-        while os.path.exists(file_path):
-            name, ext = os.path.splitext(filename)
-            if '_' in name: # Check if the name contains an underscore
-                arr = name.rsplit('_', 1)  # Split the name from the last underscore
-                if arr[-1].isdigit(): # Check if the part after the underscore is a digit
-                    # Increment the number and create a new unique filename
-                    last_num = int(arr[-1]) + 1
-                    unique_filename = f"{arr[0]}_{last_num}{ext}"
-                   
-                else:
-                    unique_filename = f"{name}_1{ext}" # Append '_1' to the name to create a new unique filename
-            else:
-                unique_filename = f"{name}_1{ext}"  # Append '_1' to the name to create a new unique filename
-            
-            filename = unique_filename
-            image_filename = unique_filename
-            
-            # Update the file path with the new unique filename
-            file_path = os.path.join(target_directory, unique_filename)
-            
-
-
-        
-        # Create the image path
-        image_path = os.path.join(target_directory, image_filename)
-        
-        # Decode the base64 string and write the image file
-        image_data = base64.b64decode(base64_string)
-        with open(image_path, 'wb') as image_file:
-            image_file.write(image_data)
-        
-        # Replace the base64 string with the new image link
-        image_url = f'/static/images/quilljs/{image_filename}'
-        base64_pattern = re.escape(f'data:image/{image_type};filename={old_file_name};base64,') + '([^"]+)'
-        modified_html = re.sub(base64_pattern, image_url, modified_html, 1)
-    
-    img_src_pattern = r'<img[^>]+src="([^">]+)"'
-
-    new_img_urls = set(re.findall(img_src_pattern, modified_html))
+    modified_html = save_inline_images(html_content, 'images/quilljs', '/static/images/quilljs/')
+    modified_html = sanitize_html(modified_html)
 
     # Check for unused files and remove them
     sqlQueryOld = "SELECT `Text` FROM `article` WHERE `ID` = %s;"
     sqlQueryOldVal = (productID,)
     result = sqlSelect(sqlQueryOld, sqlQueryOldVal, True)
 
-    if result['data'][0]['Text'] is not None:
-        old_img_urls = set(re.findall(img_src_pattern, result['data'][0]['Text']))
-
-        imgs_to_remove = list(old_img_urls - new_img_urls)
-
-        for url in imgs_to_remove:
-            arr = url.split('/')
-            fileName = arr[4]
-            fileDir = arr[2] + '/' + arr[3]
-        
-            removeRedundantFiles(fileName, fileDir)
+    if result['length'] > 0:
+        remove_unused_inline_images(result['data'][0]['Text'], modified_html, 'images/quilljs')
                 
     # Insert the content into the MySQL database
     sqlUpdateRT =   f"""UPDATE `article` SET
@@ -964,7 +794,7 @@ def constructPrData(RefKey, productStatus, languageID=''):
             'Product_Category_ID': row['Product_Category_ID'], 
             'Url': row['Url'], 
             'Title': row['Title'], 
-            'Text': row['Text'], 
+            'Text': sanitize_html(row['Text']), 
             'Thumbnail': row['Thumbnail'], 
             'ShortDescription': row['ShortDescription'], 
             'LongDescription': row['LongDescription'], 
@@ -1009,7 +839,7 @@ def constructArData(RefKey, articleStatus):
             'Product_Category_ID': row['Article_Category_ID'], 
             'Url': row['Url'], 
             'Title': row['Title'], 
-            'Text': row['Text'], 
+            'Text': sanitize_html(row['Text']), 
             'Thumbnail': row['Thumbnail'], 
             'ShortDescription': row['ShortDescription'], 
             'LongDescription': row['LongDescription'], 

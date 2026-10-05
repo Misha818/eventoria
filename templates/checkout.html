@@ -10,10 +10,10 @@
 <meta name="robots" content="noindex, nofollow" />
 
 <!-- jQuery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 <!-- International Telephone Input JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/8.4.7/js/intlTelInput.js"></script>
 
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -116,17 +116,17 @@ body {
                     <h6 class="my-0" style="text-align: left;">{{ _('Promo code') }}</h6>
                     <small id="promo-code-value">Example</small>
                   </div>
-                  <span class="text-success" id="promo-code-success">{{ mainCurrency|safe }} -5</span>
+                  <span class="text-success" id="promo-code-success">{{ mainCurrency }} -5</span>
                 </li>
 
 
                   <li class="list-group-item d-flex justify-content-between" style="border-top-width: 1px; border-radius: inherit;">
                     <span>{{ _('Total') }} </span>
-                    <strong id="checkout-total-price">{{ mainCurrency|safe }} 0</strong>
+                    <strong id="checkout-total-price">{{ mainCurrency }} 0</strong>
                   </li>
                   <li class="list-group-item d-flex justify-content-between" id="discount-info" style="border-top-width: 1px; border-radius: inherit; display: none!important;">
                     <span></span>
-                    <strong id="discount-total-price">{{ mainCurrency|safe }} 0</strong>
+                    <strong id="discount-total-price">{{ mainCurrency }} 0</strong>
                   </li>
                 </ul>
 
@@ -222,7 +222,7 @@ body {
                       </div>
                       <div class="col-md-6">
                           <label for="cc-number" class="form-label">{{ _('Credit card number')}} *</label>
-                          <input type="number" class="form-control" id="cc-number" oninput="validateNumericInput(this)" inputmode="numeric"  required>
+                          <input type="number" class="form-control" id="cc-number" data-oninput='["validateNumericInput", "$this"]' inputmode="numeric"  required>
                           <div class="invalid-feedback"> {{ _('Credit card number is required.')}} </div>
                       </div>
                       <div class="col-md-3">
@@ -253,8 +253,8 @@ body {
       </div>
   </main>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script nonce="{{ csp_nonce() }}">
 
   const languageID = `{{ languageID }}`;
 

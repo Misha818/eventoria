@@ -47,14 +47,14 @@
     <div id="accordion" class="toRight tableDaddy"></div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
     
     function hyphen(str) {
         return str.replace(/\s+/g, '-');
     }
 
 
-    const data = JSON.parse(`{{ discounts|safe }}`);
+    const data = JSON.parse({{ discounts | tojson }});
 
     // Group data by parent title (prTitle)
     const groupedData = {};
@@ -93,9 +93,9 @@
         
         let revardText = '';
         if(item.revard_type === 0) {
-          revardText = item.revard_value + ' <i>%</i>';
+          revardText = escapeHtml(item.revard_value) + ' <i>%</i>';
         } else if(item.revard_type === 1) {
-          revardText = item.revard_value + ' <i>fx</i>';
+          revardText = escapeHtml(item.revard_value) + ' <i>fx</i>';
         }
 
         if (item.ptTitle) {
@@ -105,9 +105,9 @@
             <li class="list-group-item">
                 <div class="row">
                     <div class="col">
-                        <a href="${ptUrl}" target="_blank" onclick="event.stopPropagation();">${item.ptTitle}</a>
+                        <a href="${escapeHtml(ptUrl)}" target="_blank">${escapeHtml(item.ptTitle)}</a>
                     </div>
-                <div class="col">${item.discount}</div>
+                <div class="col">${escapeHtml(item.discount)}</div>
                 <div class="col">${revardText}</div>
                 </div>
             </li>
@@ -122,7 +122,7 @@
         <div class="card" style="cursor:pointer;">
           <div class="card-header" id="${headingId}">
             <span  class="d-block" data-toggle="collapse-accordion" data-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
-              ${prTitle}
+              ${escapeHtml(prTitle)}
             </span>
           </div>
           <div id="${collapseId}" class="collapse-accordion ${index === 0 ? 'show' : 'collapse'}" aria-labelledby="${headingId}" data-parent="#accordion">
@@ -141,9 +141,12 @@
     accordion.innerHTML = headerRow + accordionHTML;
 
     // Attach an event listener to the entire card to toggle the collapse on card click.
-    // (Inner anchor clicks have event.stopPropagation() so they won't trigger this.)
+    // Clicks on the product type links only open the link.
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('click', function(e) {
+        if (e.target.closest('a')) {
+          return;
+        }
         const collapseElement = card.querySelector('.collapse-accordion');
         if (collapseElement.classList.contains('show')) {
             $(collapseElement).collapse('toggle');
@@ -163,9 +166,9 @@
   </script>
 
   <!-- jQuery, Popper.js, and Bootstrap JS for accordion functionality -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 {% endblock %}
 
 

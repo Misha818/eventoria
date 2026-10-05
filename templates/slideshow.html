@@ -51,7 +51,7 @@
   <input type="hidden" id="no-spot-left" value="{{ _('No spot left') }}">
 
   <div class="thumbnail-container">
-    <button class="thumb-prev" style="{{ display }}" onclick="scrollThumbnails('left', false)">&#11165;</button>
+    <button class="thumb-prev" style="{{ display }}" data-onclick='["scrollThumbnails", "left", false]'>&#11165;</button>
     <div class="thumbnails-wrapper" style="{{ thumbnailsWrapperHeight }}">
       <div class="thumbnails {{ imgMarginBottom }}">
 
@@ -68,7 +68,7 @@
         {% endif %}
 
         <img src="{{ url_for('static', filename='') + fileDir }}" alt="{{ row['AltText'] }}"
-            onclick="showImage('{{ ns.i }}')" class="{{ selectedThumbnail }}"
+            data-onclick='{{ ["showImage", ns.i | string] | tojson }}' class="{{ selectedThumbnail }}"
             style="margin-bottom: 13px!important;">
 
         {% set ns.i = ns.i + 1 %}
@@ -84,20 +84,20 @@
         {% set selectedThumbnail = ''%}
         {% endif %}
         <img src="{{ url_for('static', filename='') + fileDir}} " alt='{{ row["AltText"] }}'
-          onclick='showImage("{{ns.i}}")' class='{{ selectedThumbnail }}'>
+          data-onclick='{{ ["showImage", ns.i | string] | tojson }}' class='{{ selectedThumbnail }}'>
         {% set ns.i = ns.i + 1 %}
         {% endfor %}
       </div>
     </div>
-    <button class="thumb-next" style="{{ display }}" onclick="scrollThumbnails('right', false)">&#11167;</button>
+    <button class="thumb-next" style="{{ display }}" data-onclick='["scrollThumbnails", "right", false]'>&#11167;</button>
   </div>
 
   <div class="image-gallery">
     <div class="slider">
-      <button class="prevM" onclick="prevImage()">&#10094;</button>
+      <button class="prevM" data-onclick='["prevImage"]'>&#10094;</button>
       <img id="main-image" src="{{ url_for('static', filename=mainImgUrl ) }}"
         alt="{{ mainImgAlt }}" class="fade">
-      <button class="nextM" onclick="nextImage()">&#10095;</button>
+      <button class="nextM" data-onclick='["nextImage"]'>&#10095;</button>
     </div>
   </div>
 
@@ -132,7 +132,7 @@
         {% set wrapperMargin = "margin-left: 18px;" %}
       {% endif %}
     <div class="thumbnail-containerX" style="{{ containerX }}">
-      <button class="thumb-prevX" style="{{ arrows }}" onclick="scrollThumbnailsPrice('left', false)">❮</button>
+      <button class="thumb-prevX" style="{{ arrows }}" data-onclick='["scrollThumbnailsPrice", "left", false]'>❮</button>
       <div class="price-thumbnails-wrapper" style="{{ wrapperMargin }}">
         <div class="price-thumbnails">
           {% set ns = namespace(i=0) %}
@@ -149,13 +149,13 @@
                 class='{{ selectedThumbnail }}'
                 data-ptid="{{ row['ID'] }}"
                 data-value="{{row['i']}}" 
-                onclick='showImage({{row["i"]}}), changeType({{ ns.i }}, this), scrollThumbnailsFromPrice({{ row["i"] }})'
+                data-onclick='{{ [["showImage", row["i"]], ["changeType", ns.i, "$this"], ["scrollThumbnailsFromPrice", row["i"]]] | tojson }}'
             />
           {% set ns.i = ns.i + 1 %}
           {% endfor %}
         </div>
       </div>
-      <button class="thumb-nextX" style="{{ arrows }}" onclick="scrollThumbnailsPrice('right', false)">❯</button>
+      <button class="thumb-nextX" style="{{ arrows }}" data-onclick='["scrollThumbnailsPrice", "right", false]'>❯</button>
     </div>
     {% endif %}
 
@@ -287,12 +287,12 @@
   </div>
   </div>
   <!-- Bootstrap JS bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- <script type="text/javascript" src="{{ url_for('static', filename='JS/header.js') }}"></script> -->
-  <script type="text/javascript" src="{{ url_for('static', filename='JS/slideshow.js') }}"></script>
+  <!-- <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/header.js') }}"></script> -->
+  <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/slideshow.js') }}"></script>
 
-  <script>
+  <script nonce="{{ csp_nonce() }}">
     const container = document.querySelector('.price-thumbnails');
     if (container) {
         if (window.innerWidth > 474 && window.innerWidth < 1366) {

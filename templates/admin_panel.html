@@ -2,8 +2,8 @@
 
 {% block head %}
 {% if resultActions.data[0]['rolID'] == 4 %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     .chart-wrapper {
       max-width: 700px;
@@ -159,7 +159,7 @@
 
         <select id="person">
           <option value="">{{ _('All Affiliates') }}</option>
-          <option value="0">{{ _("Mammy's Bread") }}</option>
+          <option value="0">{{ _("Eventoria") }}</option>
         </select>
 
         <button id="filter" class="primary">{{ _('Submit') }}</button>
@@ -232,7 +232,7 @@
 </div>
 
 {% if resultActions.data[0]['rolID'] == 4 %}
-<script>
+<script nonce="{{ csp_nonce() }}">
     let csrfToken = "{{ csrf_token() }}";
 
     //  BAR CHART

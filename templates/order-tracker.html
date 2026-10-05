@@ -109,7 +109,7 @@ body {
 {% block content %}
 
 <div class="container">
-  <h2 class="text-center mt-5">{{ _('Order') }} #{{ row['ID'] | safe }}</h2>
+  <h2 class="text-center mt-5">{{ _('Order') }} #{{ row['ID'] }}</h2>
   <!-- Stepper container -->
   <div id="stepper" class="stepper"></div>
   <div class="text-center">
@@ -117,13 +117,13 @@ body {
   </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
   // Define order statuses (the Cancelled status is key "0")
-  const orderStatusList = JSON.parse('{{ orderStatusList|safe }}');
+  const orderStatusList = JSON.parse({{ orderStatusList | tojson }});
 
 
   // Set the initial order status (starting at "Purchased")
-  let currentStatus = parseInt("{{ row['Status'] | safe }}");
+  let currentStatus = parseInt("{{ row['Status'] }}");
 
   // Generate the stepper UI (excluding Cancelled status)
   const stepper = document.getElementById("stepper");

@@ -7709,17 +7709,25 @@ tr:nth-child(even) {
   text-decoration: none;
 }
 
-.pagination div {
+.pagination div,
+.pagination a {
   margin: 0 4px;
   padding: 6px 12px;
   color: #E76F51;
   border-radius: 4px;
   border: 1px solid #ddd;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.pagination a:hover {
+  border-color: #E76F51;
+  color: #E76F51;
 }
 
 .pagination a.active, div.active {
   background-color: #E76F51;
+  border-color: #E76F51;
   color: #fff;
 }
 

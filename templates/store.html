@@ -237,7 +237,7 @@
             </tr>
             <tr class="extra-row">
               <td colspan="7" style="text-align: center; padding: 5px; ">
-                <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_{{row['ID']}}" onclick="getProductTypes({{row['ID']}})">
+                <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_{{row['ID']}}" data-onclick='{{ ["getProductTypes", row["ID"]] | tojson }}'>
                   <div class="chevron">&#9660;</div>
                 </button>
               </td>
@@ -257,8 +257,8 @@
 </div>
 
 
-<script type="text/javascript" src="{{ url_for('static', filename='JS/custom.js')}}"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/custom.js')}}"></script>
+<script nonce="{{ csp_nonce() }}">
 let csrfToken = "{{ csrf_token() }}";
 window.addEventListener('load', () => {
   document.querySelector('body').classList.add('loaded');
@@ -353,7 +353,7 @@ function getProductTypes(prID) {
 
                 parentTr.insertAdjacentHTML('afterend', `
                       <tr id="answerID" >
-                          <td style="text-align: center;" colspan="7">${response.answer}</td>
+                          <td style="text-align: center;" colspan="7">${escapeHtml(response.answer)}</td>
                       </tr>
                   `);   
                 
@@ -373,7 +373,7 @@ function getProductTypes(prID) {
                       <tr id="answerID" >
                           <td style="text-align: center;" colspan="7">
                             <div class="no-pt-detected">{{ _('No Product Type Detected In Store') }}</div>
-                            <div><a class="pcButtonS" href="${urlTo}" style="text-decoration: none; margin-bottom: 20px;">{{ _('Add To Store') }}</a></div>
+                            <div><a class="pcButtonS" href="${escapeHtml(urlTo)}" style="text-decoration: none; margin-bottom: 20px;">{{ _('Add To Store') }}</a></div>
                           </td>
                       </tr>
                   `);   
@@ -402,22 +402,22 @@ function getProductTypes(prID) {
                     console.log(typeof(list[1]['expired']))
                     let expired = ''
                     if (list[1]['expired'] !== null && parseInt(list[1]['expired']) !== 0) {
-                      expired = `<p class="store-quantity-span" style="color: red;">${list[1]['expired']} ${expiredText} </p>`;
+                      expired = `<p class="store-quantity-span" style="color: red;">${escapeHtml(list[1]['expired'])} ${expiredText} </p>`;
                     } 
 
                     let perRow = `<div class="child" draggable="false" style="cursor: auto;">
-                                    <input type="hidden" name="TypeID" value="${list[1]['ID']}">
-                                    <img src="${imgUrl}" alt="${list[1]['AltText']}" class="" style="width: 150px;">
-                                    <div><p style="justify-content: left; font-weight: 600;">${restoreUnwantedJsonChars(list[1]['Title'])}</p></div>
-                                    <div><p><span style="font-weight: 600; margin-right: 3px;">${list[1]['Price']}</span> {{ mainCurrency }}</p></div>
+                                    <input type="hidden" name="TypeID" value="${escapeHtml(list[1]['ID'])}">
+                                    <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(list[1]['AltText'])}" class="" style="width: 150px;">
+                                    <div><p style="justify-content: left; font-weight: 600;">${escapeHtml(restoreUnwantedJsonChars(list[1]['Title']))}</p></div>
+                                    <div><p><span style="font-weight: 600; margin-right: 3px;">${escapeHtml(list[1]['Price'])}</span> {{ mainCurrency }}</p></div>
                                     <div>
                                       <p>
-                                        <p class="store-quantity-span">${list[1]['Quantity']}  ${inStock}</p> 
+                                        <p class="store-quantity-span">${escapeHtml(list[1]['Quantity'])}  ${inStock}</p> 
                                         ${expired}
                                       </p>
                                     </div>
 
-                                    <p data-id="${list[1]['ID']}" class="more-on-quantity" >{{ _('More') }}</p>
+                                    <p data-id="${escapeHtml(list[1]['ID'])}" class="more-on-quantity" >{{ _('More') }}</p>
                                 </div>`;
 
                     rows = rows + perRow;
@@ -430,7 +430,7 @@ function getProductTypes(prID) {
                                       ${rows}    
                                     </div>
 
-                                    <button class="pcButtonS" style="display: none" id="saveChanges" onclick="saveChanges(${prID})"><span id='schText'>{{ _('Save Changes') }}</span></button>
+                                    <button class="pcButtonS" style="display: none" id="saveChanges" data-onclick='["saveChanges", ${Number(prID)}]'><span id='schText'>{{ _('Save Changes') }}</span></button>
                                   </td>
                                 </tr>
                                 `
@@ -619,8 +619,8 @@ function myLoader(color) {
 
 // Create drop-down 
 
-  const storeData = JSON.parse(`{{ storeData|safe }}`);
-  const productsData = JSON.parse(`{{ productsData|safe }}`);
+  const storeData = JSON.parse({{ storeData | tojson }});
+  const productsData = JSON.parse({{ productsData | tojson }});
     
   creatDropDown(storeData, 'store', 'store', '200px', "{{ _('Shows From All Stores') }}", '.filters')
   creatDropDown(productsData, 'product', 'product', '200px', "{{ _('Shows All Products') }}", '.filters')
@@ -748,15 +748,15 @@ function myLoader(color) {
 </script>
 
 <!-- 3. Bootstrap 5 JS (Popper included) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- 4. jQuery (Required by bootstrap-datepicker 1.x) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
 <!-- 5. Bootstrap Datepicker JS (uxsolutions) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
   // Initialize the date picker on our input
   $(function() {
     $('#productionDate').datepicker({
@@ -840,11 +840,11 @@ function myLoader(color) {
               }
               mainRow.innerHTML = `
                 <td style="padding: 16px;">
-                  <img src="${currentImgUrl}" style="width: 100px;"/>
+                  <img src="${escapeHtml(currentImgUrl)}" style="width: 100px;"/>
                 </td>
-                <td style="padding: 16px;">${restoreUnwantedJsonChars(row.prTitle)}</td>
-                <td style="padding: 16px;">${row.TotalQuantity}</td>
-                <td style="padding: 16px; color: red;">${expiredQuantity}</td>
+                <td style="padding: 16px;">${escapeHtml(restoreUnwantedJsonChars(row.prTitle))}</td>
+                <td style="padding: 16px;">${escapeHtml(row.TotalQuantity)}</td>
+                <td style="padding: 16px; color: red;">${escapeHtml(expiredQuantity)}</td>
               `;
 
               // Create the extra row with the button
@@ -852,7 +852,7 @@ function myLoader(color) {
               extraRow.classList.add('extra-row');
               extraRow.innerHTML = `
                 <td colspan="7" style="text-align: center; padding: 5px;">
-                  <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_${row.ID}" onclick="getProductTypes(${row.ID})">
+                  <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_${escapeHtml(row.ID)}" data-onclick='["getProductTypes", ${Number(row.ID)}]'>
                     <div class="chevron">&#9660;</div>
                   </button>
                 </td>

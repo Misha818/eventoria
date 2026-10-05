@@ -1,68 +1,75 @@
 import os
 import time
-import logging
+import threading
 from mysql.connector.pooling import MySQLConnectionPool, PoolError
 from flask import g, current_app
 from dotenv import load_dotenv
 
 load_dotenv()
 
-class BlockingMySQLConnectionPool(MySQLConnectionPool):
+# Connections per process. Every gunicorn worker is its own process with its own
+# pool, so the server opens up to  workers x MYSQL_POOL_SIZE  connections in total,
+# which must stay below MySQL's max_connections (151 by default).
+# A request holds at most one connection (see get_db), and a sync gunicorn worker
+# serves one request at a time, so a small pool is enough.
+POOL_SIZE = int(os.getenv("MYSQL_POOL_SIZE", "5"))
+
+# How long a request waits for a free connection before giving up with
+# "server busy" (HTTP 503) instead of hanging the worker forever.
+POOL_TIMEOUT = float(os.getenv("MYSQL_POOL_TIMEOUT", "10"))
+
+
+class WaitingMySQLConnectionPool(MySQLConnectionPool):
     """
-    A pool that sleeps & retries when empty, instead of blowing up.
+    A pool whose get_connection() waits up to POOL_TIMEOUT seconds for a free
+    connection (the base class fails immediately when all are in use).
     """
     def get_connection(self, *args, **kwargs):
+        deadline = time.monotonic() + POOL_TIMEOUT
         while True:
             try:
                 return super().get_connection(*args, **kwargs)
             except PoolError:
-                # log at debug so you can spot when you’re
-                # running at full capacity, and then sleep & retry
-                current_app.logger.debug("Connection pool exhausted, waiting for a free slot…")
-                time.sleep(0.1)  # tweak sleep duration if you like
-    
-    def add_connection(self, conn=None):
-        """
-        If called with no args, this is the __init__-time fill.
-        If called with conn, it’s a “return to pool” from conn.close().
-        """
-        while True:
-            try:
-                if conn is None:
-                    # initial fill: let base class create a fresh connection
-                    return super().add_connection()
-                else:
-                    # returning a used connection back into the idle list
-                    return super().add_connection(conn)
-            except PoolError:
-                current_app.logger.debug(
-                    "Idle-pool full; waiting to return connection…"
+                if time.monotonic() >= deadline:
+                    current_app.logger.error(
+                        "No free database connection after %ss (pool size %s)", POOL_TIMEOUT, POOL_SIZE
+                    )
+                    raise
+                time.sleep(0.05)
+
+
+_pool = None
+_pool_lock = threading.Lock()
+
+
+def get_pool():
+    # Created on first use rather than at import: the pool opens all its
+    # connections at once, and processes that never serve a request (e.g. the
+    # Flask reloader's parent process) should not hold any.
+    global _pool
+    if _pool is None:
+        with _pool_lock:
+            if _pool is None:
+                _pool = WaitingMySQLConnectionPool(
+                    pool_name="mypool",
+                    pool_size=POOL_SIZE,
+                    pool_reset_session=True,
+                    host=os.getenv("MYSQL_HOST"),
+                    port=int(os.getenv("MYSQL_PORT", "3306")),
+                    charset="utf8mb4",
+                    user=os.getenv("MYSQL_USER"),
+                    password=os.getenv("MYSQL_PASSWORD"),
+                    database=os.getenv("MYSQL_DATABASE"),
                 )
-                time.sleep(0.1)
-
-
-# swap in the blocking pool
-pool = BlockingMySQLConnectionPool(
-    pool_name="mypool",
-    pool_size=32,
-    pool_reset_session=True,
-    host=os.getenv("MYSQL_HOST"),
-    user=os.getenv("MYSQL_USER"),
-    password=os.getenv("MYSQL_PASSWORD"),
-    database=os.getenv("MYSQL_DATABASE"),
-)
+    return _pool
 
 
 def get_db():
+    # One connection per request, returned to the pool by close_db()
     if "db_conn" not in g:
-        g.db_conn = pool.get_connection()
+        g.db_conn = get_pool().get_connection()
     return g.db_conn
 
-# def close_db(exc=None):
-#     conn = g.pop("db_conn", None)
-#     if conn is not None:
-#         conn.close()
-#         current_app.logger.debug("Returned connection to pool")
 
 def close_db(exc=None):
     conn = g.pop("db_conn", None)

@@ -19,8 +19,8 @@
 {% block content %}
 
 <div class="containerCart" >
-<input type="hidden" id="csrfToket" value="{{ cartMessage[1]|safe }}">
-<input type="hidden" id="inBasketText" value="{{ cartMessage[2]|safe }}">
+<input type="hidden" id="csrfToket" value="{{ cartMessage[1] }}">
+<input type="hidden" id="inBasketText" value="{{ cartMessage[2] }}">
 
   
 {% if result.length == 0 %}
@@ -134,7 +134,7 @@
 {% endif %}
 
 
-<script>
+<script nonce="{{ csp_nonce() }}">
     // let csrfToken = "{{ csrf_token() }}";
     window.addEventListener('load', () => {
       document.querySelector('body').classList.add('loaded');

@@ -380,8 +380,8 @@ msgid "cheers"
 msgstr "С уважением"
 
 #: app.py:4198
-msgid "Mammy's Bread Team"
-msgstr "Команда Mammy's bread"
+msgid "Eventoria Team"
+msgstr "Команда Eventoria"
 
 #: app.py:4199 app.py:4200 templates/edit-profile.html:35
 #: templates/teammate-signup.html:27 templates/teammate-signup.html:35
@@ -1239,7 +1239,7 @@ msgid "All Affiliates"
 msgstr "Все партнеры"
 
 #: templates/admin_panel.html:162
-msgid "Mammy's Bread"
+msgid "Eventoria"
 msgstr "Хлеб Мамми"
 
 #: templates/admin_panel.html:197

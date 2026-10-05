@@ -59,12 +59,12 @@
 </div>
 
 <!-- Script for Dropzone (image upload) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 
-<script>
+<script nonce="{{ csp_nonce() }}">
     let dzCancel = 'display: none;';
     let outputType = '';
     // Initialize Dropzone
@@ -166,7 +166,7 @@
         imageEditorModal.id = 'imageEditorModal';
         imageEditorModal.className = 'modal open';
         imageEditorModal.innerHTML = `
-            <img id="imageToEdit" src="${imageUrl}" alt="Image to edit">
+            <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
             <br>
             <button id="saveEditedImage">{{ _('Crop') }}</button>
             <button id="cancelEdit" style="${dzCancel}">{{ _('Done') }}</button>
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.status === '0') {
                     // Handle empty product name
-                    mistakesDiv.innerHTML = response.answer;
+                    mistakesDiv.innerHTML = safeMessage(response.answer);
                     mistakesDiv.style.color = 'red';
                     mistakesDiv.style.display = 'flex';
 
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function() {
                    
                     errorList =  response.answer;
                     for (let i = 0; i < errorList.length; i++) {
-                        myHTML += '<p>' + errorList[i] + '</p>';
+                        myHTML += '<p>' + escapeHtml(errorList[i]) + '</p>';
                     }
                     mistakesDiv.innerHTML = myHTML;
                     mistakesDiv.style.color = 'red';

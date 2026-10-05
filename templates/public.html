@@ -3,6 +3,7 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="UTF-8">
+    <script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='JS/security.js') }}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- ICO format -->
@@ -18,7 +19,7 @@
         {% endblock %}
     </title>
 
-    <script>
+    <script nonce="{{ csp_nonce() }}">
 
       window.addEventListener('load', () => {
         document.querySelector('body').classList.add('loaded');
@@ -78,8 +79,8 @@
         <span class="notification" style="display: none;">0</span>
       </header>
       
-      <script type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
-      <script type="text/javascript" src="{{ url_for('static', filename='JS/header.js') }}"></script>
+      <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/cookie.umd.min.js') }}"></script>
+      <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/header.js') }}"></script>
       <!-- End of Header -->
       
     {% block content %}
@@ -187,7 +188,7 @@
       </nav>
     </div>
     
-    <script>
+    <script nonce="{{ csp_nonce() }}">
       let xhr = new XMLHttpRequest();
       let csrfToken = "{{ csrf_token() }}";
       const redFields = document.getElementById('redFields').value;
@@ -404,14 +405,14 @@
                   gearElement.remove();
                   document.getElementById('subscribe').textContent = `{{ _('Submit') }}`;
                   if (response.status === '1') {
-                      let content = response.answer;
+                      let content = safeMessage(response.answer);
                       document.querySelector('#subscribe-message').innerHTML = content;
                       document.querySelector('#subscribe-message').style.color = 'green';
                       
                   }
                   
                   if (response.status === '0') {
-                    let content = response.answer;
+                    let content = safeMessage(response.answer);
                     document.querySelector('#subscribe-message').innerHTML = content;
                   }
                     
@@ -526,14 +527,14 @@
                   document.getElementById('message').textContent = `{{ _('Submit') }}`;
                   // cmFlag = false;
                   if (response.status === '1') {
-                      let content = response.answer;
+                      let content = safeMessage(response.answer);
                       errorMC.innerHTML = content;
                       errorMC.style.color = 'green';
                       
                     }
                     
                   if (response.status === '0') {
-                      let content = response.answer;
+                      let content = safeMessage(response.answer);
                       errorMC.style.color = 'red';
                       errorMC.innerHTML = content;
                   }
@@ -627,7 +628,7 @@
           });
 
 
-        let supported_langs = JSON.parse('{{ jsonifiedSupportedLangsData | safe }}');
+        let supported_langs = JSON.parse({{ jsonifiedSupportedLangsData | tojson }});
         let current_locale = "{{ current_locale }}";
 
         const langContainer = document.querySelector(".lang-container");

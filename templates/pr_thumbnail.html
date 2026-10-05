@@ -61,8 +61,8 @@
     
             <!-- Add more slides as needed -->
         </div>
-        <a class="prev" onclick="moveSlide(-1)">&#10094;</a>
-        <a class="next" onclick="moveSlide(1)">&#10095;</a>
+        <a class="prev" data-onclick='["moveSlide", -1]'>&#10094;</a>
+        <a class="next" data-onclick='["moveSlide", 1]'>&#10095;</a>
     </div>
 
 {% else %}    
@@ -93,7 +93,7 @@
 </div>
 
 
-<script>
+<script nonce="{{ csp_nonce() }}">
 let currentSlide = 0;
 
 function showSlide(index) {
@@ -168,12 +168,12 @@ slides.forEach(slide => {
 });
 </script>
 <!-- Script for Dropzone (image upload) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <!-- Thumbnail image manipulations -->
-<script>
+<script nonce="{{ csp_nonce() }}">
 
 let csrfToken = "{{ csrf_token() }}"
 const content = {{ content | tojson  }};
@@ -333,7 +333,7 @@ function openImageEditorModal(imageUrl, callback) {
         imageEditorModal.id = 'imageEditorModal';
         imageEditorModal.className = 'modal open';
         imageEditorModal.innerHTML = `
-            <img id="imageToEdit" src="${imageUrl}" alt="Image to edit">
+            <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
             <br>
             <button id="saveEditedImage">{{ _('Crop') }}</button>
             <button id="cancelEdit">{{ _('Done') }}</button>
@@ -462,7 +462,7 @@ saveButton.addEventListener('click', function (event) {
 
             if (response.status === '0') {
                 // Handle empty product name
-                mistakesDiv.innerHTML = response.answer;
+                mistakesDiv.innerHTML = safeMessage(response.answer);
                 mistakesDiv.style.color = 'red';
 
                 // Scroll the window to the mistakesDiv with smooth behavior
@@ -495,7 +495,7 @@ saveButton.addEventListener('click', function (event) {
 </script>
 <!-- End of thumbnail image manipulations -->
 
-<script>
+<script nonce="{{ csp_nonce() }}">
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('myDropzone').addEventListener('click', function() {
             cropperState = 1;    

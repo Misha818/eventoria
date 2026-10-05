@@ -151,7 +151,7 @@
 <!-- <span class="option-box container toRight tableDaddy" style="padding-top: unset; margin-top: 120px;"> -->
   <div class="container" style="padding-top: unset;">
 <span class="option-box filter-container toRight tableDaddy" style="padding-top: unset; width: 550px; background-color: unset;">
-  <input type="text" id="myInput" onkeyup="filter_products_by_title(this)" placeholder="{{ _('Search for a slide by title') }}" title="{{ _('Type in a product title') }}" style="width: 100%; padding: 12px; margin-right: 10px;">
+  <input type="text" id="myInput" data-onkeyup='["filter_products_by_title", "$this"]' placeholder="{{ _('Search for a slide by title') }}" title="{{ _('Type in a product title') }}" style="width: 100%; padding: 12px; margin-right: 10px;">
   {% if translated == True %}
     <input type="checkbox" class="checkbox" style="margin-bottom: unset;">
     <span class="untranslated" style="font-size: 20px; font-style: italic; font-weight: 600; margin-top: 10px;">{{ _('Show Originals') }}</span>
@@ -172,8 +172,8 @@
           <div style="display: flex; align-items: center;">
            {{ _('Thumbnail') }} 
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" onclick="sortTable(this, 0, 'up')"></i>
-              <i class="fas fa-sort-down mydown" onclick="sortTable(this, 0, 'down')"></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
             </div>
           </div>
         </th>
@@ -182,8 +182,8 @@
           <div style="display: flex; align-items: center;">
             {{ _('Title') }} 
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" onclick="sortTable(this, 1, 'up')"></i>
-              <i class="fas fa-sort-down mydown" onclick="sortTable(this, 1, 'down')"></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
             </div>
           </div>
         </th>
@@ -192,8 +192,8 @@
           <div style="display: flex; align-items: center;">
             {{ _('Start Date') }} 
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" onclick="sortTable(this, 2, 'up')"></i>
-              <i class="fas fa-sort-down mydown" onclick="sortTable(this, 2, 'down')"></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 2, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 2, "down"]'></i>
             </div>
           </div>
         </th>
@@ -202,8 +202,8 @@
           <div style="display: flex; align-items: center;">
             {{ _('End Date') }} 
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" onclick="sortTable(this, 3, 'up')"></i>
-              <i class="fas fa-sort-down mydown" onclick="sortTable(this, 3, 'down')"></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 3, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 3, "down"]'></i>
             </div>
           </div>
         </th>
@@ -212,8 +212,8 @@
           <div style="display: flex; align-items: center;">
             {{ _('Status') }} 
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" onclick="sortTable(this, 5, 'up')"></i>
-              <i class="fas fa-sort-down mydown" onclick="sortTable(this, 5, 'down')"></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 5, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 5, "down"]'></i>
             </div>
           </div>
         </th>
@@ -264,7 +264,7 @@
 
 
 
-<script>
+<script nonce="{{ csp_nonce() }}">
 let csrfToken = "{{ csrf_token() }}";
 function constract_table_rows(data, mainUrl, langUrl, prID, transparent='', draggable='true') {
     let dataArray = Object.entries(data);
@@ -292,17 +292,17 @@ function constract_table_rows(data, mainUrl, langUrl, prID, transparent='', drag
       }
 
       let perRow = `<div class="child ${transparent}" draggable="${draggable}">
-                      <input type="hidden" name="TypeID" value="${list[1]['ID']}">
-                      <img src="${imgUrl}" alt="${list[1]['AltText']}" class="" style="width: 150px;">
-                      <div><p style="justify-content: left;">${list[1]['Title']}</p></div>
-                      <div><p>${list[1]['Price']} {{mainCurrency}}</p></div>
-                      <div title="${title}" onclick="changeStatus(${list[1]['ID']})">
-                          <label class="switch" id="switch_${list[1]['ID']}">
+                      <input type="hidden" name="TypeID" value="${escapeHtml(list[1]['ID'])}">
+                      <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(list[1]['AltText'])}" class="" style="width: 150px;">
+                      <div><p style="justify-content: left;">${escapeHtml(list[1]['Title'])}</p></div>
+                      <div><p>${escapeHtml(list[1]['Price'])} {{mainCurrency}}</p></div>
+                      <div title="${title}" data-onclick='["changeStatus", ${Number(list[1]['ID'])}]'>
+                          <label class="switch" id="switch_${escapeHtml(list[1]['ID'])}">
                               <span class="sliderA round ${checked}"></span>
                           </label>
                       </div>
                       
-                      <a href="${editUrl+langUrl}" target="_BLANK" title="${editTitle}"><i class="fas ${editIconClass}" style=" color: #E76F51;"></i></a>
+                      <a href="${escapeHtml(editUrl+langUrl)}" target="_BLANK" title="${editTitle}"><i class="fas ${editIconClass}" style=" color: #E76F51;"></i></a>
                   </div>`;
 
       rows = rows + perRow;
@@ -372,7 +372,7 @@ window.addEventListener('load', () => {
                     // console.log(row.P_Ref_Key);
                     let editUrl = 'edit-slide/' + row.HS_Ref_Key;
                     
-                    let actionBtns = `<a href="{{ url_for('home', _external=True) }}${editUrl}" target="_blank" title="{{ _('Edit') }}"><i class="fas fa-pencil" style=" color: #E76F51;"></i></a>`;
+                    let actionBtns = `<a href="{{ url_for('home', _external=True) }}${escapeHtml(editUrl)}" target="_blank" title="{{ _('Edit') }}"><i class="fas fa-pencil" style=" color: #E76F51;"></i></a>`;
                     
                     let status = `{{ _('Active') }}`;
                     if (row['Status'] == 0) {
@@ -385,11 +385,11 @@ window.addEventListener('load', () => {
                     
                     let imgUrl = `{{ url_for('static', filename='images/uploads/home_slides/') }}`+ row.IMG;
                     newRows += `
-                    <tr class="keyup-filter" data-value="${row.ID}-&$%-${row.Title}">
-                      <td><img src="${imgUrl}" style="width: 100px;"/></td>
-                      <td><a href="{{ url_for('home', _external=True) }}${editUrl}" target="_blank" title="{{ _('Edit in original language') }}">${row.Title}</a></td>
-                      <td>${formatToYYYYMMDD(row.Start_Date)}</td>
-                      <td>${formatToYYYYMMDD(row.Exp_Date)}</td>
+                    <tr class="keyup-filter" data-value="${escapeHtml(row.ID)}-&$%-${escapeHtml(row.Title)}">
+                      <td><img src="${escapeHtml(imgUrl)}" style="width: 100px;"/></td>
+                      <td><a href="{{ url_for('home', _external=True) }}${escapeHtml(editUrl)}" target="_blank" title="{{ _('Edit in original language') }}">${escapeHtml(row.Title)}</a></td>
+                      <td>${escapeHtml(formatToYYYYMMDD(row.Start_Date))}</td>
+                      <td>${escapeHtml(formatToYYYYMMDD(row.Exp_Date))}</td>
                       <td>${status}</td>
                       <td class="actions">${actionBtns}</td>
                       </tr>`;
@@ -572,7 +572,7 @@ function getProductTypes(prID, getOrighins=false) {
 
                 parentTr.insertAdjacentHTML('afterend', `
                       <tr id="answerID" >
-                          <td style="text-align: center;" colspan="7">${response.answer}</td>
+                          <td style="text-align: center;" colspan="7">${escapeHtml(response.answer)}</td>
                       </tr>
                   `);   
                 
@@ -598,7 +598,7 @@ function getProductTypes(prID, getOrighins=false) {
                       <tr id="answerID" >
                           <td style="text-align: center;" colspan="7">
                             <div class="no-pt-detected">{{ _('No Product Type Detected') }}</div>
-                            <div><a class="pcButtonS" href="${urlTo}" style="text-decoration: none">{{ _('Add Product Type') }}</a></div>
+                            <div><a class="pcButtonS" href="${escapeHtml(urlTo)}" style="text-decoration: none">{{ _('Add Product Type') }}</a></div>
                           </td>
                       </tr>
                   `);   
@@ -628,7 +628,7 @@ function getProductTypes(prID, getOrighins=false) {
                                     ${rows}    
                                   </div>
 
-                                  <button class="pcButtonS" style="display: none" id="saveChanges" onclick="saveChanges(${prID})"><span id='schText'>{{ _('Save Changes') }}</span></button>
+                                  <button class="pcButtonS" style="display: none" id="saveChanges" data-onclick='["saveChanges", ${Number(prID)}]'><span id='schText'>{{ _('Save Changes') }}</span></button>
                                 </td>
                               </tr>
                               `;

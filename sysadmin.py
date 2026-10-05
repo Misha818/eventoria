@@ -1,4 +1,6 @@
 from flask import session, redirect, jsonify, request, g, abort, url_for
+from flask_wtf.csrf import generate_csrf
+from markupsafe import escape
 from eventoria_db import get_db
 from dotenv import load_dotenv
 from flask_babel import Babel, _, lazy_gettext as _l, gettext
@@ -19,7 +21,7 @@ import time
 import requests
 import cssutils
 import base64
-import imghdr
+import nh3
 import json
 
 
@@ -52,33 +54,6 @@ def init_sysadmin_context(app):
         return {
             'actionInfo': action_info()
         }
-
-def get_db_connection(use_dict_cursor=False):
-    retries = 3
-    for i in range(retries):
-        try:
-            db_connection = mysql.connector.connect(
-                user=os.getenv('MYSQL_USER'),
-                password=os.getenv('PASSWORD'),
-                host=os.getenv('LOCALHOST'),
-                database=os.getenv('DATABASE'),
-                connection_timeout=10
-            )
-            if db_connection.is_connected():
-                # Create a cursor with dictionary=True if needed
-                cursor = db_connection.cursor(dictionary=use_dict_cursor)
-                return db_connection, cursor
-        except mysql.connector.Error as err:
-            print(f"Attempt {i + 1} failed: {err}")
-            if i < retries - 1:
-                time.sleep(5)  # Wait before retrying
-            else:
-                raise
-
-
-def close_connection(db_connection):
-    if db_connection.is_connected():
-        db_connection.close()
 
 @with_conn
 def sqlSelect(
@@ -453,9 +428,9 @@ def removeRedundantFiles(fileName, fileDir):
     # fileName = 'photo.jpg'
 
     # Create path to the file
-    remove_from = os.path.join(static_folder_path, fileDir, fileName)
+    remove_from = safe_static_path(fileDir, fileName)
 
-    if os.path.exists(remove_from):
+    if remove_from and os.path.isfile(remove_from):
         os.remove(remove_from)
         return True
     else:
@@ -491,25 +466,25 @@ def getFileName(colonName, tableName, idName, idVal):
 def get_meta_tags(content):
     ImageUrl = os.path.join(static_folder_path, 'static', content['ImageUrl'])
 
+    # Title and descriptions are typed by staff, so every value is escaped
+    # before it goes into an attribute or the JSON-LD script block.
+    title = escape(content['Title'])
+    description = escape(content['ShortDescription'] or '')
+    url = escape(content['Url'])
+    siteName = escape(content['SiteName'])
+
     # Facebook and instagram metatags
     metaMetaTags = f"""
-        <meta property="og:title" content="{content['Title']}" />
-        <meta property="og:description" content="{content['ShortDescription']}" />
-        <meta property="og:image" content="{ImageUrl}" />
-        <meta property="og:url" content="{content['Url']}" />
+        <meta property="og:title" content="{title}" />
+        <meta property="og:description" content="{description}" />
+        <meta property="og:image" content="{escape(ImageUrl)}" />
+        <meta property="og:url" content="{url}" />
         <meta property="og:type" content="website" />
-        <link rel="canonical" href="{content['Url']}" />
-        <meta property="og:site_name" content="{content['SiteName']}" />
+        <link rel="canonical" href="{url}" />
+        <meta property="og:site_name" content="{siteName}" />
     """
 
     # Google metatags
-    headline = content['Title']
-    description = content['ShortDescription']
-    image_url = ImageUrl
-    author_name = "Author Name"
-    publisher_name = "Publisher Name"
-    logo_url = "https://www.example.com/logo.jpg"
-    article_url = "https://www.example.com/article-page.html"
     date_published = 0 
     date_modified = 0
 
@@ -524,114 +499,57 @@ def get_meta_tags(content):
         date_published = content['DatePublished'] 
         date_modified = content['DateModified']
 
-
-   
-
-    # Create the meta tags with variables
-    googleMetaTags = f"""
-        <script type="application/ld+json">
-        {{
+    structuredData = {
         "@context": "https://schema.org",
         "@type": "Product",
-        "headline": "{headline}",
-        "description": "{description}",
-        "image": "{image_url}",
-        
-        "datePublished": "{date_published}",
-        "dateModified": "{date_modified}",
-        "mainEntityOfPage": {{
+        "headline": content['Title'],
+        "description": content['ShortDescription'],
+        "image": ImageUrl,
+        "datePublished": str(date_published),
+        "dateModified": str(date_modified),
+        "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "{content['Url']}"
-        }}
-        }}
+            "@id": content['Url']
+        }
+    }
+    # "<", ">" and "&" are escaped so a value can never close the <script> element
+    structuredJson = (json.dumps(structuredData, ensure_ascii=False, indent=8)
+                      .replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026'))
+
+    googleMetaTags = f"""
+        <script type="application/ld+json">
+        {structuredJson}
         </script>
     """
-    
-    # "author": {{
-    #     "@type": "Person",
-    #     "name": "{author_name}"
-    # }},
-    
-    # "publisher": {{
-    #     "@type": "Organization",
-    #     "name": "{publisher_name}",
-    #     "logo": {{
-    #     "@type": "ImageObject",
-    #     "url": "{logo_url}"
-    #     }}
-    # }},
 
     metaTags = metaMetaTags + googleMetaTags
     return metaTags
 
 
-# # The patterns we want to catch
-# BLACKLIST_PATTERNS = [
-#     # SQL keywords / operators
-#     r"(?i)\b(select|update|delete|insert|drop|alter|union|exec)\b",
-#     r"--",                     # SQL comment
-#     # r";",                      # statement terminator
-#     r";(?=\s*(select|update|delete|insert|drop)\b|$)", # statement terminator
-#     # XSS patterns
-#     r"(?i)<\s*script",         # <script> tag
-#     r"(?i)on\w+\s*=",          # event handlers like onload=
-#     r"(?i)javascript:",        # javascript: URI
-#     # Shell-injection
-#     r"`",                      # backticks
-#     r"\$\(",                   # $(…) subshell
-#     r"\|\|", r"\&\&",          # logical or/and in shell
-# ]
+# ── Request hygiene ──────────────────────────────────────────────────────────
+# What protects us from what:
+#   * SQL injection  -> every value goes to MySQL as a %s parameter (sqlSelect & co.)
+#   * XSS            -> Jinja autoescaping, escapeHtml() in templates' JS,
+#                       and sanitize_html() for the rich text coming from Quill
+#   * Path traversal -> secure_filename() + safe_static_path()
+# validate_request() adds input hygiene on top of that. It rejects values that are
+# never legitimate in their field instead of blocking ordinary words, so a customer
+# can write "please update my booking" or "select the second date".
 
-# # precompile
-# COMPILED = [re.compile(p) for p in BLACKLIST_PATTERNS]
+# Fields that legitimately carry HTML (Quill editor). They are sanitized with
+# sanitize_html() before being stored, so markup is allowed here.
+RICH_TEXT_FIELDS = {'content'}
+IGNORED_FIELDS = {'cf-turnstile-response'}
+MAX_FIELD_LENGTH = 50000
 
-# def contains_bad_pattern(value: str) -> bool:
-#     """Returns True if any blacklist pattern is found in value."""
-#     for pat in COMPILED:
-#         if pat.search(value):
-#             return True
-#     return False
+# ASCII control characters except tab, newline and carriage return
+CONTROL_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]')
+# Markup in a plain-text field: "<" immediately followed by a tag name, "/", "!" or "?"
+# (browsers only start a tag that way). "a < b", "<3" and "5<6" are still accepted.
+HTML_TAG = re.compile(r'<[a-zA-Z!/?]')
 
-
-# def validate_request(f):
-#     @wraps(f)
-#     def wrapper(*args, **kwargs):
-#         ignore_keys = {"cf-turnstile-response"}
-#         for key, values in request.values.lists():
-#             if key in ignore_keys:
-#                 continue
-#             for v in values:
-#                 if isinstance(v, str) and contains_bad_pattern(v):
-#                     abort(400, description=gettext('Something went wrong. Please try again!'))
-#         return f(*args, **kwargs)
-#     return wrapper
-
-
-# The patterns we want to catch
-BLACKLIST_PATTERNS = [
-    # SQL keywords / operators
-    r"(?i)\b(select|update|delete|insert|drop|alter|union|exec)\b",
-    r"--",  # SQL comment
-    r";(?=\s*(select|update|delete|insert|drop)\b|$)",  # statement terminator
-    # XSS patterns
-    r"(?i)<\s*script",  # <script> tag
-    r"(?i)on\w+\s*=",  # event handlers like onload=
-    r"(?i)javascript:",  # javascript: URI
-    # Shell-injection
-    r"`",  # backticks
-    r"\$\(",  # $(…) subshell
-    r"\|\|", r"\&\&",  # logical or/and in shell
-]
-
-COMPILED = [re.compile(p) for p in BLACKLIST_PATTERNS]
 ALLOWED_IMAGE_TYPES = {"jpeg", "png"}
 
-def contains_bad_pattern(value: str) -> bool:
-    """Returns True if any blacklist pattern is found in value."""
-    for pat in COMPILED:
-        if pat.search(value):
-            return True
-    return False
 
 def is_valid_base64_image(value: str) -> bool:
     """Checks if the base64 string is a valid JPEG or PNG image."""
@@ -639,28 +557,101 @@ def is_valid_base64_image(value: str) -> bool:
         if ',' in value:
             _, value = value.split(',', 1)  # Remove data URI prefix if present
         decoded = base64.b64decode(value, validate=True)
-        img_type = imghdr.what(None, decoded)
-        return img_type in ALLOWED_IMAGE_TYPES
+        is_jpeg = decoded.startswith(b"\xff\xd8\xff")
+        is_png = decoded.startswith(b"\x89PNG\r\n\x1a\n")
+        return (is_jpeg and "jpeg" in ALLOWED_IMAGE_TYPES) or (is_png and "png" in ALLOWED_IMAGE_TYPES)
     except (ValueError, TypeError):
         return False
+
+
+def find_invalid_value(key, value):
+    """Returns a user-facing error message for an unacceptable value, or None."""
+    if CONTROL_CHARS.search(value):
+        return gettext('Something went wrong. Please try again!')
+
+    if key in RICH_TEXT_FIELDS:
+        return None
+
+    if len(value) > MAX_FIELD_LENGTH and not is_valid_base64_image(value):
+        return gettext('The text is too long.')
+
+    if HTML_TAG.search(value):
+        return gettext('Please remove HTML tags (text in angle brackets) from your input.')
+
+    return None
+
+
+def reject_request(message):
+    # XHR handlers across the templates display `answer` when status is '0' and
+    # only read 200 responses, so POSTs get a readable message instead of an error page.
+    if request.method == 'GET':
+        abort(400, description=message)
+    return jsonify({'status': '0', 'answer': message, 'newCSRFtoken': generate_csrf()})
+
 
 def validate_request(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        ignore_keys = {"cf-turnstile-response"}
-
         for key, values in request.values.lists():
-            if key in ignore_keys:
+            if key in IGNORED_FIELDS:
                 continue
-            for v in values:
-                if isinstance(v, str):
-                    # First check if it's a valid base64 image and allow it
-                    if is_valid_base64_image(v):
-                        continue
-                    if contains_bad_pattern(v):
-                        abort(400, description=gettext('Something went wrong. Please try again!'))
+            for value in values:
+                if isinstance(value, str):
+                    message = find_invalid_value(key, value)
+                    if message:
+                        return reject_request(message)
+
+        # URL path segments (e.g. /affiliate/<affID>, /orders/<filter>) end up in templates too
+        for value in (request.view_args or {}).values():
+            if isinstance(value, str) and (CONTROL_CHARS.search(value) or HTML_TAG.search(value)):
+                return reject_request(gettext('Something went wrong. Please try again!'))
+
         return f(*args, **kwargs)
     return wrapper
+
+
+# Rich text (Quill) sanitizer: everything not listed here is removed
+SANITIZE_TAGS = {
+    'p', 'br', 'span', 'div', 'strong', 'b', 'em', 'i', 'u', 's', 'strike', 'sub', 'sup',
+    'a', 'img', 'ol', 'ul', 'li', 'blockquote', 'pre', 'code',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+}
+SANITIZE_ATTRIBUTES = {
+    '*': {'class', 'style'},
+    'a': {'href', 'target'},
+    'img': {'src', 'alt', 'width', 'height'},
+    'ul': {'data-checked'},
+    'pre': {'spellcheck'},
+}
+SANITIZE_STYLE_PROPERTIES = {
+    'color', 'background-color', 'font-family', 'font-size', 'font-weight', 'font-style',
+    'text-decoration', 'text-align', 'line-height', 'margin', 'margin-top', 'margin-bottom',
+    'margin-left', 'margin-right', 'padding', 'padding-top', 'padding-bottom', 'padding-left',
+    'padding-right', 'width', 'max-width', 'height', 'border', 'border-radius', 'display',
+    'list-style-type', 'vertical-align', 'white-space',
+}
+SANITIZE_URL_SCHEMES = {'http', 'https', 'mailto', 'tel'}
+
+
+def sanitize_html(html):
+    """Strips scripts, event handlers, javascript: URLs and unknown tags from rich text."""
+    if not html:
+        return html
+    return nh3.clean(
+        html,
+        tags=SANITIZE_TAGS,
+        attributes=SANITIZE_ATTRIBUTES,
+        filter_style_properties=SANITIZE_STYLE_PROPERTIES,
+        url_schemes=SANITIZE_URL_SCHEMES,
+    )
+
+
+def safe_static_path(fileDir, fileName):
+    """Joins a path under /static and returns None if it would escape that folder."""
+    path = os.path.realpath(os.path.join(static_folder_path, fileDir, fileName))
+    if not path.startswith(os.path.realpath(static_folder_path) + os.sep):
+        return None
+    return path
 
 
 def session_expired():
@@ -848,6 +839,21 @@ def totalNumRows(tableName, where='', sqlValTuple=()):
     result = sqlSelect(sqlQuery, sqlValTuple, True)
 
     return result['length']
+
+
+def countRows(fromClause, where='', sqlValTuple=(), distinctColumn=None):
+    """
+    Number of rows a paginated listing returns, for its page links.
+    fromClause / where / sqlValTuple must be exactly what the listing query uses
+    (same JOINs and WHERE parameters), otherwise filtered counts fail or differ.
+    distinctColumn: pass the GROUP BY column for listings that group rows.
+    """
+    counted = f'COUNT(DISTINCT {distinctColumn})' if distinctColumn else 'COUNT(*)'
+    sqlQuery = f"SELECT {counted} AS `numRows` FROM {fromClause} {where};"
+    result = sqlSelect(sqlQuery, sqlValTuple, True)
+    if result['length'] == 0:
+        return 0
+    return result['data'][0]['numRows']
 
 
 
@@ -1699,7 +1705,7 @@ def send_confirmation_email(pdID, trackOrderUrl):
         'text_2': gettext("If you’re having trouble with the button above, copy and paste the URL below into your web browser."),
         'text_3': gettext("See you on the event"),
         'text_4': gettext("Kind regards"),
-        'company_team': gettext("Mammy's Bread Team"),
+        'company_team': gettext("Eventoria Team"),
 
         # "text_0": gettext("Dear") + ' ' + result['data'][0]['FirstName'] + ', ' + gettext("Thank you for shopping with us. We are preparing your order now!"),
         # "delivery_info": gettext("Delivery Information"),
@@ -1774,8 +1780,8 @@ def send_confirmation_email(pdID, trackOrderUrl):
 def is_valid_url(url: str) -> bool:
     try:
         result = urlparse(url)
-        # A valid URL needs at least scheme and netloc
-        return all([result.scheme, result.netloc])
+        # A valid URL needs an http(s) scheme and netloc (rejects javascript: and data: links)
+        return result.scheme in ('http', 'https') and bool(result.netloc)
     except ValueError:
         return False
 

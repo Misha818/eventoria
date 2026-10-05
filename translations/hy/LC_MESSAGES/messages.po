@@ -373,7 +373,7 @@ msgid "cheers"
 msgstr "Հարգանքներով"
 
 #: app.py:4198
-msgid "Mammy's Bread Team"
+msgid "Eventoria Team"
 msgstr "Իվենտորիայի թիմ"
 
 #: app.py:4199 app.py:4200 templates/edit-profile.html:35
@@ -1226,7 +1226,7 @@ msgid "All Affiliates"
 msgstr "Բոլոր գործընկերները"
 
 #: templates/admin_panel.html:162
-msgid "Mammy's Bread"
+msgid "Eventoria"
 msgstr "Իվենտորիա"
 
 #: templates/admin_panel.html:197

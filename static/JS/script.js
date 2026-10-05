@@ -132,14 +132,14 @@ let loader = myLoader('#e1d7cc');
             gearElement.remove();
             document.getElementById('subscribe').textContent = subscribeText;
             if (response.status === '1') {
-                let content = response.answer;
+                let content = safeMessage(response.answer);
                 document.querySelector('#subscribe-message').innerHTML = content;
                 document.querySelector('#subscribe-message').style.color = 'green';
                 
             }
             
             if (response.status === '0') {
-            let content = response.answer;
+            let content = safeMessage(response.answer);
             document.querySelector('#subscribe-message').innerHTML = content;
             }
             
@@ -262,14 +262,14 @@ document.getElementById('message').addEventListener('click', function() {
             document.getElementById('message').textContent = submitText;
             // cmFlag = false;
             if (response.status === '1') {
-                let content = response.answer;
+                let content = safeMessage(response.answer);
                 errorMC.innerHTML = content;
                 errorMC.style.color = 'green';
                 
             }
             
             if (response.status === '0') {
-                let content = response.answer;
+                let content = safeMessage(response.answer);
                 errorMC.style.color = 'red';
                 errorMC.innerHTML = content;
             }

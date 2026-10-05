@@ -76,8 +76,8 @@
     <div class="pcButtonS hidden" id="saving">{{ _('Saving...')}}</div>
 </div>
 
-<script src="{{ url_for('static', filename='JS/1-3-6-quill.js') }}"></script>
-<script>
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='JS/1-3-6-quill.js') }}"></script>
+<script nonce="{{ csp_nonce() }}">
 
 document.addEventListener('DOMContentLoaded', function() {
     
