@@ -147,7 +147,9 @@ limiter = Limiter(
     storage_uri=os.getenv('RATELIMIT_STORAGE_URI', 'memory://'),
     # If Redis is unreachable, keep limiting per process instead of failing every request
     in_memory_fallback_enabled=True,
-    strategy="fixed-window"
+    # Counts the last N minutes from any moment (a fixed window would allow a burst of
+    # twice the limit around a window boundary)
+    strategy="moving-window"
 )
 
 
@@ -272,8 +274,27 @@ def side_bar_stuff():
     return render_template('side-bar-stuff-1.html', result=result['data'], supportedLangsData=supportedLangsData, current_locale=get_locale()) # current_locale is babel variable for multilingual purposes
 
 
+# Login limits (viewing the login page is not counted):
+# 1) per visitor IP: every login attempt counts.
+# 2) per account: only failed passwords count, after the Turnstile human check passed.
+#    This stops password guessing spread over many IPs. Only real wrong-password
+#    attempts count, so nobody can lock an account just by sending junk requests.
+LOGIN_ATTEMPTS_PER_IP = "5 per minute"
+LOGIN_FAILURES_PER_ACCOUNT = "10 per 15 minutes"
+
+def login_username_key():
+    # Usernames are matched exactly at login (BINARY), so the key is the username as typed
+    return 'login-user:' + request.form.get('username', '')
+
+def is_failed_login(response):
+    # Set by login() after a wrong username/password combination
+    return g.get('login_failed', False)
+
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute", methods=["POST"])  # login attempts; viewing the page is not counted
+@limiter.limit(LOGIN_ATTEMPTS_PER_IP, methods=["POST"],
+               error_message=lambda: gettext('Too many login attempts. Please wait a minute and try again.'))
+@limiter.limit(LOGIN_FAILURES_PER_ACCOUNT, methods=["POST"], key_func=login_username_key, deduct_when=is_failed_login,
+               error_message=lambda: gettext('Too many failed login attempts for this account. Please try again in 15 minutes.'))
 @validate_request
 def login():
     if request.method == "POST":
@@ -328,10 +349,12 @@ def login():
                 response = {'status': '1'}
                 return jsonify(response)
             else:
+                g.login_failed = True  # counts towards LOGIN_FAILURES_PER_ACCOUNT
                 answer = gettext('The username or password do not match')
                 response = {'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}
                 return jsonify(response)
         else:
+            g.login_failed = True  # unknown usernames count too, same answer as a wrong password
             answer = gettext('The username or password do not match')
             response = {'status': '0', 'answer': answer, 'newCSRFtoken': newCSRFtoken}
             return jsonify(response)
@@ -348,8 +371,12 @@ def login():
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
-
-    return jsonify({'status': '0', 'answer': gettext('Rate limit exceeded'), 'newCSRFtoken': generate_csrf()}), 429
+    # Limits with an error_message (e.g. the login limits) explain themselves;
+    # others only have a technical description like "60 per 1 minute"
+    answer = gettext('Rate limit exceeded')
+    if getattr(e, 'limit', None) is not None and e.limit.error_message:
+        answer = e.description
+    return jsonify({'status': '0', 'answer': answer, 'newCSRFtoken': generate_csrf()}), 429
 
 
 @app.route('/submit_product_text', methods=['POST'])

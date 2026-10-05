@@ -148,7 +148,15 @@ so that pool size >= threads per worker, and keep workers x pool size under max_
 
 # Rate limiting (login) and the visitor's real IP
 
-The login form allows 5 attempts per minute per visitor IP (viewing the page is not counted).
+Login limits (LOGIN_ATTEMPTS_PER_IP / LOGIN_FAILURES_PER_ACCOUNT in app.py; viewing the
+login page is not counted):
+- 5 login attempts per minute per visitor IP.
+- 10 failed passwords per account per 15 minutes, whatever IP they come from. After that
+  every login to that account is refused until the 15 minutes pass (even with the right
+  password), which stops password guessing spread over many IPs. Only attempts that passed
+  the Turnstile human check and then had a wrong password count, so an account cannot be
+  locked just by sending junk requests. To unlock an account early, delete its counter in
+  Redis (keys containing "login-user:<username>") or wait.
 
 Production .env settings:
 
