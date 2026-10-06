@@ -34,20 +34,22 @@
 {{ sideBar | safe }}
 
 <div class="overlay" id="overlay"></div>
-<div class="containerS">
-    <!-- Form for adding a product -->
-    
-    <form>
-        <div id="mistakes" style="width: 100%;"></div>
-        
-        <input type="text" id="email" placeholder="{{ _('Email') }}" style="padding: 15px; width: 100%;">
-        <div class="form-group row" style="margin-bottom: unset;" id="stuffDropDown"></div>
+<div class="containerS admin-form-card">
+    <h1>{{ _('Create Email') }}</h1>
+    <div id="mistakes" style="width: 100%;" role="alert" aria-live="polite"></div>
 
-            
+    <form class="admin-form" novalidate>
+        <label for="email" class="field-label">{{ _('Email') }}</label>
+        <input type="email" id="email" class="text-field" placeholder="{{ _('Email') }}" inputmode="email" autocomplete="off">
+
+        <label for="stuff" class="field-label">{{ _('Employee') }}</label>
+        <div class="form-group row" id="stuffDropDown"></div>
+
+
         <input type="hidden" id="language-id" value="{{ languageID }}">
-        
-        <div id="saveButton" class="pcButtonS modifiedB" >{{ _('Submit') }}</div>
-        <div id="saving" class="pcButtonS hidden modifiedB" >{{ _('Saving...') }}</div>
+
+        <div id="saveButton" class="pcButtonS modifiedB" role="button" tabindex="0">{{ _('Submit') }}</div>
+        <div id="saving" class="pcButtonS hidden modifiedB" aria-live="polite">{{ _('Saving...') }}</div>
     </form>
 
 
@@ -100,6 +102,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // When the form is submitted
     const saveButton = document.getElementById('saveButton');
 
+    // Enter in a field submits through the Submit button (a plain form submit would reload the page)
+    const adminForm = document.querySelector('.admin-form');
+    adminForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+    });
+    adminForm.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && event.target.classList.contains('text-field')) {
+            event.preventDefault();
+            if (!saveButton.classList.contains('hidden')) {
+                saveButton.click();
+            }
+        }
+    });
+    saveButton.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            saveButton.click();
+        }
+    });
+
     saveButton.addEventListener('click', function (event) {
 
         event.preventDefault();
@@ -113,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let formData = new FormData();
          
         let languageID = document.getElementById('language-id').value;
-        let stuffID = document.getElementById('stuff').value;
+        const stuffSelect = document.getElementById('stuff');
+        let stuffID = stuffSelect ? stuffSelect.value : '';
         let Email = document.getElementById('email').value;
 
         

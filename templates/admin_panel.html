@@ -5,117 +5,302 @@
   <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    .chart-wrapper {
-      max-width: 700px;
-      margin: 0 auto;
-      text-align: center;
+    /* ---- Sales & Marketing charts ---- */
+    .sales-dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: 20px;
+      width: 92%;
+      max-width: 1200px;
+      margin: 24px auto 8px auto;
+      box-sizing: border-box;
     }
 
-    .chart-filters {
-      display: inline-flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .chart-filters select {
-      padding: 6px 10px;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-      background: #fff;
-      font: inherit;
-      cursor: pointer;
-      transition: border-color .2s;
-    }
-    .chart-filters select:hover {
-      border-color: #888;
-    }
-
-    /* make your chart fill its container */
-    .chart-wrapper {
-      width: 700px; height: 400px;
-    }
-    /* when in fullscreen mode, let it expand to viewport */
-    :fullscreen .chart-wrapper {
-      width: 100vw;
-      height: 100vh;
-
-    }
-    :fullscreen .chart-filters {
-      display: none;
-    }
-
-    /* ensure the full-screen wrapper stays white */
-    .chart-wrapper:fullscreen {
-      width: 100%;
-      height: 100%;
+    .chart-card {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      background-color: #fcfcfa;
-    }
-    /* WebKit/Blink */
-    .chart-wrapper:-webkit-full-screen {
-      background-color: #fcfcfa;
-    }
-    /* Firefox */
-    .chart-wrapper:-moz-full-screen {
-      margin: auto;
-      background-color: #fcfcfa;
-    }
-    /* IE11 */
-    .chart-wrapper:-ms-fullscreen {
-      background-color: #fcfcfa;
+      gap: 14px;
+      min-width: 0;
+      padding: 18px 20px 16px 20px;
+      background-color: #fff;
+      border: 1px solid #efece6;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(38, 70, 83, 0.06);
     }
 
-    .secondary {
-        border: unset;
-        background-color: unset;
-        cursor: pointer;
-        font-size: 28px;
-        color: #e76f51;
-    }
-
-    #filter, #filterPie {
-      padding: 5px 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    #filter:hover, #filterPie:hover {
-      filter: brightness(1.1);         
-    }
-
-    .chart-container {
+    .chart-card-header {
       display: flex;
-      flex-direction: row;
-      margin-bottom: 20px;
-      gap: 15px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .chart-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #264653;
+    }
+
+    .chart-card-title i {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background-color: #fbe9e4;
+      color: #E76F51;
+      font-size: 16px;
+    }
+
+    /* The canvas sizes itself to this box (Chart.js responsive mode) */
+    .chart-canvas {
+      position: relative;
+      height: 340px;
+    }
+
+    .chart-card.pie .chart-canvas {
+      height: 300px;
+    }
+
+    .chart-canvas canvas {
+      max-width: 100%;
+    }
+
+    /* Shown over an empty chart instead of bare axes */
+    .chart-empty {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: #8a8a8a;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .chart-canvas.is-empty .chart-empty {
+      display: flex;
+    }
+
+    .chart-canvas.is-empty canvas {
+      opacity: 0.55;
+    }
+
+    .chart-canvas:fullscreen {
+      height: 100vh;
+      padding: 32px;
+      box-sizing: border-box;
+      background-color: #fcfcfa;
+    }
+
+    .chart-canvas:-webkit-full-screen {
+      background-color: #fcfcfa;
+    }
+
+    /* ---- Filters ---- */
+    .chart-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid #f0ede7;
+    }
+
+    .chart-filters select {
+      flex: 1 1 120px;
+      min-width: 0;
+      height: 40px;
+      padding: 0 10px;
+      font: inherit;
+      font-size: 14px;
+      color: #333;
+      background-color: #fafaf8;
+      border: 1px solid #d9d5cd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .chart-filters select:hover {
+      border-color: #b9b3a8;
+    }
+
+    .chart-filters select:focus {
+      outline: none;
+      border-color: #2A9D8F;
+      box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.18);
+    }
+
+    .chart-filters .primary {
+      flex: 0 0 auto;
+      height: 40px;
+      padding: 0 20px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      background-color: #E76F51;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .chart-filters .primary:hover {
+      background-color: #d65f42;
+    }
+
+    .chart-card .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      color: #E76F51;
+      background-color: #fff;
+      border: 1px solid #f1d8cf;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .chart-card .secondary:hover {
+      background-color: #fbe9e4;
+    }
+
+    .chart-filters .primary:focus-visible,
+    .chart-card .secondary:focus-visible,
+    .chart-fullscreen:focus-visible {
+      outline: 3px solid #264653;
+      outline-offset: 2px;
+    }
+
+    /* line the action tiles up with the chart cards above them */
+    .sales-dashboard + .card-container.stuff-dashboard {
+      max-width: 1200px;
     }
 
     @media (max-width: 1100px) {
-      .chart-container {
-        flex-direction: column;
-        gap: 70px;
-      }
-      .chart-wrapper {
-        width: 100%;
-        height: 400px;
-      }
-
-      .card-container {
-        margin-top: 7%!important;
+      .sales-dashboard {
+        grid-template-columns: minmax(0, 1fr);
       }
     }
 
+    @media (max-width: 600px) {
+      .chart-card {
+        padding: 14px;
+      }
+
+      .chart-canvas,
+      .chart-card.pie .chart-canvas {
+        height: 260px;
+      }
+
+      .chart-filters .primary {
+        flex: 1 1 100%;
+      }
+    }
   </style>
 {% endif %}
 
 <style>
-  .card:hover {
-    filter: brightness(1.1);          /* 1.05 = +5%; 1.1 = +10% */
+  /* Dashboard tiles: a grid that fills the width on every screen size */
+  .card-container.stuff-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    width: 92%;
+    max-width: 1100px;
+    height: auto;
+    box-sizing: border-box;
   }
 
+  .stuff-dashboard > a:last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+  }
+
+  .stuff-dashboard > a {
+    display: block;
+    border-radius: 14px;
+  }
+
+  .stuff-dashboard > a:focus-visible {
+    outline: 2px solid #E76F51;
+    outline-offset: 3px;
+  }
+
+  .stuff-dashboard .card {
+    height: 100%;
+    border: 1px solid #efece6;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(38, 70, 83, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .stuff-dashboard > a:hover .card,
+  .stuff-dashboard > a:focus-visible .card {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(38, 70, 83, 0.12);
+  }
+
+  .stuff-dashboard .card-content-stuff {
+    flex-wrap: nowrap;
+    min-height: 72px;
+  }
+
+  .stuff-dashboard .card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background-color: #fbe9e4;
+  }
+
+  .stuff-dashboard .card-title {
+    font-size: 1.15rem;
+    text-align: left;
+    margin: 0;
+    color: #264653;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 600px) {
+    .card-container.stuff-dashboard {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stuff-dashboard .card-content-stuff {
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      padding: 16px 10px;
+      min-height: 96px;
+    }
+
+    .stuff-dashboard .card-title {
+      font-size: 1rem;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .card-container.stuff-dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
 
 {% endblock %}
@@ -128,20 +313,27 @@
 
 {% set margins = "margin: 5% 0% 3% 0%;" %}
 {% if resultActions.data[0]['rolID'] == 4 %}
-{% set margins = "margin: 3% 0% 3% 0%;" %}
-<div class="chart-container" >
-  <div class="chart-wrapper persons">
-      <canvas id="myChart" width="700" height="400"></canvas>
-      
-      <!-- ▼ your three dropdowns ▼ -->
-      <div class="chart-filters ">
-        <select id="yearSelect">
-          <option>2025</option>
-          <option>2024</option>
-          <option>2023</option>
+{% set margins = "margin: 8px 0% 3% 0%;" %}
+<div class="sales-dashboard">
+  <section class="chart-card persons" aria-labelledby="chart-affiliates-title">
+      <div class="chart-card-header">
+        <h2 class="chart-card-title" id="chart-affiliates-title"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>{{ _('Affiliates') }}</h2>
+        <button id="downloadPdf" class="secondary" title="{{ _('Download PDF') }}" aria-label="{{ _('Download PDF') }}"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i></button>
+      </div>
+
+      <div class="chart-canvas">
+        <canvas id="myChart" width="700" height="400" role="img" aria-labelledby="chart-affiliates-title"></canvas>
+        <div class="chart-empty">{{ _('No data to show!') }}</div>
+      </div>
+
+      <div class="chart-filters">
+        <select id="yearSelect" aria-label="{{ _('Year') }}">
+          {% for y in range(current_year, current_year - 4, -1) %}
+          <option>{{ y }}</option>
+          {% endfor %}
         </select>
 
-        <select id="monthSelect">
+        <select id="monthSelect" aria-label="{{ _('All Months') }}">
           <option value="">{{ _('All Months') }}</option>
           <option value="01">{{ _('January') }}</option>
           <option value="02">{{ _('February') }}</option>
@@ -157,28 +349,34 @@
           <option value="12">{{ _('December') }}</option>
         </select>
 
-        <select id="person">
+        <select id="person" aria-label="{{ _('All Affiliates') }}">
           <option value="">{{ _('All Affiliates') }}</option>
           <option value="0">{{ _("Eventoria") }}</option>
         </select>
 
         <button id="filter" class="primary">{{ _('Submit') }}</button>
-        <button id="downloadPdf" class="secondary" title="Download PDF"><i class="fa-solid fa-file-arrow-down"></i></button>
       </div>
-  </div>
+  </section>
 
-  <div class="chart-wrapper sales" style="width: 400px;">
-      <canvas id="myChartPie"></canvas>
-      
-      <!-- ▼ your three dropdowns ▼ -->
+  <section class="chart-card pie sales" aria-labelledby="chart-products-title">
+      <div class="chart-card-header">
+        <h2 class="chart-card-title" id="chart-products-title"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i>{{ _('Products') }}</h2>
+        <button id="downloadPdfPie" class="secondary" title="{{ _('Download PDF') }}" aria-label="{{ _('Download PDF') }}"><i class="fa-solid fa-file-arrow-down" aria-hidden="true"></i></button>
+      </div>
+
+      <div class="chart-canvas">
+        <canvas id="myChartPie" role="img" aria-labelledby="chart-products-title"></canvas>
+        <div class="chart-empty">{{ _('No data to show!') }}</div>
+      </div>
+
       <div class="chart-filters">
-        <select id="yearSelectPie">
-          <option>2025</option>
-          <option>2024</option>
-          <option>2023</option>
+        <select id="yearSelectPie" aria-label="{{ _('Year') }}">
+          {% for y in range(current_year, current_year - 4, -1) %}
+          <option>{{ y }}</option>
+          {% endfor %}
         </select>
 
-        <select id="monthSelectPie">
+        <select id="monthSelectPie" aria-label="{{ _('All Months') }}">
           <option value="">{{ _('All Months') }}</option>
           <option value="01">{{ _('January') }}</option>
           <option value="02">{{ _('February') }}</option>
@@ -193,35 +391,34 @@
           <option value="11">{{ _('November') }}</option>
           <option value="12">{{ _('December') }}</option>
         </select>
-        
-        <select id="top" title="{{ _('Chose the number of top products') }}">
+
+        <select id="top" title="{{ _('Chose the number of top products') }}" aria-label="{{ _('Chose the number of top products') }}">
           <option value="">{{ _('Top') }}</option>
         </select>
 
-        <select id="products" style="width: 115px;">
+        <select id="products" aria-label="{{ _('Product') }}">
           <option value="">{{ _('Product') }}</option>
         </select>
 
         <button id="filterPie" class="primary">{{ _('Submit') }}</button>
-        <button id="downloadPdfPie" class="secondary" title="Download PDF"><i class="fa-solid fa-file-arrow-down"></i></button>
       </div>
-  </div>
+  </section>
 
 </div>
 
 {% endif %}
 
-<div class="card-container" style="{{ margins }}">
+<div class="card-container stuff-dashboard" style="{{ margins }}">
 {% if resultActions.length > 0 %}
   {% for row in resultActions.data %}
   <a href="{{ url_for('home', _external=True) + row['ActionDir'] }}" style="text-decoration: none;">
     <div class="card" style="background-color: #FFFFFF">
       <div class="card-content-stuff">
-        <i class="{{ row['img']}}" style="font-size: 22px; color: #E76F51;"></i>
+        <span class="card-icon"><i class="{{ row['img']}}" style="font-size: 20px; color: #E76F51;" aria-hidden="true"></i></span>
         <h2 class="card-title">
           {{ _(row['ActionName']) }}
         </h2>
-        
+
       </div>
     </div>
   </a>
@@ -235,20 +432,32 @@
 <script nonce="{{ csp_nonce() }}">
     let csrfToken = "{{ csrf_token() }}";
 
-    //  BAR CHART
-    const fullscreenPlugin = {
-        id: 'fullscreen',
+    // Shows "No data" over a chart that has nothing to draw
+    function toggleEmpty(canvasId, isEmpty) {
+      document.getElementById(canvasId).parentNode.classList.toggle('is-empty', isEmpty);
+    }
+
+    // Full-screen toggle drawn in the corner of each chart
+    function makeFullscreenPlugin(id) {
+      return {
+        id: id,
         afterInit(chart, args, opts) {
             const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'chart-fullscreen';
             btn.textContent = opts.buttonText || '⛶';
+            btn.title = "{{ _('Full screen') }}";
+            btn.setAttribute('aria-label', "{{ _('Full screen') }}");
             Object.assign(btn.style, {
             position: 'absolute',
-            top: '-2px',
-            right: '8px',
-            padding: '4px 8px',
+            top: '0',
+            right: '0',
+            width: '32px',
+            height: '32px',
             backgroundColor: 'white',
-            borderRadius: '5px',
-            border: '1px solid #f1f1ef',
+            borderRadius: '8px',
+            border: '1px solid #ebe7e0',
+            color: '#264653',
             cursor: 'pointer',
             zIndex: 10
             });
@@ -268,21 +477,39 @@
             chart.resize();
             });
         }
-    };
+      };
+    }
 
-    // Initialize chart 
+    //  BAR CHART
+    const fullscreenPlugin = makeFullscreenPlugin('fullscreen');
+
+    // Initialize chart
     const ctx = document.getElementById('myChart').getContext('2d');
     let chart = new Chart(ctx, {
       type: 'bar',
-      data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: '#2A9D8F' }] },
+      data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: '#2A9D8F', borderRadius: 6, maxBarThickness: 56 }] },
       options: {
         responsive: true,
-        plugins: { 
-            legend: {display:false}, 
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {display:false},
             title: {display:true, text:''},
             fullscreen: { buttonText: '⛶' },
         },
-        scales: { x:{title:{display:true,text:''}}, y:{beginAtZero:true} }
+        scales: {
+          x: {
+            title: {display:true, text:''},
+            grid: { display: false },
+            border: { color: '#9a958c', width: 1 },
+            ticks: { color: '#3a3a3a', font: { size: 12 } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#d4cfc6', lineWidth: 1 },
+            border: { color: '#9a958c', width: 1 },
+            ticks: { precision: 0, color: '#3a3a3a', font: { size: 12 } }
+          }
+        }
       },
       plugins: [ fullscreenPlugin ]
     });
@@ -290,8 +517,6 @@
     // 3) A helper to redraw based on current filters:
     function applyFilters(load=false) {
       const languageID = `{{ languageID }}`;
-
-      
 
       // Create a new FormData object
       let formData = new FormData();
@@ -310,8 +535,6 @@
         formData.append('person', person);
       }
 
-
-
       // Create a new XMLHttpRequest object
       let xhr = new XMLHttpRequest();
 
@@ -323,7 +546,7 @@
       xhr.onload = function() {
           if (xhr.status === 200) {
               let response = JSON.parse(xhr.responseText);
-              
+
               if (response.status === '1') {
                   if (load === true) {
                     response.chartData.affiliates.forEach(affiliate => {
@@ -346,7 +569,7 @@
                       personLabel = d.label;
                       if (d.label == null) {
                         personLabel = document.querySelector('select[id="person"] option[value="0"]').textContent;
-                      } 
+                      }
                       return personLabel + ' (' + d.value + ')';
                     });
                   }
@@ -354,9 +577,10 @@
                   chart.data.datasets[0].backgroundColor = colors;
                   chart.data.datasets[0].data = fullData.map(d => d.value);
                   chart.update();
-                  
+                  toggleEmpty('myChart', fullData.length === 0);
+
               }
-              
+
               if (response.status === '0') {
                   alert(response.answer);
               }
@@ -373,16 +597,13 @@
 
     // 4) Hook all three dropdowns to re-filter on change:
     // ['yearSelect','monthSelect','person']
-    //   .forEach(id => 
+    //   .forEach(id =>
     //     document.getElementById(id).addEventListener('change', applyFilters)
     //   );
     document.getElementById('filter').addEventListener('click', applyFilters)
 
     // 5) Initial draw:
     applyFilters(true);
-
-    // const fsBtn = document.getElementById('fsBtn');
-    // const wrapper = document.getElementById('chartWrapper');
 
     // Download PDF
     const { jsPDF } = window.jspdf;
@@ -399,53 +620,22 @@
 // End of BAR CHART
 
 // Pie CHART
-    const fullscreenPluginPie = {
-        id: 'fullscreenPie',
-        afterInit(chart, args, opts) {
-            const btn = document.createElement('button');
-            btn.textContent = opts.buttonText || '⛶';
-            Object.assign(btn.style, {
-            position: 'absolute',
-            top: '-2px',
-            right: '8px',
-            padding: '4px 8px',
-            backgroundColor: 'white',
-            borderRadius: '5px',
-            border: '1px solid #f1f1ef',
-            cursor: 'pointer',
-            zIndex: 10
-            });
-            btn.onclick = () => {
-            const container = chart.canvas.parentNode;
-            if (!document.fullscreenElement) {
-                container.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-            };
-            // position needs the parent to be relative
-            chart.canvas.parentNode.style.position = 'relative';
-            chart.canvas.parentNode.appendChild(btn);
+    const fullscreenPluginPie = makeFullscreenPlugin('fullscreenPie');
 
-            document.addEventListener('fullscreenchange', () => {
-              chart.resize();
-            });
-        }
-    };
-
-    // Initialize chart 
+    // Initialize chart
     const ctxPie = document.getElementById('myChartPie').getContext('2d');
     let chartPie = new Chart(ctxPie, {
       type: 'pie',
-      data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: '#2a9d8f' }] },
+      data: { labels: [], datasets: [{ label: '', data: [], backgroundColor: '#2a9d8f', borderColor: '#fff', borderWidth: 2 }] },
       options: {
         responsive: true,
-        plugins: { 
-            legend: {display:false}, 
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {display:false},
             title: {display:false,},
-            fullscreen: { buttonText: '⛶' },  
+            fullscreenPie: { buttonText: '⛶' },
         },
-        scales: { x:{title:{display:true,text:''}}, y:{beginAtZero:true} }
+        scales: { x:{display:false}, y:{display:false} }
       },
       plugins: [ fullscreenPluginPie  ]
     });
@@ -453,8 +643,11 @@
     // 3) A helper to redraw based on current filters:
     let loadPie = true;
     function applyFiltersPie() {
-      
-      const languageID = `{{ languageID }}`;      
+
+      const languageID = `{{ languageID }}`;
+      const productSelect = document.getElementById('products');
+      // Remembered before the request: the list is rebuilt from the response
+      const selectedProduct = productSelect.value;
 
       // Create a new FormData object
       let formData = new FormData();
@@ -464,15 +657,12 @@
         const year    = document.getElementById('yearSelectPie').value;
         const month   = document.getElementById('monthSelectPie').value;
         const top   = document.getElementById('top').value;
-        const product   = document.getElementById('products').value;
 
         formData.append('year', year);
         formData.append('month', month);
         formData.append('top', top);
-        formData.append('product', product);
+        formData.append('product', selectedProduct);
       }
-
-
 
       // Create a new XMLHttpRequest object
       let xhr = new XMLHttpRequest();
@@ -485,7 +675,7 @@
       xhr.onload = function() {
           if (xhr.status === 200) {
               let response = JSON.parse(xhr.responseText);
-              
+
               if (response.status === '1') {
                   if (loadPie === true) {
                     let dataLen = response.chartData.data.length;
@@ -507,37 +697,33 @@
                     }
                   }
 
-                  const productSelect = document.getElementById('products');
+                  // Rebuild the product list (it used to grow by a full copy on every submit)
+                  while (productSelect.options.length > 1) {
+                    productSelect.remove(1);
+                  }
                   response.chartData.products.forEach(pr => {
                     const option = document.createElement('option');
                     option.value = pr.ID;
                     option.textContent = pr.Title;
-                    if (loadPie === false) {
-                      if (pr.ID == product) {
-                        option.selected = true;
-                      }
+                    if (String(pr.ID) === String(selectedProduct)) {
+                      option.selected = true;
                     }
                     productSelect.appendChild(option);
                   });
 
                   let fullData = response.chartData.data;
 
-                  // Map to labels & values:
-                  if (document.getElementById('person').value) {
-                      chartPie.data.labels = fullData.map(d => document.querySelector(`select[id="monthSelect"] option[value="${d.month}"]`).textContent + ' (' + d.value + ')');
-                  } else {
-
-                    chartPie.data.labels = fullData.map(d => d.label);
-                  }
+                  // Slices are labelled by product
+                  chartPie.data.labels = fullData.map(d => d.label);
                   const colors = pickColors(fullData.length);
 
                   chartPie.data.datasets[0].data = fullData.map(d => d.value);
                   chartPie.data.datasets[0].backgroundColor = colors;
                   chartPie.update();
-                  
-                  
+                  toggleEmpty('myChartPie', fullData.length === 0);
+
               }
-              
+
               if (response.status === '0') {
                   alert(response.answer);
               }

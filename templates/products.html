@@ -119,15 +119,203 @@
           opacity: 0.6;
         }
 
-        .actions {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
+        /* A real table cell, so its icons sit on the same line as the other columns' text
+           (display: flex took it out of the row and pinned the icons to the top); icons centred */
+        #myTable td.actions {
+          text-align: center;
+          vertical-align: middle;
+          white-space: nowrap;
         }
 
+        #myTable td.actions a + a {
+          margin-left: 10px;
+        }
+
+
+        /* ---- Filter row ---- */
+        .list-filters {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 10px 12px;
+          width: auto !important;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .list-filters #myInput {
+          flex: 1 1 240px;
+          max-width: 360px;
+          margin: 0 !important;
+          box-sizing: border-box;
+        }
+
+        .list-filters .untranslated {
+          width: auto;
+          margin: 0 !important;
+          padding: 0;
+          cursor: pointer;
+        }
+
+        .list-filters #slide-status {
+          flex: 0 1 250px;
+        }
+
+        /* ---- Table ---- */
         .actions a {
-          margin: 65% auto;
+          margin: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          min-height: 40px;
+          border-radius: 6px;
+          text-decoration: none;
+        }
+
+        .actions a i {
+          margin: 0 !important;
+        }
+
+        .actions a:hover,
+        .actions a:focus-visible {
+          background-color: #fbe9e4;
+        }
+
+        .actions a:focus-visible,
+        .view-types-btn:focus-visible {
+          outline: 3px solid #264653;
+          outline-offset: 2px;
+        }
+
+        .sort-icons i {
+          padding: 2px 4px;
+        }
+
+        #myTable td.table-empty {
+          text-align: center;
+          color: #666;
+        }
+
+        /* Narrow desktops / tablets in landscape: the full table needs ~750px, more than the 70% container */
+        @media (768px < width <= 1100px) {
+          .container {
+            width: 94%;
+          }
+
+          #myTable th,
+          #myTable td {
+            padding: 10px 8px;
+          }
+
+          #myTable td img {
+            width: 64px !important;
+          }
+
+          #myTable th > div {
+            gap: 2px;
+          }
+
+          #myTable .sort-icons {
+            margin-left: 2px !important;
+          }
+
+          /* dates stay on one line */
+          #myTable td:nth-child(3),
+          #myTable td:nth-child(4) {
+            white-space: nowrap;
+          }
+
+          /* The open sidebar pushes the table right with a margin: let that margin shrink the
+             table instead of pushing it off screen, and scroll sideways if it still doesn't fit */
+          .table-container#tableDaddy {
+            width: auto;
+            overflow-x: auto;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            width: 92%;
+          }
+
+          #tableDaddy,
+          .tableDaddy {
+            margin-left: 0 !important;
+          }
+
+          #myTable tr {
+            padding: 12px 16px;
+          }
+
+          #myTable td {
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            text-align: right;
+            overflow-wrap: anywhere;
+          }
+
+          #myTable td::before {
+            flex-shrink: 0;
+            text-align: left;
+          }
+
+          /* Keep the action icons together on the right */
+          #myTable td.actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 4px;
+          }
+
+          #myTable td.actions a + a {
+            margin-left: 0;
+          }
+
+          #myTable td.actions::before {
+            margin-right: auto;
+          }
+
+          #myTable tr.extra-row td,
+          #myTable td.table-empty,
+          #answerID td {
+            justify-content: center;
+          }
+
+          #myTable td.table-empty::before {
+            display: none;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .list-filters #myInput {
+            flex-basis: 100%;
+            max-width: none;
+          }
+
+          .list-filters #slide-status {
+            flex: 1 1 100%;
+            max-width: none;
+          }
+
+          /* Service types: picture on the left, details stacked beside it */
+          #answerID .child {
+            grid-template-columns: 88px minmax(0, 1fr);
+            gap: 4px 10px;
+            padding: 8px;
+          }
+
+          #answerID .child img {
+            width: 88px !important;
+            grid-row: span 4;
+          }
+
+          #answerID .child p {
+            justify-content: flex-start;
+            text-align: left;
+            margin: 0;
+            padding: 2px 0;
+          }
         }
     </style>
 {% endblock %}
@@ -140,11 +328,11 @@
 
 <!-- <span class="option-box container toRight tableDaddy" style="padding-top: unset; margin-top: 120px;"> -->
   <div class="container" style="padding-top: unset;">
-<span class="option-box filter-container toRight tableDaddy" style="padding-top: unset; width: 350px; background-color: unset;">
-  <input type="text" id="myInput" data-onkeyup='["filter_products_by_title", "$this"]' placeholder="{{ _('Search for a product by title') }}" title="{{ _('Type in a product title') }}" style="width: 100%; padding: 12px; margin-bottom: unset; margin-right: 10px;">
+<span class="option-box filter-container list-filters toRight tableDaddy" style="padding-top: unset; background-color: unset;">
+  <input type="text" id="myInput" data-onkeyup='["filter_products_by_title", "$this"]' placeholder="{{ _('Search for a product by title') }}" title="{{ _('Type in a product title') }}" aria-label="{{ _('Search for a product by title') }}" autocomplete="off" style="padding: 12px;">
   {% if translated == True %}
-    <input type="checkbox" class="checkbox" style="margin-bottom: unset;">
-    <span class="untranslated" style="font-size: 20px; font-style: italic; font-weight: 600; margin-top: 10px;">{{ _('Show Originals') }}</span>
+    <input type="checkbox" class="checkbox" id="show-originals" style="margin-bottom: unset;">
+    <label for="show-originals" class="untranslated" style="font-size: 20px; font-style: italic; font-weight: 600;">{{ _('Show Originals') }}</label>
   {% endif %}
 </span>
 
@@ -239,22 +427,22 @@
 
   {% set editUrl = 'product/' + row['P_Ref_Key']|string %}
     <tr class="{{ trBorderTop }}" data-value="{{row['ID']}}-&$%-{{row['Title']}}" >
-      <td><img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['Thumbnail']) }}" style="width: 100px;"/></td>
-      <td><a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('Edit') }}">{{ row['Title'] }}</a></td>
-      <td>{{ publishedDate }}</td>
-      <td>{{ row['DateModified'] }}</td>
-      <td>{{ row['Product_Category_Name'] }}</td>
-      <td>{{ status }}</td>
-      <td class="actions">
-        <a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('Edit') }}"><i class="fas fa-pencil" style=" color: #E76F51;"></i></a>
+      <td data-label="{{ _('Thumbnail') }}"><img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['Thumbnail']) }}" alt="" style="width: 100px;"/></td>
+      <td data-label="{{ _('Title') }}"><a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('Edit') }}">{{ row['Title'] }}</a></td>
+      <td data-label="{{ _('Published Date') }}">{{ publishedDate }}</td>
+      <td data-label="{{ _('Modified Date') }}">{{ row['DateModified'] }}</td>
+      <td data-label="{{ _('Product Category') }}">{{ row['Product_Category_Name'] }}</td>
+      <td data-label="{{ _('Status') }}">{{ status }}</td>
+      <td class="actions" data-label="{{ _('Actions') }}">
+        <a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('Edit') }}" aria-label="{{ _('Edit') }}: {{ row['Title'] }}"><i class="fas fa-pencil" style=" color: #E76F51;" aria-hidden="true"></i></a>
         {% if row['Product_Status'] == 2 %}
-        <a href="{{ url_for('home', _external=True) + row['Url'] }}" target="_blank" title="{{ _('View') }}"><i class="fas fa-eye" style="font-size: 20px; color: #E76F51; margin-right: 20px;"></i></a>
+        <a href="{{ url_for('home', _external=True) + row['Url'] }}" target="_blank" title="{{ _('View') }}" aria-label="{{ _('View') }}: {{ row['Title'] }}"><i class="fas fa-eye" style="font-size: 20px; color: #E76F51; margin-right: 20px;" aria-hidden="true"></i></a>
         {% endif %}
       </td>
     </tr>
     <tr class="extra-row" id="extraRow_{{row['ID']}}">
       <td colspan="7" style="text-align: center; padding: 5px; ">
-        <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_{{row['ID']}}" data-onclick='{{ ["getProductTypes", row["ID"], true] | tojson }}'>
+        <button class="view-types-btn" title="{{ _('View Types') }}" aria-label="{{ _('View Types') }}: {{ row['Title'] }}" id="btn_{{row['ID']}}" data-onclick='{{ ["getProductTypes", row["ID"], true] | tojson }}'>
           <div class="chevron">&#9660;</div>
         </button>
       </td>
@@ -264,7 +452,7 @@
 {% endfor %}
 
 {% else %}
-<tr><td>{{ _('No data to show!') }}</td></tr>
+<tr><td class="table-empty" colspan="7">{{ _('No data to show!') }}</td></tr>
 {% endif %}
     </tbody>
   </table>
@@ -395,13 +583,13 @@ window.addEventListener('load', () => {
                   let imgUrl = `{{ url_for('static', filename='images/pr_thumbnails/') }}`+ row.Thumbnail;
                   newRows += `
                   <tr class="keyup-filter transparent" data-value="${escapeHtml(row.ID)}-&$%-${escapeHtml(row.Title)}">
-                    <td><img src="${escapeHtml(imgUrl)}" style="width: 100px;"/></td>
-                    <td><a href="{{ url_for('home', _external=True) }}${escapeHtml(editUrl)}&langID={{ DefLangID }}" target="_blank" title="{{ _('Edit in original language') }}">${escapeHtml(row.Title)}</a></td>
-                    <td>${escapeHtml(formatToYYYYMMDD(row.DatePublished))}</td>
-                    <td>${escapeHtml(formatToYYYYMMDD(row.DateModified))}</td>
-                    <td>${escapeHtml(row.Product_Category_Name)}</td>
-                    <td>${status}</td>
-                    <td class="actions">${actionBtns}</td>
+                    <td data-label="{{ _('Thumbnail') }}"><img src="${escapeHtml(imgUrl)}" alt="" style="width: 100px;"/></td>
+                    <td data-label="{{ _('Title') }}"><a href="{{ url_for('home', _external=True) }}${escapeHtml(editUrl)}&langID={{ DefLangID }}" target="_blank" title="{{ _('Edit in original language') }}">${escapeHtml(row.Title)}</a></td>
+                    <td data-label="{{ _('Published Date') }}">${escapeHtml(formatToYYYYMMDD(row.DatePublished))}</td>
+                    <td data-label="{{ _('Modified Date') }}">${escapeHtml(formatToYYYYMMDD(row.DateModified))}</td>
+                    <td data-label="{{ _('Product Category') }}">${escapeHtml(row.Product_Category_Name)}</td>
+                    <td data-label="{{ _('Status') }}">${status}</td>
+                    <td class="actions" data-label="{{ _('Actions') }}">${actionBtns}</td>
                     </tr>
                     <tr class="extra-row transparent" id="extraRow_${escapeHtml(row['ID'])}">
                       <td colspan="7" style="text-align: center; padding: 5px; ">
@@ -442,71 +630,37 @@ window.addEventListener('load', () => {
   }
 });
 
-let trace;
-
-function sortTable(arrowElement, n, direction) {
-  
-  if (trace === String(n) + direction) {
+// Sorts the rows by the clicked column: "up" = A to Z / smallest first, "down" = the reverse.
+// A row keeps whatever belongs under it (its "view types" row and an open types panel).
+function sortTable(arrowElement, column, direction) {
+  const tbody = document.getElementById('myTable').tBodies[0];
+  if (!tbody) {
     return;
   }
 
-  trace = String(n) + direction;
-  
+  const groups = [];
+  Array.from(tbody.rows).forEach(row => {
+    const isMainRow = row.cells.length > 1 && !row.classList.contains('extra-row') && row.id !== 'answerID';
+    if (isMainRow) {
+      groups.push([row]);
+    } else if (groups.length > 0) {
+      groups[groups.length - 1].push(row);
+    }
+  });
+
+  const cellValue = group => {
+    const cell = group[0].cells[column];
+    return cell ? cell.textContent.trim() : '';
+  };
+
+  groups.sort((a, b) => {
+    const result = cellValue(a).localeCompare(cellValue(b), undefined, { numeric: true, sensitivity: 'base' });
+    return direction === 'down' ? -result : result;
+  });
+  groups.forEach(group => group.forEach(row => tbody.appendChild(row)));
+
   document.querySelectorAll('.sort-icons i').forEach(icon => icon.style.color = '#fff');
   arrowElement.style.color = '#ff0000';
-
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
 }
 
 let prIdChecker = undefined; 
@@ -854,10 +1008,15 @@ function changeStatus(ptID) {
 
 function rotate(gearElement) {
   let angle = 0;
-    setInterval(() => {
-      angle = (angle + 5) % 360; 
+    // Stop once the spinner is removed; the timer used to run forever after every click
+    const timer = setInterval(() => {
+      if (!gearElement.isConnected) {
+        clearInterval(timer);
+        return;
+      }
+      angle = (angle + 5) % 360;
       gearElement.style.transform = `rotate(${angle}deg)`;
-    }, 50); 
+    }, 50);
 
 }
 

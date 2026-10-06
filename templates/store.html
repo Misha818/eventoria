@@ -11,8 +11,9 @@
   <!-- Bootstrap Icons for the calendar icon -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-  <!-- 2. Bootstrap Datepicker CSS (uxsolutions) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"/>
+  <!-- 2. flatpickr (calendars) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='calendar.css') }}">
 
   <style>
     body {
@@ -77,9 +78,6 @@
         opacity: 0.5;
     }
 
-    .datepicker {
-       width: 195px !important; /* Set to desired width */
-    }
 
 
     .datepicker-days thead {
@@ -111,6 +109,170 @@
       background-color: #2a9d8f!important;
     }
 
+    /* ---- Toolbar ---- */
+    .store-toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    /* the open filter panel already sits below the toolbar's gap */
+    .filters.show {
+      margin-top: 0;
+    }
+
+    .store-toolbar .filter-button,
+    .store-toolbar .add-to-store-btn {
+      margin: 0;
+      width: auto;
+      min-width: 100px;
+      min-height: 40px;
+      padding: 6px 16px;
+      background: none;
+      font: inherit;
+      font-weight: 600;
+      box-sizing: border-box;
+    }
+
+    .store-toolbar .filter-button[aria-expanded="true"] {
+      background-color: #e6f4f2;
+    }
+
+    .store-toolbar .filter-button:focus-visible,
+    .store-toolbar .add-to-store-btn:focus-visible,
+    .filters #saveButton:focus-visible,
+    .view-types-btn:focus-visible {
+      outline: 3px solid #264653;
+      outline-offset: 2px;
+    }
+
+    /* ---- Filter panel ---- */
+    .filters.show {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .filter-dates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 16px;
+      width: 100%;
+    }
+
+    .filter-dates .mb-3 {
+      flex: 1 1 200px;
+      width: auto !important;
+      max-width: 250px;
+    }
+
+    /* keep the calendar icon on the same line as its date field */
+    .filter-dates .input-group {
+      flex-wrap: nowrap;
+    }
+
+    .filter-dates .input-group input {
+      width: auto !important;
+      min-width: 0;
+    }
+
+    .filters select {
+      flex: 1 1 200px;
+      width: auto !important;
+      max-width: 250px;
+      min-width: 0;
+      margin-right: 0;
+    }
+
+    .filters #saveButton,
+    .filters #saving {
+      margin: 0;
+      min-height: 44px;
+      min-width: 56px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* The service-type panel used to be capped at 200px, cutting off longer lists */
+    #answerID.active {
+      max-height: 5000px;
+    }
+
+    @media (max-width: 768px) {
+      .containerCart.store-page {
+        width: 92%;
+        margin: 0 auto;
+        padding-top: 16px;
+      }
+
+      .store-page #tableDaddy {
+        margin-left: 0 !important;
+      }
+
+      #myTable td {
+        padding: 8px 0 !important;
+        align-items: center;
+        gap: 12px;
+        text-align: right;
+      }
+
+      #myTable td::before {
+        flex-shrink: 0;
+        text-align: left;
+      }
+
+      #myTable td.view-types-cell {
+        justify-content: center;
+      }
+
+      .pt-quantity-table td {
+        gap: 12px;
+        text-align: right;
+      }
+
+      .pt-quantity-table td::before {
+        flex-shrink: 0;
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .filter-dates .mb-3,
+      .filters select {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+
+      /* Service types: picture on the left, details stacked beside it */
+      #answerID .child {
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 4px 10px;
+        padding: 8px;
+      }
+
+      #answerID .child img {
+        width: 88px !important;
+        grid-row: span 4;
+      }
+
+      #answerID .child p {
+        justify-content: flex-start;
+        text-align: left;
+        margin: 0;
+        padding: 2px 0;
+      }
+
+      #answerID .child .more-on-quantity {
+        justify-self: start;
+        margin: 4px 0;
+        padding: 4px 10px;
+      }
+    }
+
   </style>
 {% endblock %}
 
@@ -118,12 +280,12 @@
 
 {{ sideBar | safe }}
 
-<div class="containerCart">
-  <div style="display: flex; align-items: center;">
-    <div class="filter-button">{{ _('Filters') }}</div>
-    <a class="add-to-store-btn" style="width: 180px; margin-left: 10px; text-decoration: none;" href="{{ url_for('add_to_store') }}">{{ _('Add To Store') }}</a>
+<div class="containerCart store-page">
+  <div class="store-toolbar">
+    <button type="button" class="filter-button" aria-expanded="false" aria-controls="store-filters">{{ _('Filters') }}</button>
+    <a class="add-to-store-btn" style="text-decoration: none;" href="{{ url_for('add_to_store') }}">{{ _('Add To Store') }}</a>
   </div>
-  <div class="filters">
+  <div class="filters" id="store-filters">
     <div class="filter-dates">
         <!-- Production Date -->
         <div class="mb-3" style="width: 250px; display: inline-block; vertical-align: top;">
@@ -229,15 +391,15 @@
             {% set expQuantity = row['expired'] %}
           {% endif %}
             <tr {{ trBorderTop }}>
-              <td style="padding: 16px;"><img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['Thumbnail']) }}" style="width: 100px;"/></td>
-              <td style="padding: 16px;">{{ row['prTitle'] }}</td>
-              <td style="padding: 16px;">{{ row['TotalQuantity'] }}</td>
-              <td style="padding: 16px; color: red;">{{ expQuantity }}</td>
+              <td style="padding: 16px;" data-label="{{ _('Thumbnail') }}"><img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['Thumbnail']) }}" alt="" style="width: 100px;"/></td>
+              <td style="padding: 16px;" data-label="{{ _('Title') }}">{{ row['prTitle'] }}</td>
+              <td style="padding: 16px;" data-label="{{ _('Full Quantity') }}">{{ row['TotalQuantity'] }}</td>
+              <td style="padding: 16px; color: red;" data-label="{{ _('Outdated Quantity') }}">{{ expQuantity }}</td>
 
             </tr>
             <tr class="extra-row">
-              <td colspan="7" style="text-align: center; padding: 5px; ">
-                <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_{{row['ID']}}" data-onclick='{{ ["getProductTypes", row["ID"]] | tojson }}'>
+              <td colspan="7" class="view-types-cell" style="text-align: center; padding: 5px; ">
+                <button class="view-types-btn" title="{{ _('View Types') }}" aria-label="{{ _('View Types') }}: {{ row['prTitle'] }}" id="btn_{{row['ID']}}" data-onclick='{{ ["getProductTypes", row["ID"]] | tojson }}'>
                   <div class="chevron">&#9660;</div>
                 </button>
               </td>
@@ -246,7 +408,7 @@
             
         {% endfor %}
         {% else %}
-          <tr><td style="padding: 15px; font-size: 18px;">{{ _('The store(s) are empty.') }}</td></tr></h3>
+          <tr><td colspan="4" style="padding: 15px; font-size: 18px;">{{ _('The store(s) are empty.') }}</td></tr>
         {% endif %}
 
         </tbody>
@@ -595,10 +757,15 @@ function saveChanges(prID) {
 
 function rotate(gearElement) {
   let angle = 0;
-    setInterval(() => {
-      angle = (angle + 5) % 360; 
+    // Stop once the spinner is removed; the timer used to run forever after every click
+    const timer = setInterval(() => {
+      if (!gearElement.isConnected) {
+        clearInterval(timer);
+        return;
+      }
+      angle = (angle + 5) % 360;
       gearElement.style.transform = `rotate(${angle}deg)`;
-    }, 50); 
+    }, 50);
 
 }
 
@@ -734,6 +901,10 @@ function myLoader(color) {
     saveButton.className = 'pcButtonS';     
     saveButton.textContent = '🔍';
     saveButton.style = 'background-color: white; border: 1px solid #2a9d8f;';
+    saveButton.setAttribute('role', 'button');
+    saveButton.setAttribute('tabindex', '0');
+    saveButton.setAttribute('title', "{{ _('Apply') }}");
+    saveButton.setAttribute('aria-label', "{{ _('Apply') }}");
 
     // 3. Create the second new DIV (#saving)
     const savingDiv = document.createElement('div');
@@ -750,42 +921,59 @@ function myLoader(color) {
 <!-- 3. Bootstrap 5 JS (Popper included) -->
 <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 4. jQuery (Required by bootstrap-datepicker 1.x) -->
+<!-- 4. jQuery -->
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-<!-- 5. Bootstrap Datepicker JS (uxsolutions) -->
-<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!-- 5. flatpickr (calendars) -->
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script nonce="{{ csp_nonce() }}">
   // Initialize the date picker on our input
-  $(function() {
-    $('#productionDate').datepicker({
-      format: 'mm-dd-yyyy', 
-      autoclose: true,      
-      todayHighlight: true  
-    });
+  // Calendars: the same flatpickr calendar as the Add/Edit Slide pages (phone/tablet layout in static/calendar.css).
+  // Same date format as before (MM-DD-YYYY); typing a date (or deleting it) still works.
+  const calendarOptions = { dateFormat: 'm-d-Y', allowInput: true, disableMobile: true };
+  flatpickr('#productionDate', Object.assign({}, calendarOptions));
+  flatpickr('#expDate', Object.assign({}, calendarOptions));
+  flatpickr('#addDate', Object.assign({}, calendarOptions));
+
+  // The calendar icon next to each date field opens its calendar too
+  document.querySelectorAll('.input-group-text').forEach(function (icon) {
+    const input = icon.parentElement.querySelector('input');
+    if (input && input._flatpickr) {
+      icon.style.cursor = 'pointer';
+      icon.addEventListener('click', function () { input._flatpickr.open(); });
+    }
   });
 
-  $(function() {
-    $('#expDate').datepicker({
-      format: 'mm-dd-yyyy', 
-      autoclose: true,      
-      todayHighlight: true  
-    });
-  });
+
   
-  $(function() {
-    $('#addDate').datepicker({
-      format: 'mm-dd-yyyy', 
-      autoclose: true,      
-      todayHighlight: true  
-    });
-  });
 
  
  document.querySelector('.filter-button').addEventListener('click', function() {
     document.querySelector('.filters').classList.toggle('show');
+    this.setAttribute('aria-expanded', document.querySelector('.filters').classList.contains('show') ? 'true' : 'false');
  })
+
+ // The search control is a div: let Enter/Space press it
+ document.querySelector('#saveButton').addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.click();
+    }
+ });
+
+ // The quantities modal closes with Escape or a click on its backdrop, like its close button
+ document.addEventListener('keydown', function (event) {
+    const modal = document.querySelector('.pt-quantity-modal');
+    if (event.key === 'Escape' && modal) {
+      modal.remove();
+    }
+ });
+ document.addEventListener('click', function (event) {
+    if (event.target.classList && event.target.classList.contains('pt-quantity-modal')) {
+      event.target.remove();
+    }
+ });
 
 
  document.querySelector('#saveButton').onclick = function(event) {
@@ -839,20 +1027,20 @@ function myLoader(color) {
                 expiredQuantity = '';
               }
               mainRow.innerHTML = `
-                <td style="padding: 16px;">
-                  <img src="${escapeHtml(currentImgUrl)}" style="width: 100px;"/>
+                <td style="padding: 16px;" data-label="{{ _('Thumbnail') }}">
+                  <img src="${escapeHtml(currentImgUrl)}" alt="" style="width: 100px;"/>
                 </td>
-                <td style="padding: 16px;">${escapeHtml(restoreUnwantedJsonChars(row.prTitle))}</td>
-                <td style="padding: 16px;">${escapeHtml(row.TotalQuantity)}</td>
-                <td style="padding: 16px; color: red;">${escapeHtml(expiredQuantity)}</td>
+                <td style="padding: 16px;" data-label="{{ _('Title') }}">${escapeHtml(restoreUnwantedJsonChars(row.prTitle))}</td>
+                <td style="padding: 16px;" data-label="{{ _('Full Quantity') }}">${escapeHtml(row.TotalQuantity)}</td>
+                <td style="padding: 16px; color: red;" data-label="{{ _('Outdated Quantity') }}">${escapeHtml(expiredQuantity)}</td>
               `;
 
               // Create the extra row with the button
               const extraRow = document.createElement('tr');
               extraRow.classList.add('extra-row');
               extraRow.innerHTML = `
-                <td colspan="7" style="text-align: center; padding: 5px;">
-                  <button class="view-types-btn" title="{{ _('View Types') }}" id="btn_${escapeHtml(row.ID)}" data-onclick='["getProductTypes", ${Number(row.ID)}]'>
+                <td colspan="7" class="view-types-cell" style="text-align: center; padding: 5px;">
+                  <button class="view-types-btn" title="{{ _('View Types') }}" aria-label="{{ _('View Types') }}: ${escapeHtml(restoreUnwantedJsonChars(row.prTitle))}" id="btn_${escapeHtml(row.ID)}" data-onclick='["getProductTypes", ${Number(row.ID)}]'>
                     <div class="chevron">&#9660;</div>
                   </button>
                 </td>
@@ -971,7 +1159,15 @@ document.addEventListener('click', function(event) {
                   actionLink.className = "pt-quantity-action-btn";
                   actionCell.appendChild(actionLink);
                   row.appendChild(actionCell);
-                  
+
+                  // Label each cell from the header row: on phones the rows are stacked as cards
+                  const labels = tableBody.closest('table').querySelectorAll('thead th');
+                  Array.from(row.children).forEach((cell, i) => {
+                    if (labels[i]) {
+                      cell.dataset.label = labels[i].textContent;
+                    }
+                  });
+
                   tableBody.appendChild(row);
                 });
             }

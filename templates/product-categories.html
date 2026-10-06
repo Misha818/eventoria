@@ -24,13 +24,158 @@ th, td {
 tr:nth-child(even) {
   background-color: #f2f2f2
 }
+
+        /* ---- Filter row ---- */
+        .list-filters {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 10px 12px;
+          width: auto !important;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .list-filters #myInput {
+          flex: 1 1 240px;
+          max-width: 360px;
+          margin: 0 !important;
+          box-sizing: border-box;
+        }
+
+        .list-filters .untranslated {
+          width: auto;
+          margin: 0 !important;
+          padding: 0;
+          cursor: pointer;
+        }
+
+        .list-filters #slide-status {
+          flex: 0 1 250px;
+        }
+
+        /* ---- Table ---- */
+        .actions a {
+          margin: 0;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 40px;
+          min-height: 40px;
+          border-radius: 6px;
+          text-decoration: none;
+        }
+
+        .actions a i {
+          margin: 0 !important;
+        }
+
+        .actions a:hover,
+        .actions a:focus-visible {
+          background-color: #fbe9e4;
+        }
+
+        .actions a:focus-visible,
+        .view-types-btn:focus-visible {
+          outline: 3px solid #264653;
+          outline-offset: 2px;
+        }
+
+        .sort-icons i {
+          padding: 2px 4px;
+        }
+
+        #myTable td.table-empty {
+          text-align: center;
+          color: #666;
+        }
+
+        @media (max-width: 768px) {
+          /* beats the inline width: 75% */
+          .container.categories-page {
+            width: 92% !important;
+          }
+
+          #tableDaddy,
+          .tableDaddy {
+            margin-left: 0 !important;
+          }
+
+          #myTable tr {
+            padding: 12px 16px;
+          }
+
+          #myTable td {
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            text-align: right;
+            overflow-wrap: anywhere;
+          }
+
+          #myTable td::before {
+            flex-shrink: 0;
+            text-align: left;
+          }
+
+          /* Keep the action icons together on the right */
+          #myTable td.actions {
+            justify-content: flex-end;
+            gap: 4px;
+          }
+
+          #myTable td.actions::before {
+            margin-right: auto;
+          }
+
+          #myTable tr.extra-row td,
+          #myTable td.table-empty,
+          #answerID td {
+            justify-content: center;
+          }
+
+          #myTable td.table-empty::before {
+            display: none;
+          }
+        }
+
+        @media (max-width: 600px) {
+          .list-filters #myInput {
+            flex-basis: 100%;
+            max-width: none;
+          }
+
+          .list-filters #slide-status {
+            flex: 1 1 100%;
+            max-width: none;
+          }
+
+          /* Service types: picture on the left, details stacked beside it */
+          #answerID .child {
+            grid-template-columns: 88px minmax(0, 1fr);
+            gap: 4px 10px;
+            padding: 8px;
+          }
+
+          #answerID .child img {
+            width: 88px !important;
+            grid-row: span 4;
+          }
+
+          #answerID .child p {
+            justify-content: flex-start;
+            text-align: left;
+            margin: 0;
+            padding: 2px 0;
+          }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 
 {{ sideBar | safe }}
-<div class="container" style="width: 75%;">
+<div class="container categories-page" style="width: 75%;">
   
 {% if result.length > 0 %}
 <div class="table-container toRight" id="tableDaddy" style="max-width: unset;">
@@ -60,16 +205,17 @@ tr:nth-child(even) {
 
         <th>
           <div style="display: flex; align-items: center;">
-            {{ _('Status') }} 
+            {{ _('Status') }}
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
-              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 2, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 2, "down"]'></i>
             </div>
           </div>
         </th>
         <th></th>
       </tr>
       </thead>
+      <tbody>
     {% for row in result.data %}
       {% set status = _('Published') %}
       {% if row['Product_Category_Status'] == 0 %}
@@ -77,26 +223,28 @@ tr:nth-child(even) {
       {% endif %}
       {% set editUrl = 'edit-product-category/' + row['PC_Ref_Key']|string %}
     
-      {% set imgUrl = url_for('static', filename='images/pc_uploads/' + row['Product_Category_Images']) if row['Product_Category_Images'] else url_for('static', filename='images/error.png') %}
+      {% set imgUrl = url_for('static', filename='images/pc_uploads/' + row['Product_Category_Images']) if row['Product_Category_Images'] else url_for('static', filename='images/unimaged.png') %}
     
       {% set name = row['Product_Category_Name'] if row['Product_Category_Name'] else  _('Empty')  %}
       <tr>
-        <td><img src="{{ imgUrl }}" style="width: 100px;"/></td>
-        <td>{{ name }}</td>
-        <td>{{ status }}</td>
-        <td>
-          <a href="{{ url_for('home', _external=True) + editUrl }}" title="{{ _('Edit') }}"><i class="fas fa-pencil" style="color: #E76F51"></i></a>
+        <td data-label="{{ _('Thumbnail') }}"><img src="{{ imgUrl }}" alt="" style="width: 100px;"/></td>
+        <td data-label="{{ _('Name') }}">{{ name }}</td>
+        <td data-label="{{ _('Status') }}">{{ status }}</td>
+        <td class="actions" data-label="{{ _('Edit') }}">
+          <a href="{{ url_for('home', _external=True) + editUrl }}" title="{{ _('Edit') }}" aria-label="{{ _('Edit') }}: {{ name }}"><i class="fas fa-pencil" style="color: #E76F51" aria-hidden="true"></i></a>
         </td>
       </tr>
     
     
 {% endfor %}
-
+      </tbody>
   </table>
 </div>
 
 {% else %}
-<h3>{{ _('No data to show!') }}</h3>
+<div class="table-container">
+  <h3 style="padding: 24px; text-align: center; color: #666;">{{ _('No data to show!') }}</h3>
+</div>
 {% endif %}
 </div>
 
@@ -108,72 +256,37 @@ window.addEventListener('load', () => {
   document.querySelector('body').classList.add('loaded');
 });
 
-let trace;
-
-function sortTable(arrowElement, n, direction) {
-  
-  // console.log(n);
-  if (trace === String(n) + direction) {
+// Sorts the rows by the clicked column: "up" = A to Z / smallest first, "down" = the reverse.
+// A row keeps whatever belongs under it (its "view types" row and an open types panel).
+function sortTable(arrowElement, column, direction) {
+  const tbody = document.getElementById('myTable').tBodies[0];
+  if (!tbody) {
     return;
   }
 
-  trace = String(n) + direction;
-  
+  const groups = [];
+  Array.from(tbody.rows).forEach(row => {
+    const isMainRow = row.cells.length > 1 && !row.classList.contains('extra-row') && row.id !== 'answerID';
+    if (isMainRow) {
+      groups.push([row]);
+    } else if (groups.length > 0) {
+      groups[groups.length - 1].push(row);
+    }
+  });
+
+  const cellValue = group => {
+    const cell = group[0].cells[column];
+    return cell ? cell.textContent.trim() : '';
+  };
+
+  groups.sort((a, b) => {
+    const result = cellValue(a).localeCompare(cellValue(b), undefined, { numeric: true, sensitivity: 'base' });
+    return direction === 'down' ? -result : result;
+  });
+  groups.forEach(group => group.forEach(row => tbody.appendChild(row)));
+
   document.querySelectorAll('.sort-icons i').forEach(icon => icon.style.color = '#fff');
   arrowElement.style.color = '#ff0000';
-
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
 }
 
 </script>

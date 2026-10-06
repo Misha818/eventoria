@@ -10,13 +10,11 @@
   <!-- Bootstrap Icons for the calendar icon -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-  <!-- 2. Bootstrap Datepicker CSS (uxsolutions) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"/>
+  <!-- 2. flatpickr (calendars) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='calendar.css') }}">
 
   <style>
-    .datepicker {
-       width: 195px !important; /* Set to desired width */
-    }
 
     thead {
         background-color: inherit; 
@@ -88,26 +86,28 @@
 
 <div class="overlay" id="overlay"></div>
 {{ sideBar | safe }}
-<div class="containerS" style="width: 50%;">
+<div class="containerS promo-edit-card">
     <h1>{{ _('Create Promo Code') }}</h1>
-    <!-- Form for adding a product -->
-    <div id="mistakes" style="width: 90%"></div>
-    <form id="product-category-form" style="margin: 20px 20px -15px 20px; width: 100%;">
+    <div id="mistakes" style="width: 100%" role="alert" aria-live="polite"></div>
+    <form id="product-category-form" class="promo-edit-form" novalidate>
 
         {% if affiliates.length > 0 %}
-        <select name="affiliates" id="affiliates" class="styled-select" style="width: 90%;">
+        <label for="affiliates" class="field-label">{{ _('Affiliate') }}</label>
+        <select name="affiliates" id="affiliates" class="styled-select">
             <option value="">{{ _('Select an affiliate') }}</option>
             {% for row in affiliates.data %}
                 <option value="{{ row['ID'] }}">{{ row['Firstname'] + ' ' + row['Lastname'] + ' ' + row['email'] }}</option>
             {% endfor %}
         </select>
         {% else %}
-            {{ _('You do not have any affiliate yet') }}
+            <p class="promo-note">{{ _('You do not have any affiliate yet') }}</p>
+            <!-- The scripts read the affiliate from this field -->
+            <input type="hidden" id="affiliates" value="">
         {% endif %}
         <!-- Dropdown Container -->
         <div class="dropdown">
             <!-- The top label -->
-            <div class="dropdown-label" id="selected-label">{{ _('Products') }}</div>
+            <div class="dropdown-label" id="selected-label" role="button" tabindex="0" aria-controls="parent-options" aria-expanded="false"><span>{{ _('Products') }}</span><i class="fas fa-chevron-down" aria-hidden="true"></i></div>
 
             <!-- Parents list (hidden initially) -->
             <div class="dropdown-options hidden" id="parent-options"></div>
@@ -119,37 +119,41 @@
         <!-- <input type="text" name="promo-code" id="promo-code"  placeholder="{{ _('Promo Code') }}" class="store-quantity"> -->
 
 
-        <div class="input-group mb-3" style="gap: unset; width: 90%;">
-            <!-- <label for="expDate" class="form-label">{{ _('Expiration Date') }}</label> -->
-            <!-- <div class="input-group" style="gap: 0px;"> -->
-            <input
-                type="text"
-                class="form-control"
-                id="expDate"
-                placeholder="{{ _('Expiration Date') }}"
-                style="width: 35px; min-height: 48px;"
-            />
-            <span class="input-group-text">
-                <i class="bi bi-calendar-date"></i>
-            </span>
-            <!-- </div> -->
-            <input type="text" 
-                id="promo-code"
-                placeholder="{{ _('Promo Code') }}"
-                aria-label="Recipient's username" 
-                aria-describedby="basic-addon2"
-                style="margin-left: 10px;"
-                class="form-control"
-            >
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" id="auto-genarate" style="height: -webkit-fill-available; border-radius: 0 5px 5px 0;" type="button">{{ _('Auto Genarate') }}</button>
+        <div class="promo-fields">
+            <div class="promo-field">
+                <label for="expDate" class="field-label">{{ _('Expiration Date') }}</label>
+                <div class="input-group promo-input-group">
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="expDate"
+                        placeholder="{{ _('Expiration Date') }}"
+                        autocomplete="off"
+                    />
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar-date" aria-hidden="true"></i>
+                    </span>
+                </div>
             </div>
-          </div>
+
+            <div class="promo-field">
+                <label for="promo-code" class="field-label">{{ _('Promo Code') }}</label>
+                <div class="input-group promo-input-group">
+                    <input type="text"
+                        id="promo-code"
+                        placeholder="{{ _('Promo Code') }}"
+                        class="form-control"
+                        autocomplete="off"
+                    >
+                    <button class="btn btn-outline-secondary" id="auto-genarate" type="button">{{ _('Auto Genarate') }}</button>
+                </div>
+            </div>
+        </div>
             
         <input type="hidden" id="language-id" value="{{ languageID }}">
 
-        <div id="saveButton" class="pcButtonS margin10" style="width: 250px;">{{ _('Submit') }}</div>
-        <div id="saving" class="pcButtonS margin10 hidden" style="width: 250px;">{{ _('Saving...') }}</div>
+        <div id="saveButton" class="pcButtonS modifiedB" role="button" tabindex="0">{{ _('Submit') }}</div>
+        <div id="saving" class="pcButtonS modifiedB hidden" aria-live="polite">{{ _('Saving...') }}</div>
     </form>
 </div>
 
@@ -1522,23 +1526,29 @@ saveButton.addEventListener('click', function (event) {
 <!-- 3. Bootstrap 5 JS (Popper included) -->
 <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- 4. jQuery (Required by bootstrap-datepicker 1.x) -->
+<!-- 4. jQuery -->
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-<!-- 5. Bootstrap Datepicker JS (uxsolutions) -->
-<script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!-- 5. flatpickr (calendars) -->
+<script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script nonce="{{ csp_nonce() }}">
   // Initialize the date picker on our input
 
-  $(function() {
-    $('#expDate').datepicker({
-      format: 'mm-dd-yyyy', // Adjust format to your preference
-      autoclose: true,      // Close the picker automatically after selecting a date
-      todayHighlight: true,  // Highlight today's date
-      startDate: new Date() 
-    });
+  // Calendars: the same flatpickr calendar as the Add/Edit Slide pages (phone/tablet layout in static/calendar.css).
+  // Same date format as before (MM-DD-YYYY); typing a date (or deleting it) still works.
+  const calendarOptions = { dateFormat: 'm-d-Y', allowInput: true, disableMobile: true };
+  flatpickr('#expDate', Object.assign({}, calendarOptions, { minDate: 'today' }));
+
+  // The calendar icon next to each date field opens its calendar too
+  document.querySelectorAll('.input-group-text').forEach(function (icon) {
+    const input = icon.parentElement.querySelector('input');
+    if (input && input._flatpickr) {
+      icon.style.cursor = 'pointer';
+      icon.addEventListener('click', function () { input._flatpickr.open(); });
+    }
   });
+
 
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -1591,6 +1601,34 @@ saveButton.addEventListener('click', function (event) {
     }
         
     
+    // The products dropdown and Submit are divs: make them keyboard-operable and announce their state
+    const productsToggle = document.getElementById('selected-label');
+    const productsList = document.getElementById('parent-options');
+    new MutationObserver(function () {
+        productsToggle.setAttribute('aria-expanded', productsList.classList.contains('hidden') ? 'false' : 'true');
+    }).observe(productsList, { attributes: true, attributeFilter: ['class'] });
+
+    productsToggle.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            productsToggle.click();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !productsList.classList.contains('hidden')) {
+            productsList.classList.add('hidden');
+            productsToggle.focus();
+        }
+    });
+
+    document.getElementById('saveButton').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.click();
+        }
+    });
+
     document.querySelector('#affiliates').addEventListener('change', function() {
         if (document.querySelector('#affiliates').value) {
 

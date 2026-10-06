@@ -10,9 +10,6 @@
      body {
         background-color: #fdf6ec;
     }
-    .card-header {
-      cursor: pointer;
-    }
     /* Optional: style anchors */
     a {
       text-decoration: none;
@@ -26,15 +23,120 @@
         width: inherit!important;
         padding: unset!important;
     }
-  </style>  
+
+    .promo-details a {
+      color: #E76F51;
+    }
+
+    .promo-card {
+      margin-bottom: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .promo-card .card-header {
+      padding: 0;
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .promo-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 20px;
+      border: 0;
+      background: none;
+      color: #333;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .promo-toggle i {
+      color: #E76F51;
+      transition: transform 0.2s ease;
+    }
+
+    .promo-toggle[aria-expanded="true"] i {
+      transform: rotate(180deg);
+    }
+
+    .promo-toggle:focus-visible {
+      outline: 3px solid #264653;
+      outline-offset: -3px;
+    }
+
+    .promo-grid {
+      padding: 4px 20px 12px;
+    }
+
+    /* Header and value rows share one grid so the columns line up */
+    .promo-row {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .promo-row:last-child {
+      border-bottom: 0;
+    }
+
+    .promo-row > :not(:first-child) {
+      text-align: right;
+    }
+
+    .promo-row-head {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+    }
+
+    @media (max-width: 768px) {
+      .container.promo-details {
+        width: 92%;
+        margin-top: 16px !important;
+      }
+
+      .promo-details .tableDaddy {
+        margin-left: 0 !important;
+      }
+
+      .promo-details h2 {
+        font-size: 1.5rem;
+      }
+
+      .promo-details h4 {
+        font-size: 1.15rem;
+      }
+
+      .promo-toggle {
+        padding: 12px 14px;
+      }
+
+      .promo-grid {
+        padding: 2px 14px 8px;
+      }
+
+      .promo-row {
+        gap: 8px;
+      }
+    }
+  </style>
 
 {% endblock %}
 
 {% block content %}
 
 {{ sideBar | safe }}
-<div class="container my-5">
-{% if headings[2] %}  
+<div class="container my-5 promo-details">
+{% if headings[2] %}
   {% if headings[0] is not none %}
     <h2 class="toRight tableDaddy">{{ _('Affiliate') + ': ' }}  <a href="{{ url_for('affiliate', affID=headings[2]) }}" >{{ headings[0] }}</a></h2>
   {% endif %}
@@ -48,7 +150,7 @@
 </div>
 
 <script nonce="{{ csp_nonce() }}">
-    
+
     function hyphen(str) {
         return str.replace(/\s+/g, '-');
     }
@@ -67,15 +169,13 @@
 
     // Build the accordion HTML
     const accordion = document.getElementById('accordion');
-    
-    // Header row for the card body
+
+    // Column headings, repeated inside each card so they line up with its rows
     const headerRow = `
-      <div  class="row font-weight-bold border-bottom pb-2 mb-2"
-            style="width: 100%;"
-      >
-        <div class="col">{{ _('Product') }}</div>
-        <div class="col">{{ _('Discount') }} (%)</div>
-        <div class="col">{{ _('Revard') }}</div>
+      <div class="promo-row promo-row-head">
+        <span>{{ _('Product') }}</span>
+        <span>{{ _('Discount') }} (%)</span>
+        <span>{{ _('Revard') }}</span>
       </div>
     `;
     let accordionHTML = '';
@@ -84,13 +184,10 @@
       const collapseId = 'collapse' + index;
       const headingId = 'heading' + index;
 
-     
-
       // Build child rows for each item in the group
       let childRows = '';
       groupedData[prTitle].forEach(item => {
         // Compute revard text: append italicized "%" if revard_type is 0, or italicized "fx" if revard_type is 1
-        
         let revardText = '';
         if(item.revard_type === 0) {
           revardText = escapeHtml(item.revard_value) + ' <i>%</i>';
@@ -102,35 +199,28 @@
             let ptUrl = "{{ url_for('home') }}" + hyphen(prTitle) + '&' + hyphen(item.ptTitle)
 
             childRows += `
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col">
-                        <a href="${escapeHtml(ptUrl)}" target="_blank">${escapeHtml(item.ptTitle)}</a>
-                    </div>
-                <div class="col">${escapeHtml(item.discount)}</div>
-                <div class="col">${revardText}</div>
-                </div>
-            </li>
+            <div class="promo-row">
+                <span><a href="${escapeHtml(ptUrl)}" target="_blank">${escapeHtml(item.ptTitle)}</a></span>
+                <span>${escapeHtml(item.discount)}</span>
+                <span>${revardText}</span>
+            </div>
             `;
         }
-    });
+      });
 
-      
-      // Assemble each accordion card
-     
+      // Assemble each accordion card (the first one starts open)
       accordionHTML += `
-        <div class="card" style="cursor:pointer;">
-          <div class="card-header" id="${headingId}">
-            <span  class="d-block" data-toggle="collapse-accordion" data-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
-              ${escapeHtml(prTitle)}
-            </span>
-          </div>
-          <div id="${collapseId}" class="collapse-accordion ${index === 0 ? 'show' : 'collapse'}" aria-labelledby="${headingId}" data-parent="#accordion">
-            <div class="card-body">
-              
-              <ul class="list-group list-group-flush">
-                ${childRows}
-              </ul>
+        <div class="card promo-card">
+          <h3 class="card-header" id="${headingId}">
+            <button type="button" class="promo-toggle" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
+              <span>${escapeHtml(prTitle)}</span>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+          </h3>
+          <div id="${collapseId}" class="promo-panel" role="region" aria-labelledby="${headingId}" ${index === 0 ? '' : 'hidden'}>
+            <div class="promo-grid">
+              ${headerRow}
+              ${childRows}
             </div>
           </div>
         </div>
@@ -138,37 +228,20 @@
       index++;
     }
 
-    accordion.innerHTML = headerRow + accordionHTML;
+    accordion.innerHTML = accordionHTML;
 
-    // Attach an event listener to the entire card to toggle the collapse on card click.
-    // Clicks on the product type links only open the link.
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        if (e.target.closest('a')) {
-          return;
-        }
-        const collapseElement = card.querySelector('.collapse-accordion');
-        if (collapseElement.classList.contains('show')) {
-            $(collapseElement).collapse('toggle');
-        } else {
-            // Collapse any other open accordion items
-            let openElement = document.querySelector('.collapse-accordion.show');
-            if (openElement) {
-                $(openElement).collapse('toggle'); // Correct way to call jQuery collapse
-            }
-            $(collapseElement).collapse('toggle');
-        }
+    // One product open at a time: opening a card closes the one that was open
+    function setPanel(toggle, open) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.getElementById(toggle.getAttribute('aria-controls')).hidden = !open;
+    }
 
-        // Use jQuery's collapse toggle method (Bootstrap relies on jQuery)
-        // $(collapseElement).collapse('toggle');
+    document.querySelectorAll('.promo-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function() {
+        const wasOpen = toggle.getAttribute('aria-expanded') === 'true';
+        document.querySelectorAll('.promo-toggle').forEach(other => setPanel(other, false));
+        setPanel(toggle, !wasOpen);
       });
     });
   </script>
-
-  <!-- jQuery, Popper.js, and Bootstrap JS for accordion functionality -->
-  <script nonce="{{ csp_nonce() }}" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script nonce="{{ csp_nonce() }}" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 {% endblock %}
-
-

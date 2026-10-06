@@ -92,6 +92,206 @@
 }
 
 
+/* ---- Filters ---- */
+.mail-filters {
+  margin: 0;
+}
+
+.mail-filters.mail-filters-end {
+  justify-content: flex-end;
+}
+
+.mail-filters .filter-inputs,
+.mail-filters #eStatus {
+  flex: 1 1 200px;
+  max-width: 250px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.mail-filters .filter,
+.mail-filters .dropbtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 42px;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.mail-filters .filter:focus-visible,
+.mail-filters .dropbtn:focus-visible,
+#myTable .row-actions [role="button"]:focus-visible,
+#myTable .row-actions a:focus-visible,
+.pagination [role="button"]:focus-visible,
+.pt-quantity-close:focus-visible {
+  outline: 3px solid #264653;
+  outline-offset: 2px;
+}
+
+/* ---- Table ---- */
+#myTable td.row-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+#myTable td.row-actions > span,
+#myTable td.row-actions > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#myTable td.row-actions > span:hover,
+#myTable td.row-actions > a:hover {
+  background-color: #fbe9e4;
+}
+
+.sort-icons i {
+  padding: 2px 4px;
+}
+
+#myTable td.table-empty {
+  text-align: center;
+  padding: 24px;
+  font-size: 18px;
+  color: #666;
+}
+
+.pagination {
+  flex-wrap: wrap;
+  gap: 6px 0;
+}
+
+/* ---- Modal ---- */
+.transfer-details-modal .pt-quantity-modal-content {
+  max-width: 760px;
+}
+
+#injectEmail {
+  font-size: 1.25rem;
+  padding-right: 30px;
+  overflow-wrap: anywhere;
+}
+
+#editorContent {
+  overflow-wrap: anywhere;
+}
+
+#emailToEdit {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.pt-quantity-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .pt-quantity-modal-content {
+    width: 92%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 92%;
+  }
+
+  #tableDaddy,
+  .tableDaddy {
+    margin-left: 0 !important;
+  }
+
+  #myTable tr {
+    padding: 12px 16px;
+  }
+
+  #myTable td {
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  #myTable td::before {
+    flex-shrink: 0;
+  }
+
+  #myTable td.row-actions {
+    width: auto;
+    border-top: 1px dashed #e5e5e5;
+    margin-top: 4px;
+  }
+
+  #myTable td.table-empty {
+    justify-content: center;
+  }
+
+  #myTable td.table-empty::before {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .mail-filters .filter-inputs {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .mail-filters #eStatus {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+
+/* ---- Transfers filters ---- */
+.mail-filters {
+  flex-wrap: wrap;
+}
+
+.mail-filters .transfers-title {
+  flex: 1 1 auto;
+  margin: 0;
+  text-align: left;
+}
+
+.mail-filters #affiliates {
+  flex: 1 1 200px;
+  max-width: 250px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .mail-filters .transfers-title {
+    flex: 1 1 100%;
+    font-size: 1.5rem;
+  }
+
+  .mail-filters #affiliates {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+
 </style>
 
 {% endblock %}
@@ -103,9 +303,9 @@
 <div class="container" >
   
   <div class="table-container toRight tableDaddy" style="max-width: 1320px; box-shadow: unset; background-color: unset">
-    <div class="filter-container">
-      <h2 style="text-align: left; flex: 1;">{{ _("Transfers' history") }} </h2>
-      <select id="affiliates" style="flex: 1; max-width: 250px;">
+    <div class="filter-container mail-filters">
+      <h2 class="transfers-title">{{ _("Transfers' history") }} </h2>
+      <select id="affiliates" aria-label="{{ _('Filter by staff member') }}">
         <option value="" >{{ _('Filter by staff member') }}</option>
         
         {% if resultAff['length'] > 0 %}
@@ -123,13 +323,13 @@
         {% endif %} 
       </select>
       
-      <button class="filter" style="flex: 0 0 auto;">
-        <i class="fas fa-search" style="margin-right: 5px;"></i>
+      <button type="button" class="filter" title="{{ _('Apply') }}" aria-label="{{ _('Apply') }}">
+        <i class="fas fa-search" aria-hidden="true"></i>
       </button>
       
       <a  href="{{ url_for('transfers', filters='page=1') }}"
-      class="dropbtn" style="flex: 0 0 auto;">
-      <i class="fas fa-chevron-down" style="margin-right: 5px;"></i>
+      class="dropbtn" title="{{ _('Clear filters') }}" aria-label="{{ _('Clear filters') }}">
+      <i class="fas fa-xmark" aria-hidden="true"></i>
     </a>
       </div>
     </div>
@@ -156,8 +356,8 @@
          {{ _('Staff member') }} 
 
           <div class="sort-icons" style="margin-left: 5px;">
-            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
+            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
           </div>
         </div>
       </th>
@@ -167,8 +367,8 @@
          {{ _('Amount') }} 
 
           <div class="sort-icons" style="margin-left: 5px;">
-            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 2, "up"]'></i>
+            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 2, "down"]'></i>
           </div>
         </div>
       </th>
@@ -178,8 +378,8 @@
          {{ _('Type') }} 
 
           <div class="sort-icons" style="margin-left: 5px;">
-            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 3, "up"]'></i>
+            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 3, "down"]'></i>
           </div>
         </div>
       </th>
@@ -189,8 +389,8 @@
          {{ _('Date') }} 
 
           <div class="sort-icons" style="margin-left: 5px;">
-            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+            <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 4, "up"]'></i>
+            <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 4, "down"]'></i>
           </div>
         </div>
       </th>
@@ -210,31 +410,31 @@
       {% endif %}
 
       <tr>
-        <td data-label="{{ _('Transaction ID') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Transaction ID') }}">
           {{ row['transactionID'] }}
         </td>
         
-        <td data-label="{{ _('Amount') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Staff member') }}">
           {{ row['Initials'] + ' | ' + _(row['Position']) }}
         </td>
         
-        <td data-label="{{ _('Amount') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Amount') }}">
           {{ row['amount'] }}
         </td>
         
-        <td data-label="{{ _('Promo Code') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Type') }}">
           {{ type }}
         </td>
    
-        <td data-label="{{ _('Net') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Date') }}">
           {{ row['timestamp'] }}
         </td>
    
 
-        <td class="edit-user">
+        <td class="edit-user row-actions" data-label="{{ _('Details') }}">
           {% set note = '' %}
             {% if row['note'] is not none %}
-            <span data-value="{{ row['notesID'] }}" class="show-transfer-details" title="{{ _('Transaction Details') }}" style="color:#E76F51"><i class="fas fa-eye"></i></span>
+            <span data-value="{{ row['notesID'] }}" class="show-transfer-details" role="button" tabindex="0" title="{{ _('Transaction Details') }}" aria-label="{{ _('Transaction Details') }}: {{ row['transactionID'] }}" style="color:#E76F51"><i class="fas fa-eye" aria-hidden="true"></i></span>
           {% endif %}
           
         </td>
@@ -243,7 +443,7 @@
       {% endfor %}
       
       {% else %}
-      <tr><td><p style="padding: 15px; font-size: 26px;">{{ _('Nothing found.') }}</p></td></tr>  
+      <tr><td class="table-empty" colspan="6">{{ _('Nothing found.') }}</td></tr>  
     {% endif %}
   </tbody>
   </table>
@@ -258,18 +458,18 @@
 
     {% if page > 1 %}
     {% set urlPrev = '/' + (page - 1) | string %}
-    <div data-value="{{ page - 1 }}">❮</div>
+    <div data-value="{{ page - 1 }}" role="button" tabindex="0" aria-label="&laquo;">❮</div>
     {% endif %}
     {% for i in range(1, (numRows // pagination) + additionalPage + 1) %}
     
     {% set urlPage = '/' ~ i %}
-    <div {% if i == page %} class="active" {% endif %} data-value="{{ i }}">{{ i }}</div>
+    <div {% if i == page %} class="active" aria-current="page" {% endif %} data-value="{{ i }}" role="button" tabindex="0">{{ i }}</div>
     {% endfor %}
     
 
     {% if page < (numRows // pagination) + additionalPage  %}
     {% set urlNext = '/' + (page + 1) | string %}
-    <div data-value="{{ page + 1 }}">❯</div>
+    <div data-value="{{ page + 1 }}" role="button" tabindex="0" aria-label="&raquo;">❯</div>
     {% endif %}
     
   </div>
@@ -278,8 +478,8 @@
   {% endif %}
 
   <div id="myModal" class="transfer-details-modal hidden" >
-    <div class="pt-quantity-modal-content">
-      <span id="closeModalBtn" class="pt-quantity-close">×</span>
+    <div class="pt-quantity-modal-content" role="dialog" aria-modal="true">
+      <span id="closeModalBtn" class="pt-quantity-close" role="button" tabindex="0" aria-label="{{ _('Close') }}">×</span>
       <div class="product-container">
 
         <div id="editorContentParent">
@@ -310,6 +510,7 @@ window.addEventListener('load', () => {
       btn.addEventListener('click', function() {
         document.querySelector('#editorContent').innerHTML = "<p>{{ _('Loading.....') }}</p>";
         document.querySelector('.transfer-details-modal').classList.toggle('hidden');
+        document.getElementById('closeModalBtn').focus();
 
         notesID = btn.getAttribute('data-value');
         
@@ -354,87 +555,65 @@ window.addEventListener('load', () => {
   }
 });
 
-let trace;
-
-function sortTable(arrowElement, n, direction) {
-  
-  // console.log(n);
-  if (trace === String(n) + direction) {
+// Sorts the table rows by the clicked column: "up" = A to Z / smallest first, "down" = the reverse.
+function sortTable(arrowElement, column, direction) {
+  const tbody = document.getElementById('myTable').tBodies[0];
+  if (!tbody) {
     return;
   }
+  const rows = Array.from(tbody.rows).filter(row => !row.querySelector('.table-empty'));
 
-  trace = String(n) + direction;
-  
+  const cellValue = row => {
+    const cell = row.cells[column];
+    return cell ? cell.textContent.trim() : '';
+  };
+
+  rows.sort((a, b) => {
+    const result = cellValue(a).localeCompare(cellValue(b), undefined, { numeric: true, sensitivity: 'base' });
+    return direction === 'down' ? -result : result;
+  });
+  rows.forEach(row => tbody.appendChild(row));
+
   document.querySelectorAll('.sort-icons i').forEach(icon => icon.style.color = '#fff');
   arrowElement.style.color = '#ff0000';
-
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (!isNaN(x.innerHTML) && !isNaN(y.innerHTML)) {
-        // Compare as numbers
-        if (dir == "asc") {
-          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      } else {
-        // Compare as strings
-        if (dir == "asc") {
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
 }
+
+// Icon buttons and page numbers are spans/divs: make Enter and Space work on them
+document.addEventListener('keydown', function (event) {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+  const target = event.target;
+  if (target.matches('#myTable [role="button"], .pagination [role="button"], .pt-quantity-close')) {
+    event.preventDefault();
+    target.click();
+  }
+});
+
+// The modal closes with Escape or a click on the dimmed backdrop, like its close button
+const detailsModal = document.querySelector('.transfer-details-modal');
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && detailsModal && !detailsModal.classList.contains('hidden')) {
+    document.getElementById('closeModalBtn').click();
+  }
+});
+if (detailsModal) {
+  detailsModal.addEventListener('click', function (event) {
+    if (event.target === detailsModal) {
+      document.getElementById('closeModalBtn').click();
+    }
+  });
+}
+
+// Enter in a filter field applies the filters
+document.querySelectorAll('.filter-container input').forEach(input => {
+  input.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.querySelector('.filter').click();
+    }
+  });
+});
 
 
 // $("#phone").intlTelInput({

@@ -683,7 +683,8 @@ def edit_slide(HS_Ref_Key):
         
         resultIMG = sqlSelect(sqlQueryIMG, (HS_Ref_Key, result['data'][0]['ID']), False)
 
-        return render_template('edit_slide.html', result=result, orderLength=resultOrder['length'], resultIMG=resultIMG, languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
+        sideBar = side_bar_stuff()
+        return render_template('edit_slide.html', sideBar=sideBar, result=result, orderLength=resultOrder['length'], resultIMG=resultIMG, languageID=languageID, MAIN_CURRENCY=MAIN_CURRENCY,newCSRFtoken=newCSRFtoken, current_locale=get_locale())
     
     if request.method == 'POST':
         slideID = request.form.get('slideID')

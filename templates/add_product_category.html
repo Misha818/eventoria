@@ -24,6 +24,63 @@
         .dropzone .dz-preview {
             margin: -2px;
         }
+
+    /* ---- Form layout (card styles come from .admin-form-card in styles.css) ---- */
+    .category-form .text-field,
+    .category-form .ratio-row input {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    /* a global "#category-name" rule (8px padding, 10px margins) outranks the class above */
+    .category-form #category-name,
+    .category-form .ratio-row input {
+        padding: 12px 14px;
+        margin: 0;
+    }
+
+    .category-form .ratio-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .category-form .ratio-row input {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .category-form .ratio-row span {
+        color: #666;
+        font-weight: bold;
+    }
+
+    .category-form .dropzone {
+        margin-top: 10px !important;
+    }
+
+    .category-form .pcButtonS {
+        width: 100% !important;
+        margin: 16px 0 0 0 !important;
+        padding: 15px;
+        font-size: 20px;
+        box-sizing: border-box;
+    }
+
+    .category-form .pcButtonS:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    .category-form-card .category-back {
+        align-self: flex-start;
+        margin-top: 12px;
+        color: #E76F51;
+    }
     </style>
 {% endblock %}
 {% block title %}
@@ -37,20 +94,25 @@
 
 {{ sideBar | safe }}
 
-<div class="containerS" style="width: 25%">
-    <form id="product-category-form" style="width: 95%;">
-        <div id="mistakes" style="width: 100%"></div>
+<div class="containerS admin-form-card category-form-card">
+    <h1>{{ _('Add Product Category') }}</h1>
+    <form id="product-category-form" class="admin-form category-form" novalidate>
+        <div id="mistakes" style="width: 100%" role="alert" aria-live="polite"></div>
         <input type="hidden" id="image" value="1">
         <input type="hidden" id="img_value" value="">
         
         
-        <input type="text" id="category-name" placeholder="{{ _('Product Category Name') }}" style="padding: 15px; width: 100%;">
-        <div style="display: flex; gap: 5px; align-items: center;">
-             <p style="width: 100%">{{ _('Aspect Ratio') }}</p>
-            <input type="text" id="xRatio" value="1" style="width: 100%;" placeholder="X">
-            <input type="text" id="yRatio" value="1" style="width: 100%;" placeholder="Y">
+        <label for="category-name" class="field-label">{{ _('Product Category Name') }}</label>
+        <input type="text" id="category-name" class="text-field" placeholder="{{ _('Product Category Name') }}" autocomplete="off">
+
+        <span class="field-label" id="ratio-label">{{ _('Aspect Ratio') }}</span>
+        <div class="ratio-row" role="group" aria-labelledby="ratio-label">
+            <input type="text" id="xRatio" value="1" placeholder="X" aria-label="X" inputmode="decimal">
+            <span aria-hidden="true">:</span>
+            <input type="text" id="yRatio" value="1" placeholder="Y" aria-label="Y" inputmode="decimal">
         </div>
         {% if sps.length > 0 %}
+        <label for="spsName" class="field-label">{{ _('Product Type Specifications') }}</label>
         <select name="smsName" id="spsName" class="styled-select">
             <option value="">{{ _('Choose subproduct situation name') }}</option>
             {% for val in sps.data %}
@@ -97,21 +159,22 @@
         <input type="hidden" id="language-id" value="{{ languageID }}">
         <input type="hidden" id="RefKey" value="{{ RefKey }}">
 
-        <div id="saveButton" class="pcButtonS modifiedB" 
-            style=" width: 100%;
-                    margin: 0px auto 0px auto;
-                    display: block;"
-                >{{ _('Submit') }}</div>
-        <div id="saving" class="pcButtonS1 modifiedB hidden" 
-            style=" width: 100%;
-                    margin: 0px auto 0px auto;
-                    "
-                >{{ _('Saving...') }}</div>
+        <div id="saveButton" class="pcButtonS modifiedB" role="button" tabindex="0">{{ _('Submit') }}</div>
+        <div id="saving" class="pcButtonS1 modifiedB hidden" aria-live="polite">{{ _('Saving...') }}</div>
     </form>
 
 
 </div>
 
+<script nonce="{{ csp_nonce() }}">
+    // Submit is a div: let Enter/Space press it too
+    document.getElementById('saveButton').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.click();
+        }
+    });
+</script>
 <!-- Script for Dropzone (image upload) -->
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>

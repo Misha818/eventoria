@@ -26,6 +26,160 @@
         cursor: auto;
     }
 
+    /* ---- Form layout (card styles come from .admin-form-card in styles.css) ---- */
+    .containerS.price-form-card {
+        max-width: 640px;
+    }
+
+    /* The id carries a global 20px margin meant for other forms */
+    #add-product-form.price-form {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        margin: 0;
+    }
+
+    .price-form .field-label {
+        margin: 8px 0 2px 0;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .price-form .imageInput {
+        width: 100%;
+        margin: 0;
+        padding: 12px 14px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .price-form .price-group {
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+
+    .price-form .price-group input {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .price-form .dropzone {
+        margin-top: 10px;
+    }
+
+    .price-form .payment_methods {
+        display: block;
+    }
+
+    .price-form .pm-toggle {
+        min-width: 0;
+        padding: 12px 34px 12px 14px;
+    }
+
+    .price-form .pm-toggle:focus-visible,
+    .price-form .pcButtonS:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    .price-form .styled-select {
+        margin-bottom: 0;
+    }
+
+    .price-form .specifications {
+        margin-top: 10px;
+    }
+
+    .price-form .specifications input {
+        width: 100%;
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .price-form #saveButton,
+    .price-form #saving {
+        margin-top: 16px;
+        padding: 15px;
+        font-size: 20px;
+        box-sizing: border-box;
+    }
+
+    .price-form-card .price-back {
+        align-self: flex-start;
+        margin-top: 12px;
+        color: #E76F51;
+    }
+
+    @media (max-width: 480px) {
+        /* Specification name above its value instead of side by side */
+        .price-form .specifications {
+            grid-template-columns: 1fr;
+            gap: 4px;
+        }
+
+        .price-form .specifications label {
+            margin-top: 6px;
+            font-weight: bold;
+        }
+    }
+
+    /* ---- Crop window ---- */
+    #imageEditorModal.modal {
+        width: min(640px, calc(100vw - 24px)) !important;
+        max-height: calc(100vh - 24px) !important;
+        padding: 16px !important;
+        overflow-y: auto !important;
+        border-radius: 14px !important;
+        box-sizing: border-box;
+    }
+
+    #imageEditorModal img {
+        display: block;
+        max-width: 100%;
+        max-height: 60vh;
+    }
+
+    #imageEditorModal .crop-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    #imageEditorModal .crop-actions button {
+        flex: 1;
+        margin: 0;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    #imageEditorModal #saveEditedImage {
+        background-color: #E76F51;
+    }
+
+    #imageEditorModal #saveEditedImage:hover {
+        background-color: #d65f42;
+    }
+
+    #imageEditorModal #cancelEdit {
+        color: #264653;
+        background-color: #eef2f3;
+    }
+
+    #imageEditorModal #cancelEdit:hover {
+        background-color: #dfe6e8;
+    }
+
+    #imageEditorModal .crop-actions button:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
 </style>
 
 {% endblock %}
@@ -34,21 +188,25 @@
 
     {{ sideBar | safe }}
 
-    <div class="containerS">
+    <div class="containerS admin-form-card price-form-card">
 
-        <div id="mistakes" style="width: 93%;"></div>
+        <h1>{{ _('Add Price') }}</h1>
+        <div id="mistakes" style="width: 100%;" role="alert" aria-live="polite"></div>
         <div class="overlay" id="overlay"></div>
 
-<form id="add-product-form" style="display: flex; flex-direction: column; width: 525px">
+<form id="add-product-form" class="price-form" novalidate>
 
     <input type="hidden" id="language-id" value="{{ languageID }}" >
     <input type="hidden" id="RefKey" value="{{ RefKey }}" >
     <input type="hidden" id="PT_Ref_Key" value="{{ PT_Ref_Key }}" >
 
-    <input type="text" name="title" id="title" placeholder="{{ _('Add Product Type Title') + ' | ' + _('Max allowed number of chars is 20') }}" class="imageInput">
-    <div class="input-group">
-        <input type="number" name="price" id="price" placeholder="{{ _('Add Product Type Price') }}" class="imageInput">
-        <label for="price">{{ mainCurrency }}</label>
+    <label for="title" class="field-label">{{ _('Title') }}</label>
+    <input type="text" name="title" id="title" placeholder="{{ _('Add Product Type Title') + ' | ' + _('Max allowed number of chars is 20') }}" class="imageInput" autocomplete="off">
+
+    <label for="price" class="field-label">{{ _('Price') }}</label>
+    <div class="input-group price-group">
+        <input type="number" name="price" id="price" placeholder="{{ _('Add Product Type Price') }}" class="imageInput" inputmode="decimal" min="0">
+        <span aria-hidden="true">{{ mainCurrency }}</span>
     </div>
 
     <div class="dropzone" id="myDropzone">
@@ -119,13 +277,13 @@
 
     {% endif %}     
     <!-- Sarqum em spasificationneri fielder@ -->
-    <div id="saveButton" class="pcButtonS" style="width:100%;">{{ _('Submit') }}</div>
-    <div id="saving" class="pcButtonS" style="width:100%; display: none;">{{ _('Saving...') }}</div>
+    <div id="saveButton" class="pcButtonS" style="width:100%;" role="button" tabindex="0">{{ _('Submit') }}</div>
+    <div id="saving" class="pcButtonS" style="width:100%; display: none;" aria-live="polite">{{ _('Saving...') }}</div>
     
 </form>
 
 
-<a href="{{ url_for('home') }}product/{{ sps.data[0].P_Ref_Key }}" class="self-left">{{ _('Back') }}</a>
+<a href="{{ url_for('home') }}product/{{ sps.data[0].P_Ref_Key }}" class="self-left price-back">&larr; {{ _('Back') }}</a>
 
 </div>
 
@@ -133,6 +291,15 @@
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 <script nonce="{{ csp_nonce() }}" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script nonce="{{ csp_nonce() }}">
+    // Submit is a div: let Enter/Space press it too
+    document.getElementById('saveButton').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.click();
+        }
+    });
+</script>
 <script nonce="{{ csp_nonce() }}">
     let csrfToken = "{{ csrf_token() }}";
     let cropperState = 0;
@@ -304,7 +471,7 @@
     let cropper;
     
     function openImageEditorModal(imageUrl, closeBtn, callback) {
-        let btn = `<button id="cancelEdit">{{ _('Close') }}</button>`
+        let btn = `<button type="button" id="cancelEdit">{{ _('Close') }}</button>`
         if (cropperState === 1) {
             if (closeBtn === true) {
                 btn = ''
@@ -315,10 +482,13 @@
             imageEditorModal.className = 'modal open';
             imageEditorModal.innerHTML = `
                 <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
-                <br>
-                <button id="saveEditedImage">{{ _('Crop') }}</button>
-                ${btn}
+                <div class="crop-actions">
+                    <button type="button" id="saveEditedImage">{{ _('Crop') }}</button>
+                    ${btn}
+                </div>
             `;
+            imageEditorModal.setAttribute('role', 'dialog');
+            imageEditorModal.setAttribute('aria-modal', 'true');
             document.body.appendChild(imageEditorModal);
     
             let imageToEdit = document.getElementById('imageToEdit');
@@ -363,9 +533,11 @@
             };
             
             
-            document.getElementById('cancelEdit').onclick = function () {
-                closeImageEditorModal(imageEditorModal);
-            };
+            if (document.getElementById('cancelEdit')) {
+                document.getElementById('cancelEdit').onclick = function () {
+                    closeImageEditorModal(imageEditorModal);
+                };
+            }
         }
     }
     

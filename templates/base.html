@@ -60,7 +60,7 @@
         {% endif %}
 
       <div class="flex avatar-stuff" style="gap: 10px;">
-        <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" data-onclick='["toggleSidebar"]' alt="{{ _('Tools') }}" class="avatar" style="cursor: pointer; width: 70px; height: 70px;">
+        <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" data-onclick='["toggleSidebar"]' alt="{{ _('Tools') }}" title="{{ _('Tools') }}" class="avatar" role="button" tabindex="0" aria-controls="sidebar" aria-expanded="false" style="cursor: pointer; width: 70px; height: 70px;">
         <span style="font-size: 20px; font-weight: bold; color: #ffffff;"> {{ role + ' | ' + actionName }}</span>
       </div>
         <!-- <img src="{{ url_for('static', filename='images/stuff-tools.png') }}" data-onclick='["toggleSidebar"]' alt="{{ _('Tools') }}" style="cursor: pointer; width: 70px; height: 70px;" > -->
@@ -208,8 +208,59 @@
             
             closedNav = true;
           }
+
+          syncSidebarToggleState();
         }
-        
+
+        // ARIA state of the tools icon follows the sidebar
+        function syncSidebarToggleState() {
+          const isOpen = !sidebar.classList.contains('collapsed');
+          document.querySelectorAll('[data-onclick*="toggleSidebar"]').forEach(btn => {
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          });
+        }
+        syncSidebarToggleState();
+
+        // Place the sidebar right under the header (its height differs between phones and desktops)
+        function positionSidebar() {
+          const header = document.querySelector('.header-stuff');
+          if (!header) {
+            return;
+          }
+          const top = Math.max(header.getBoundingClientRect().bottom, 0);
+          sidebar.style.setProperty('top', top + 'px', 'important');
+          sidebar.style.setProperty('height', 'calc(100vh - ' + top + 'px)', 'important');
+        }
+        positionSidebar();
+        window.addEventListener('resize', positionSidebar);
+
+        // The tools icon is an image: let keyboard users open the menu too
+        document.querySelectorAll('[data-onclick*="toggleSidebar"]').forEach(btn => {
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              btn.click();
+            }
+          });
+        });
+
+        // Escape closes the menu; on narrow screens, so does a tap outside it
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+          }
+        });
+
+        document.addEventListener('click', function (e) {
+          if (window.innerWidth > 768 || sidebar.classList.contains('collapsed')) {
+            return;
+          }
+          if (sidebar.contains(e.target) || e.target.closest('[data-onclick*="toggleSidebar"]')) {
+            return;
+          }
+          toggleSidebar();
+        });
+
       }
 
     let popoverTrigger = document.querySelector('.avatar-stuff');

@@ -40,31 +40,28 @@
 <!-- {{ row }} -->
 
 <div class="overlay" id="overlay"></div>
-<div class="containerS" style="min-width: 380px;">
-    <!-- <div class="title">{{ _('Edit Teammate') }}</div> -->
-    <!-- Form for adding a product -->
-    <div id="mistakes" style="width: 100%;"></div>
+<div class="containerS admin-form-card">
+    <h1>{{ _('Edit Teammate') }}</h1>
+    <div id="mistakes" style="width: 100%;" role="alert" aria-live="polite"></div>
 
-    <form id="product-category-form" style="width: 100%; margin: unset;">
-        <input type="text" id="firstname" placeholder="{{ _('Firstname') }}" value="{{ row['Firstname'] }}" 
-            style="width: 100%;padding: 15px;"
-        >
-        
-        <input type="text" id="lastname" placeholder="{{ _('Lastname') }}" value="{{ row['Lastname'] }}" 
-            style="width: 100%;padding: 15px;"
-        >
-        
-        <input type="text" id="email" placeholder="{{ _('Email') }}" value="{{ row['Email'] }}" 
-            style="width: 100%;padding: 15px;"
-        >
+    <form id="product-category-form" class="admin-form" novalidate>
+        <label for="firstname" class="field-label">{{ _('Firstname') }}</label>
+        <input type="text" id="firstname" class="text-field" placeholder="{{ _('Firstname') }}" value="{{ row['Firstname'] }}" autocomplete="off">
 
-        <div class="form-group row" id="rolesDropDown" style="width: 100%;"></div>
+        <label for="lastname" class="field-label">{{ _('Lastname') }}</label>
+        <input type="text" id="lastname" class="text-field" placeholder="{{ _('Lastname') }}" value="{{ row['Lastname'] }}" autocomplete="off">
+
+        <label for="email" class="field-label">{{ _('Email') }}</label>
+        <input type="email" id="email" class="text-field" placeholder="{{ _('Email') }}" value="{{ row['Email'] }}" inputmode="email" autocomplete="off">
+
+        <label for="roles" class="field-label">{{ _('Position') }}</label>
+        <div class="form-group row" id="rolesDropDown"></div>
         
         <div  class="dropzone" id="myDropzone" >
             <div class="dz-message dz-button" style="margin: 4.5em 0;">{{ _('Avatar') }}</div>
         </div>
 
-        <div class="status-container" style="{{ statusWidth }}">
+        <div class="status-container" role="radiogroup" aria-label="{{ _('Status') }}">
             <label>{{ _('Status') }}</label>
             <label><input type="radio" name="status" value="1" {% if row['Status'] == 1 %} checked {% endif %}> {{ _('Active') }}</label>
             <label><input type="radio" name="status" value="0" {% if row['Status'] == 0 %} checked {% endif %}> {{ _('Passive') }}</label>
@@ -75,8 +72,8 @@
         <input type="hidden" id="language-id" value="{{ languageID }}">
         <input type="hidden" id="teammateID" value="{{ row['ID'] }}">
         
-        <div id="saveButton" class="pcButtonS" style="width: 100%">{{ _('Submit') }}</div>
-        <div id="saving" class="pcButtonS hidden" style="width: 100%">{{ _('Saving...') }}</div>
+        <div id="saveButton" class="pcButtonS modifiedB" role="button" tabindex="0">{{ _('Submit') }}</div>
+        <div id="saving" class="pcButtonS hidden modifiedB" aria-live="polite">{{ _('Saving...') }}</div>
     </form>
 
 
@@ -374,6 +371,26 @@ document.addEventListener('DOMContentLoaded', function() {
         rolesDropDown();
     // When the form is submitted
     const saveButton = document.getElementById('saveButton');
+
+    // Enter in a field submits through the Submit button (a plain form submit would reload the page)
+    const adminForm = document.querySelector('.admin-form');
+    adminForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+    });
+    adminForm.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && event.target.classList.contains('text-field')) {
+            event.preventDefault();
+            if (!saveButton.classList.contains('hidden')) {
+                saveButton.click();
+            }
+        }
+    });
+    saveButton.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            saveButton.click();
+        }
+    });
 
     saveButton.addEventListener('click', function (event) {
 

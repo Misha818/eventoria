@@ -92,6 +92,213 @@
 }
 
 
+/* ---- Filters ---- */
+.mail-filters {
+  margin: 0;
+}
+
+.mail-filters.mail-filters-end {
+  justify-content: flex-end;
+}
+
+.mail-filters .filter-inputs,
+.mail-filters #eStatus {
+  flex: 1 1 200px;
+  max-width: 250px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.mail-filters .filter,
+.mail-filters .dropbtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 42px;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.mail-filters .filter:focus-visible,
+.mail-filters .dropbtn:focus-visible,
+#myTable .row-actions [role="button"]:focus-visible,
+#myTable .row-actions a:focus-visible,
+.pagination [role="button"]:focus-visible,
+.pt-quantity-close:focus-visible {
+  outline: 3px solid #264653;
+  outline-offset: 2px;
+}
+
+/* ---- Table ---- */
+#myTable td.row-actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+#myTable td.row-actions > span,
+#myTable td.row-actions > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#myTable td.row-actions > span:hover,
+#myTable td.row-actions > a:hover {
+  background-color: #fbe9e4;
+}
+
+.sort-icons i {
+  padding: 2px 4px;
+}
+
+#myTable td.table-empty {
+  text-align: center;
+  padding: 24px;
+  font-size: 18px;
+  color: #666;
+}
+
+.pagination {
+  flex-wrap: wrap;
+  gap: 6px 0;
+}
+
+/* ---- Modal ---- */
+.transfer-details-modal .pt-quantity-modal-content {
+  max-width: 760px;
+}
+
+#injectEmail {
+  font-size: 1.25rem;
+  padding-right: 30px;
+  overflow-wrap: anywhere;
+}
+
+#editorContent {
+  overflow-wrap: anywhere;
+}
+
+#emailToEdit {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.pt-quantity-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .pt-quantity-modal-content {
+    width: 92%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 92%;
+  }
+
+  #tableDaddy,
+  .tableDaddy {
+    margin-left: 0 !important;
+  }
+
+  #myTable tr {
+    padding: 12px 16px;
+  }
+
+  #myTable td {
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  #myTable td::before {
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  #myTable td {
+    text-align: right;
+  }
+
+  /* Keep the action icons together on the right */
+  #myTable td.row-actions {
+    gap: 4px;
+  }
+
+  #myTable td.row-actions::before {
+    margin-right: auto;
+  }
+
+  #myTable td.row-actions {
+    width: auto;
+    border-top: 1px dashed #e5e5e5;
+    margin-top: 4px;
+  }
+
+  #myTable td.table-empty {
+    justify-content: center;
+  }
+
+  #myTable td.table-empty::before {
+    display: none;
+  }
+
+  /* Rows of the "associated employees" table are built with inline table-cell styles */
+  #myModalTable td {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    padding: 6px 0 !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* Label on its own line above the value: the modal is too narrow for side-by-side */
+  #myModalTable td::before {
+    flex-basis: 100%;
+  }
+
+  #myModalTable td.edit-user {
+    justify-content: flex-end;
+  }
+
+  #injectEmail {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .mail-filters .filter-inputs {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .mail-filters #eStatus {
+    flex: 1 1 0;
+    max-width: none;
+  }
+}
+
 </style>
 
 {% endblock %}
@@ -106,25 +313,27 @@
   {% endif %}
 
   <div class="table-container toRight tableDaddy" style="max-width: 1320px; box-shadow: unset; background-color: unset">
-    <div class="filter-container" style="margin: 5px auto 5px 48%;">
-      <input type="text" id="email" class="filter-inputs" placeholder="{{ _('Search by email') }}" value="{{ email }}" style="flex: 1; max-width: 250px;">
-      <select id="eStatus" style="flex: 1; max-width: 250px;">
+    {# eStatus defaults to 0 even when no status filter is applied: only preselect it when it was asked for #}
+    {% set statusFiltered = 'eStatus' in (request.view_args.get('filters') or '') %}
+    <div class="filter-container mail-filters mail-filters-end">
+      <input type="text" id="email" class="filter-inputs" placeholder="{{ _('Search by email') }}" aria-label="{{ _('Search by email') }}" value="{{ email }}" inputmode="email" autocomplete="off">
+      <select id="eStatus" aria-label="{{ _('Filter by status') }}">
         <option value="" >{{ _('Filter by status') }}</option>
-        
-        
-        <option value="2"  {% if eStatus == 2 %}selected="selected"{% endif %}>{{ _('All') }}</option>
-        <option value="1"  {% if eStatus == 1 %}selected="selected"{% endif %}>{{ _('Active') }}</option>
-        <option value="0"  {% if eStatus == 0 %}selected="selected"{% endif %}>{{ _('Passive') }}</option>
+
+
+        <option value="2"  {% if statusFiltered and eStatus == 2 %}selected="selected"{% endif %}>{{ _('All') }}</option>
+        <option value="1"  {% if statusFiltered and eStatus == 1 %}selected="selected"{% endif %}>{{ _('Active') }}</option>
+        <option value="0"  {% if statusFiltered and eStatus == 0 %}selected="selected"{% endif %}>{{ _('Passive') }}</option>
         
       </select>
 
-      <button class="filter" style="flex: 0 0 auto;">
-        <i class="fas fa-search" style="margin-right: 5px;"></i>
+      <button type="button" class="filter" title="{{ _('Apply') }}" aria-label="{{ _('Apply') }}">
+        <i class="fas fa-search" aria-hidden="true"></i>
       </button>
       
       <a  href="{{ url_for('corporate_emails', filters='page=1') }}"
-      class="dropbtn" style="flex: 0 0 auto;">
-      <i class="fas fa-chevron-down" style="margin-right: 5px;"></i>
+      class="dropbtn" title="{{ _('Clear filters') }}" aria-label="{{ _('Clear filters') }}">
+      <i class="fas fa-xmark" aria-hidden="true"></i>
     </a>
       </div>
     </div>
@@ -150,8 +359,8 @@
               {{ _('Status') }} 
 
                 <div class="sort-icons" style="margin-left: 5px;">
-                  <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-                  <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+                  <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
+                  <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
                 </div>
               </div>
             </th>
@@ -168,25 +377,25 @@
 
       <tr>
         
-        <td data-label="{{ _('Email') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Email') }}">
           {{ row['email']  }}
         </td>
         
-        <td data-label="{{ _('Status') }}" class="flex" style="display: table-cell;">
+        <td data-label="{{ _('Status') }}">
           {{ Status }}
         </td>
    
 
-        <td class="edit-user">
-            <span data-value="{{ row['ID'] }}" class="show-associated-employees" title="{{ _('Show associated employees') }}" style="color:#E76F51"><i class="fas fa-eye"></i></span>
-            <span data-value="{{ row['ID'] }}" class="edit-corporate-email" title="{{ _('Edit email') }}" style="color:#E76F51"><i class="fas fa-pencil-alt"></i></span>
+        <td class="edit-user row-actions" data-label="{{ _('Actions') }}">
+            <span data-value="{{ row['ID'] }}" class="show-associated-employees" role="button" tabindex="0" title="{{ _('Show associated employees') }}" aria-label="{{ _('Show associated employees') }}" style="color:#E76F51"><i class="fas fa-eye" aria-hidden="true"></i></span>
+            <span data-value="{{ row['ID'] }}" class="edit-corporate-email" role="button" tabindex="0" title="{{ _('Edit email') }}" aria-label="{{ _('Edit email') }}" style="color:#E76F51"><i class="fas fa-pencil-alt" aria-hidden="true"></i></span>
         </td>
 
       </tr>
       {% endfor %}
       
       {% else %}
-      <tr><td><p style="padding: 15px; font-size: 26px;">{{ _('Nothing found.') }}</p></td></tr>  
+      <tr><td class="table-empty" colspan="3">{{ _('Nothing found.') }}</td></tr>  
     {% endif %}
   </tbody>
   </table>
@@ -201,18 +410,18 @@
 
     {% if page > 1 %}
     {% set urlPrev = '/' + (page - 1) | string %}
-    <div data-value="{{ page - 1 }}">❮</div>
+    <div data-value="{{ page - 1 }}" role="button" tabindex="0" aria-label="&laquo;">❮</div>
     {% endif %}
     {% for i in range(1, (numRows // pagination) + additionalPage + 1) %}
     
     {% set urlPage = '/' ~ i %}
-    <div {% if i == page %} class="active" {% endif %} data-value="{{ i }}">{{ i }}</div>
+    <div {% if i == page %} class="active" aria-current="page" {% endif %} data-value="{{ i }}" role="button" tabindex="0">{{ i }}</div>
     {% endfor %}
     
 
     {% if page < (numRows // pagination) + additionalPage  %}
     {% set urlNext = '/' + (page + 1) | string %}
-    <div data-value="{{ page + 1 }}">❯</div>
+    <div data-value="{{ page + 1 }}" role="button" tabindex="0" aria-label="&raquo;">❯</div>
     {% endif %}
     
   </div>
@@ -221,8 +430,8 @@
   {% endif %}
 
   <div id="myModal" class="transfer-details-modal hidden" >
-    <div class="pt-quantity-modal-content">
-      <span id="closeModalBtn" class="pt-quantity-close">×</span>
+    <div class="pt-quantity-modal-content" role="dialog" aria-modal="true">
+      <span id="closeModalBtn" class="pt-quantity-close" role="button" tabindex="0" aria-label="{{ _('Close') }}">×</span>
       <div class="product-container">
         <h2 style="margin-bottom: 5px;" id="injectEmail"></h2>
 
@@ -255,6 +464,7 @@ window.addEventListener('load', () => {
       btn.addEventListener('click', function() {
         document.querySelector('#editorContent').innerHTML = "<p>{{ _('Loading.....') }}</p>";
         document.querySelector('.transfer-details-modal').classList.toggle('hidden');
+        document.getElementById('closeModalBtn').focus();
 
         emailID = btn.getAttribute('data-value');
         
@@ -393,6 +603,7 @@ window.addEventListener('load', () => {
       btn.addEventListener('click', function() {
         document.querySelector('#editorContent').innerHTML = "<p>{{ _('Loading.....') }}</p>";
         document.querySelector('.transfer-details-modal').classList.toggle('hidden');
+        document.getElementById('closeModalBtn').focus();
 
         emailID = btn.getAttribute('data-value');
         
@@ -418,9 +629,15 @@ window.addEventListener('load', () => {
                     let messageHeaders = `<div>
                                           <input type="hidden" value="${escapeHtml(response.row['ID'])}" id="emailID" />
                                           <input type="text" value="${escapeHtml(response.row['email'])}" id="emailToEdit" style="width: 100%;" /> 
-                                          <div class="pcButtonS" id="editCE" style="width: 100%;">{{ _('Submit') }}</div></div>`;
+                                          <div class="pcButtonS" id="editCE" role="button" tabindex="0" style="width: 100%; box-sizing: border-box;">{{ _('Submit') }}</div></div>`;
 
                     document.querySelector('#editorContent').innerHTML = messageHeaders;
+                    document.getElementById('emailToEdit').addEventListener('keydown', function (event) {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                        document.getElementById('editCE').click();
+                      }
+                    });
                     document.getElementById('editCE').addEventListener('click', function() {
                       let emailID = document.getElementById('emailID').value;
                       let emailToEdit = document.getElementById('emailToEdit').value;
@@ -482,87 +699,63 @@ window.addEventListener('load', () => {
 
 });
 
-let trace;
-
-function sortTable(arrowElement, n, direction) {
-  
-  // console.log(n);
-  if (trace === String(n) + direction) {
+// Sorts the table rows by the clicked column: "up" = A to Z / smallest first, "down" = the reverse.
+function sortTable(arrowElement, column, direction) {
+  const tbody = document.getElementById('myTable').tBodies[0];
+  if (!tbody) {
     return;
   }
+  const rows = Array.from(tbody.rows).filter(row => !row.querySelector('.table-empty'));
 
-  trace = String(n) + direction;
-  
+  const cellValue = row => {
+    const cell = row.cells[column];
+    return cell ? cell.textContent.trim() : '';
+  };
+
+  rows.sort((a, b) => {
+    const result = cellValue(a).localeCompare(cellValue(b), undefined, { numeric: true, sensitivity: 'base' });
+    return direction === 'down' ? -result : result;
+  });
+  rows.forEach(row => tbody.appendChild(row));
+
   document.querySelectorAll('.sort-icons i').forEach(icon => icon.style.color = '#fff');
   arrowElement.style.color = '#ff0000';
-
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (!isNaN(x.innerHTML) && !isNaN(y.innerHTML)) {
-        // Compare as numbers
-        if (dir == "asc") {
-          if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      } else {
-        // Compare as strings
-        if (dir == "asc") {
-          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        } else if (dir == "desc") {
-          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-            shouldSwitch = true;
-            break;
-          }
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
 }
+
+// Icon buttons and page numbers are spans/divs: make Enter and Space work on them
+document.addEventListener('keydown', function (event) {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+  const target = event.target;
+  if (target.matches('#myTable [role="button"], .pagination [role="button"], .pt-quantity-close')) {
+    event.preventDefault();
+    target.click();
+  }
+});
+
+// The modal closes with Escape or a click on the dimmed backdrop, like its close button
+const detailsModal = document.querySelector('.transfer-details-modal');
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && detailsModal && !detailsModal.classList.contains('hidden')) {
+    document.getElementById('closeModalBtn').click();
+  }
+});
+if (detailsModal) {
+  detailsModal.addEventListener('click', function (event) {
+    if (event.target === detailsModal) {
+      document.getElementById('closeModalBtn').click();
+    }
+  });
+}
+
+// Enter in the email field applies the filters
+document.getElementById('email').addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    document.querySelector('.filter').click();
+  }
+});
 
 
 // $("#phone").intlTelInput({

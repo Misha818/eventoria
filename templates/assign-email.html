@@ -34,20 +34,24 @@
 {{ sideBar | safe }}
 
 <div class="overlay" id="overlay"></div>
-<div class="containerS">
-    <!-- Form for adding a product -->
-    
-    <form>
-        <div id="mistakes" style="width: 100%;"></div>
-        
-        <div class="form-group row" id="emailsDropDown" style="margin: 15px 0px 0px 0px;"></div>
-        <div class="form-group row" style="margin-bottom: unset;" id="stuffDropDown"></div>
+<div class="containerS admin-form-card">
+    <h1>{{ _('Assign an Email') }}</h1>
+    <div id="mistakes" style="width: 100%;" role="alert" aria-live="polite"></div>
 
-            
+    <form class="admin-form" novalidate>
+        <label for="emails" class="field-label" id="emails-label">{{ _('Email') }}</label>
+        <div class="form-group row" id="emailsDropDown"></div>
+
+        <div id="stuff-field" class="field-group">
+            <label for="stuff" class="field-label">{{ _('Employee') }}</label>
+            <div class="form-group row" id="stuffDropDown"></div>
+        </div>
+
+
         <input type="hidden" id="language-id" value="{{ languageID }}">
-        
-        <div id="saveButton" class="pcButtonS modifiedB" >{{ _('Submit') }}</div>
-        <div id="saving" class="pcButtonS hidden modifiedB" >{{ _('Saving...') }}</div>
+
+        <div id="saveButton" class="pcButtonS modifiedB" role="button" tabindex="0">{{ _('Submit') }}</div>
+        <div id="saving" class="pcButtonS hidden modifiedB" aria-live="polite">{{ _('Saving...') }}</div>
     </form>
 
 
@@ -104,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (emails['length'] > 0) {
             const select = document.createElement('select');
             select.name = 'emails';
-            select.style.marginBottom = '12px';
             select.id = 'emails';
             select.classList.add('form-control');
             select.classList.add('styled-select');
@@ -133,8 +136,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const message = "{{ _('No emails available') }}";
             const messageDiv = document.createElement('div');
             messageDiv.textContent = message;
-            messageDiv.style.color = 'red'; 
-            messageDiv.style.fontSize = '22px';
+            messageDiv.style.color = 'red';
+            messageDiv.style.fontSize = '18px';
+            messageDiv.style.boxSizing = 'border-box';
             messageDiv.style.width = '100%';
             messageDiv.style.textAlign = 'center';
             messageDiv.style.border = '1px solid red';
@@ -147,6 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
             creatMessageBtn.classList.add('modifiedB');
             creatMessageBtn.href = "{{ url_for('create_email') }}";
             creatMessageBtn.style.textDecoration = 'none';
+            creatMessageBtn.style.boxSizing = 'border-box';
+            creatMessageBtn.style.textAlign = 'center';
 
             const parentDiv = document.createElement('div');
             parentDiv.style.display = 'flex';   
@@ -154,11 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
             parentDiv.style.alignItems = 'center';  
             parentDiv.style.justifyContent = 'center';
             parentDiv.style.width = '100%';
-            parentDiv.style.marginTop = '10px';
+            parentDiv.style.gap = '10px';
             parentDiv.style.marginBottom = '10px';
             parentDiv.appendChild(messageDiv);
             parentDiv.appendChild(creatMessageBtn); // Append the button to the parent div
             dropdownContainerEmails.appendChild(parentDiv); // Append the parent div to the dropdown container
+
+            // Nothing can be assigned yet: keep only the message and the link to create an email
+            document.getElementById('emails-label').classList.add('hidden');
+            document.getElementById('stuff-field').classList.add('hidden');
+            document.getElementById('saveButton').classList.add('hidden');
 
         }
     };
@@ -168,6 +179,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // When the form is submitted
     const saveButton = document.getElementById('saveButton');
+
+    // Enter in a field submits through the Submit button (a plain form submit would reload the page)
+    const adminForm = document.querySelector('.admin-form');
+    adminForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+    });
+    adminForm.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && event.target.classList.contains('text-field')) {
+            event.preventDefault();
+            if (!saveButton.classList.contains('hidden')) {
+                saveButton.click();
+            }
+        }
+    });
+    saveButton.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            saveButton.click();
+        }
+    });
 
     saveButton.addEventListener('click', function (event) {
 
@@ -182,8 +213,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let formData = new FormData();
          
         let languageID = document.getElementById('language-id').value;
-        let stuffID = document.getElementById('stuff').value;
-        let emailID = document.getElementById('emails').value;
+        const stuffSelect = document.getElementById('stuff');
+        const emailSelect = document.getElementById('emails');
+        let stuffID = stuffSelect ? stuffSelect.value : '';
+        let emailID = emailSelect ? emailSelect.value : '';
 
         
 

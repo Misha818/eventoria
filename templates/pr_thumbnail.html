@@ -27,68 +27,394 @@
         margin: -2px;
     }
 
+    /* ---- Page card (base card styles come from .admin-form-card in styles.css) ---- */
+    .containerS.thumb-card {
+        max-width: 620px;
+        gap: 18px;
+    }
+
+    .thumb-card h1 {
+        margin: 0;
+    }
+
+    .thumb-card #mistakes:empty {
+        display: none;
+    }
+
+    .thumb-card #mistakes {
+        margin: 0;
+    }
+
+    .thumb-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .thumb-section-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+    }
+
+    .thumb-hint {
+        margin: 0;
+        font-size: 14px;
+        text-align: center;
+        color: #666;
+    }
+
+    /* ---- Images from other languages ---- */
+    .thumb-card .pc_slider {
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 10px;
+        border: 1px solid #e3dfd8;
+        border-radius: 10px;
+        background-color: #faf8f5;
+        box-sizing: border-box;
+    }
+
+    /* two images per view; exactly 50% each so the slider's 100% steps line up */
+    .thumb-card .pc_slide {
+        flex: 0 0 50%;
+        min-width: 0;
+        margin-right: 0;
+        padding: 4px;
+        box-sizing: border-box;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    .thumb-card .pc_slide img {
+        border-radius: 6px;
+        aspect-ratio: auto;
+    }
+
+    .thumb-card .pc_slide.selected::after {
+        top: 6px;
+        right: 8px;
+        font-size: 32px;
+    }
+
+    .thumb-card .pc_slide:focus-visible {
+        box-shadow: 0 0 0 3px #264653;
+    }
+
+    .thumb-card .prev,
+    .thumb-card .next {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        margin-top: -18px;
+        padding: 0;
+        font-size: 16px;
+        text-decoration: none;
+        color: #fff;
+        background-color: rgba(38, 70, 83, 0.75);
+        border-radius: 50%;
+        z-index: 2;
+    }
+
+    .thumb-card .prev {
+        left: 6px;
+    }
+
+    .thumb-card .next {
+        right: 6px;
+    }
+
+    .thumb-card .prev:hover,
+    .thumb-card .next:hover {
+        background-color: #264653;
+    }
+
+    .thumb-card .prev:focus-visible,
+    .thumb-card .next:focus-visible {
+        outline: 3px solid #E76F51;
+        outline-offset: 2px;
+    }
+
+    .thumb-card .pc_slider.no-arrows .pc_slides {
+        justify-content: center;
+    }
+
+    /* nothing to scroll to: hide the arrows */
+    .thumb-card .pc_slider.no-arrows .prev,
+    .thumb-card .pc_slider.no-arrows .next {
+        display: none;
+    }
+
+    /* ---- Upload area ---- */
+    .thumb-card #add-product-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+        margin: 0;
+    }
+
+    .thumb-card .dropzone {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
+        margin: 0;
+        padding: 16px;
+        border: 2px dashed #2A9D8F;
+        border-radius: 10px;
+        background-color: #f7fbfa;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .thumb-card .dropzone:hover {
+        background-color: #eef7f5;
+    }
+
+    /* empty: a compact box; with an image: just the image card, no frame */
+    .thumb-card .dropzone {
+        align-self: center;
+        width: 220px;
+        max-width: 100%;
+    }
+
+    .thumb-card .dropzone.dz-started {
+        width: auto;
+        min-height: 0;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+    }
+
+    /* card as wide as the image (120px) plus its padding; a long file name must not stretch it */
+    .thumb-card .dropzone.dz-started .dz-preview {
+        width: 142px;
+        overflow: visible;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+
+    .thumb-card .dropzone .dz-message {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2A9D8F;
+    }
+
+    .thumb-card .dropzone .dz-preview {
+        margin: 0;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 100%;
+    }
+
+    .thumb-card .dropzone .dz-preview:hover {
+        background-color: #f8f9fa;
+    }
+
+    .thumb-card .dropzone .dz-preview .dz-remove-btn {
+        width: 28px;
+        height: 28px;
+        top: -10px;
+        right: -10px;
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .thumb-card .dropzone .alt-input {
+        display: block;
+        width: 100%;
+        margin: 10px 0 0 0;
+        padding: 8px 10px;
+        font-size: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .thumb-card .pcButtonS {
+        width: 100%;
+        margin: 0;
+        padding: 15px;
+        font-size: 20px;
+        box-sizing: border-box;
+    }
+
+    .thumb-card .pcButtonS:focus-visible,
+    .thumb-card .thumb-back:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    .thumb-card .thumb-back {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 4px;
+        font-weight: 600;
+        color: #264653;
+        text-decoration: none;
+    }
+
+    .thumb-card .thumb-back:hover {
+        text-decoration: underline;
+    }
+
+    .thumb-card .thumb-error {
+        align-items: center;
+        text-align: center;
+    }
+
+    .thumb-card .thumb-error img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* ---- Crop window ---- */
+    #imageEditorModal.modal {
+        width: min(640px, calc(100vw - 24px)) !important;
+        max-height: calc(100vh - 24px) !important;
+        padding: 16px !important;
+        overflow-y: auto !important;
+        border-radius: 14px !important;
+        box-sizing: border-box;
+    }
+
+    #imageEditorModal img {
+        display: block;
+        max-width: 100%;
+        max-height: 60vh;
+    }
+
+    #imageEditorModal .crop-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    #imageEditorModal .crop-actions button {
+        flex: 1;
+        margin: 0;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    #imageEditorModal #saveEditedImage {
+        background-color: #E76F51;
+    }
+
+    #imageEditorModal #saveEditedImage:hover {
+        background-color: #d65f42;
+    }
+
+    #imageEditorModal #cancelEdit {
+        color: #264653;
+        background-color: #eef2f3;
+    }
+
+    #imageEditorModal #cancelEdit:hover {
+        background-color: #dfe6e8;
+    }
+
+    #imageEditorModal .crop-actions button:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 600px) {
+        .thumb-card .dropzone {
+            min-height: 150px;
+            padding: 12px;
+        }
+
+        .thumb-card .pcButtonS {
+            font-size: 18px;
+        }
+    }
+
 </style>
 
 {% endblock %}
 
 {% block content %}
 
-    <div class="containerS">
-        <div id="mistakes"></div>
+    <div class="containerS admin-form-card thumb-card">
+        <h1>{{ _('Product Thumbnail') }}</h1>
+        <div id="mistakes" role="alert" aria-live="polite"></div>
         <div class="overlay" id="overlay"></div>
-        
-        {% if content.content == False %}
-        <img src="{{ url_for('static', filename='images/error.png' ) }}" >
-        <H3> {{ _('Something went wrong.') }} </H3>
-        {% else %}
-        
-{% if resultIMG.length > 0 %}
-<!-- <h3 style="text-align: center;">{{ _('Images from other language(s)') }}</h3> -->
 
-<div class="pc_slider">
-        
+        {% if content.content == False %}
+        <div class="thumb-section thumb-error">
+            <img src="{{ url_for('static', filename='images/error.png' ) }}" alt="">
+            <H3> {{ _('Something went wrong.') }} </H3>
+        </div>
+        {% else %}
+
+{% if resultIMG.length > 0 %}
+<section class="thumb-section" aria-labelledby="other-lang-title">
+<h2 class="thumb-section-title" id="other-lang-title">{{ _('Images from other language(s)') }}</h2>
+
+<div class="pc_slider{% if resultIMG.length <= 2 %} no-arrows{% endif %}">
+
 
         <div class="pc_slides">
 
     {% for row in resultIMG.data %}
 
-        <div class="pc_slide active" style="background-color: unset;">
-            <img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['thumbnail'] ) }}"  >
+        <div class="pc_slide active" style="background-color: unset;" role="button" tabindex="0" aria-label="{{ row['AltText'] or _('Image') }}">
+            <img src="{{ url_for('static', filename='images/pr_thumbnails/' + row['thumbnail'] ) }}" alt="{{ row['AltText'] }}">
             <input type="hidden" alt="{{ row['AltText'] }}" class="altText" />
         </div>
 
     {% endfor %}
-    
+
             <!-- Add more slides as needed -->
         </div>
-        <a class="prev" data-onclick='["moveSlide", -1]'>&#10094;</a>
-        <a class="next" data-onclick='["moveSlide", 1]'>&#10095;</a>
+        <a class="prev" data-onclick='["moveSlide", -1]' role="button" tabindex="0" aria-label="{{ _('Previous') }}" title="{{ _('Previous') }}">&#10094;</a>
+        <a class="next" data-onclick='["moveSlide", 1]' role="button" tabindex="0" aria-label="{{ _('Next') }}" title="{{ _('Next') }}">&#10095;</a>
     </div>
+</section>
 
-{% else %}    
+{% else %}
 <div class="pc_slides"></div>
 {% endif %}
 
-<form id="add-product-form">
+<form id="add-product-form" novalidate>
 
     <input type="hidden" id="imageState" value="0">
     <input type="hidden" id="img_value" value="">
-    
-        
+
+
     <input type="hidden" id="language-id" value="{{ languageID }}">
     <input type="hidden" id="RefKey" value="{{ RefKey }}">
 
-    <div  class="dropzone" id="myDropzone">
-        <div class="dz-message dz-button">{{ _('Image') }}</div>
+    <div class="thumb-section">
+        <h2 class="thumb-section-title" id="thumb-image-title">{{ _('Image') }}</h2>
+        <p class="thumb-hint">{{ _('Double-click the image to crop it.') }}</p>
+        <div  class="dropzone" id="myDropzone" aria-labelledby="thumb-image-title">
+            <div class="dz-message dz-button">{{ _('Image') }}</div>
+        </div>
     </div>
 
-    <div id="saveButton" class="pcButtonS" style="width:100%;">{{ _('Submit') }}</div>
-    <div id="saving" class="pcButtonS hidden" style="width:100%;">{{ _('Saving...') }}</div>
+    <div id="saveButton" class="pcButtonS" role="button" tabindex="0">{{ _('Submit') }}</div>
+    <div id="saving" class="pcButtonS hidden" aria-live="polite">{{ _('Saving...') }}</div>
 
 </form>
 
 
-<a href="{{ url_for('home') }}product/{{ RefKey }}" class="self-left">{{ _('Back') }}</a>
+<a href="{{ url_for('home') }}product/{{ RefKey }}" class="self-left thumb-back"><span aria-hidden="true">&#10094;</span> {{ _('Back') }}</a>
 
 </div>
 
@@ -334,10 +660,13 @@ function openImageEditorModal(imageUrl, callback) {
         imageEditorModal.className = 'modal open';
         imageEditorModal.innerHTML = `
             <img id="imageToEdit" src="${escapeHtml(imageUrl)}" alt="Image to edit">
-            <br>
-            <button id="saveEditedImage">{{ _('Crop') }}</button>
-            <button id="cancelEdit">{{ _('Done') }}</button>
+            <div class="crop-actions">
+                <button type="button" id="saveEditedImage">{{ _('Crop') }}</button>
+                <button type="button" id="cancelEdit">{{ _('Done') }}</button>
+            </div>
         `;
+        imageEditorModal.setAttribute('role', 'dialog');
+        imageEditorModal.setAttribute('aria-modal', 'true');
         document.body.appendChild(imageEditorModal);
 
         let imageToEdit = document.getElementById('imageToEdit');
@@ -498,9 +827,20 @@ saveButton.addEventListener('click', function (event) {
 <script nonce="{{ csp_nonce() }}">
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('myDropzone').addEventListener('click', function() {
-            cropperState = 1;    
+            cropperState = 1;
         })
 
+    });
+
+    // The image choices, arrows and Submit are not real buttons: let Enter and Space press them too
+    document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+        if (event.target.matches('.thumb-card .pc_slide, .thumb-card .prev, .thumb-card .next, .thumb-card #saveButton')) {
+            event.preventDefault();
+            event.target.click();
+        }
     });
 </script>
  {% endif %}

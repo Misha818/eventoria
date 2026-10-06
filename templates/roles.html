@@ -24,6 +24,62 @@ th, td {
 tr:nth-child(even) {
   background-color: #f2f2f2
 }
+
+/* Edit column: compact on desktop, easy to tap on touch screens */
+#myTable td.row-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+#myTable td.row-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+#myTable td.row-actions a:hover,
+#myTable td.row-actions a:focus-visible {
+  background-color: #fbe9e4;
+  outline: none;
+}
+
+.sort-icons i {
+  padding: 2px 4px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 92%;
+    padding-top: 10px;
+  }
+
+  #tableDaddy {
+    margin-left: 0 !important;
+  }
+
+  #myTable tr {
+    padding: 6px 14px;
+  }
+
+  #myTable tr td {
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    text-align: right;
+    font-size: 15px;
+  }
+
+  #myTable td.row-actions {
+    width: auto;
+    border-top: 1px dashed #e3e3e3;
+    padding-top: 6px;
+  }
+}
     </style>
 {% endblock %}
 
@@ -60,23 +116,25 @@ tr:nth-child(even) {
         <th></th>
       </tr>
       </thead>
+      <tbody>
 {% for row in result.data %}
   {% set status = _('Active') %}
   {% if row['Status'] == 0 %}
     {% set status = _('Inactive') %}
   {% endif %}
+  {% set name = row['Rol'] %}
   {% set editUrl = 'edit-role/' + row['ID']|string %}
     <tr>
-      <td>{{ row['Rol'] }}</td>
-      <td>{{ status }}</td>
-      <td>
-        <a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('View/Edit') }}"><i class="fa-solid fa-pen-to-square" style="font-size: 20px; color: #E76F51;"></i></a>
+      <td data-label="{{ _('Role') }}">{{ row['Rol'] }}</td>
+      <td data-label="{{ _('Status') }}">{{ status }}</td>
+      <td class="row-actions" data-label="{{ _('View/Edit') }}">
+        <a href="{{ url_for('home', _external=True) + editUrl }}" target="_blank" title="{{ _('View/Edit') }}" aria-label="{{ _('View/Edit') }}: {{ name }}"><i class="fa-solid fa-pen-to-square" style="font-size: 20px; color: #E76F51;" aria-hidden="true"></i></a>
       </td>
     </tr>
     
     
 {% endfor %}
-
+      </tbody>
   </table>
 </div>
 

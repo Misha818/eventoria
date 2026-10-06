@@ -152,6 +152,145 @@
       }
     }
 
+    /* ---- Reward steps: each one is a link to the matching orders ---- */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    a.step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 4px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    a.step:hover,
+    a.step:focus-visible {
+      background-color: #fbe9e4;
+      text-decoration: none;
+    }
+
+    a.step:focus-visible {
+      outline: 3px solid #264653;
+      outline-offset: 2px;
+    }
+
+    a.step .circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      font-size: 1.25rem;
+    }
+
+    .step-label {
+      font-weight: 600;
+    }
+
+    /* ---- Promo code table ---- */
+    .promo-expired {
+      color: red;
+    }
+
+    #myTable td.row-actions {
+      width: 1%;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    #myTable td.row-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      min-height: 40px;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    #myTable td.row-actions a:hover,
+    #myTable td.row-actions a:focus-visible {
+      background-color: #fbe9e4;
+    }
+
+    #myTable td.row-actions a:focus-visible {
+      outline: 3px solid #264653;
+      outline-offset: 2px;
+    }
+
+    #myTable td.table-empty {
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .sort-icons i {
+      padding: 2px 4px;
+    }
+
+    @media (max-width: 768px) {
+      .affiliate-page h2 {
+        font-size: 1.5rem;
+      }
+
+      .last-container #tableDaddy {
+        margin-left: 0 !important;
+      }
+
+      #myTable tr {
+        padding: 12px 16px;
+      }
+
+      #myTable td {
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+        text-align: right;
+      }
+
+      #myTable td::before {
+        flex-shrink: 0;
+        text-align: left;
+      }
+
+      #myTable td.row-actions {
+        width: auto;
+      }
+
+      #myTable td.table-empty {
+        justify-content: center;
+      }
+
+      #myTable td.table-empty::before {
+        display: none;
+      }
+    }
+
+    /* Phones: a 2 x 2 grid instead of four stacked circles */
+    @media (max-width: 576px) {
+      .stepper {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 24px 0;
+      }
+
+      .step {
+        margin-bottom: 0;
+      }
+
+      a.step .circle {
+        width: 70px;
+        height: 70px;
+        font-size: 1.1rem;
+      }
+    }
+
       
     </style>
 {% endblock %}
@@ -160,7 +299,7 @@
 
 {{ sideBar | safe }}
 
-<div class="container">
+<div class="container affiliate-page">
   {% set welcome = _('Welcome dear') %}
   {% set welcome2 = _('Below is the summary of your payment and reward progress.') %}
   {% if stuff == True %}
@@ -193,44 +332,29 @@
         
         <th>
           <div style="display: flex; align-items: center;">
-           {{ _('Expiration Date') }} 
-  
+           {{ _('Expiration Date') }}
+
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 0, "up"]'></i>
-              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 0, "down"]'></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
             </div>
           </div>
         </th>
 
         <th>
           <div style="display: flex; align-items: center;">
-            {{ _('Status') }} 
+            {{ _('Status') }}
             <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
-              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
+              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 2, "up"]'></i>
+              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 2, "down"]'></i>
             </div>
           </div>
         </th>
-        <th>
-          <div style="display: flex; align-items: center;">
-            {{ _('Details') }} 
-            <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
-              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
-            </div>
-          </div>
-        </th>
-        <th title="{{ _('Purchase History') }}">
-          <div style="display: flex; align-items: center;">
-            {{ _('P/H') }} 
-            <div class="sort-icons" style="margin-left: 5px;">
-              <i class="fas fa-sort-up myup" data-onclick='["sortTable", "$this", 1, "up"]'></i>
-              <i class="fas fa-sort-down mydown" data-onclick='["sortTable", "$this", 1, "down"]'></i>
-            </div>
-          </div>
-        </th>
+        <th>{{ _('Details') }}</th>
+        <th title="{{ _('Purchase History') }}">{{ _('P/H') }}</th>
       </tr>
       </thead>
+      <tbody>
 
   {% for row in resultP.data %}
     {% set status = _('Active') %}
@@ -241,21 +365,18 @@
         {% set status = _('Expired') %}
       {% endif %}
     {% endif %}
-    {% set expDateStyle = '' %}
-    {% if row['expDate'] is not none and row['expDate'] < currentDate %}
-    {% set expDateStyle = 'color: red;' %}
-    {% endif %}
+    {% set expired = row['expDate'] is not none and row['expDate'] < currentDate %}
   
   
     <tr>
       {% if row['Promo'] is none %}
-        <td style="text-align: left; font-size: 18px;;">{{ _('No promo code registered') }}</td>
+        <td class="table-empty" colspan="5">{{ _('No promo code registered') }}</td>
       {% else %}
-        <td>{{ row['Promo'] }}</td>
+        <td data-label="{{ _('Promo Code') }}"><strong>{{ row['Promo'] }}</strong></td>
 
-        <td style="{{ expDateStyle }}">{{ row['expDate'] }}</td>
-        <td>{{ status }}</td>
-        <td>
+        <td data-label="{{ _('Expiration Date') }}"{% if expired %} class="promo-expired"{% endif %}>{{ row['expDate'] }}</td>
+        <td data-label="{{ _('Status') }}">{{ status }}</td>
+        <td class="row-actions" data-label="{{ _('Details') }}">
           {% set promoDetailsUrl = '' %}
           {% set affiliateOrdersUrl = '' %}
 
@@ -268,17 +389,17 @@
                 {% set affiliateOrdersUrl = url_for('home') + 'stuff-affiliate-orders/page=1&status=all&promoCode=' + row['Promo'] + '&affiliate=' + affID %}
               {% endif %}
           {% endif %}
-          <a href="{{ promoDetailsUrl }}" title="{{ _('Details') }}"><i class="fas fa-eye" style="font-size: 20px; color: #E76F51;"></i></a>
+          <a href="{{ promoDetailsUrl }}" title="{{ _('Details') }}" aria-label="{{ _('Details') }}: {{ row['Promo'] }}"><i class="fas fa-eye" style="font-size: 20px; color: #E76F51;" aria-hidden="true"></i></a>
         </td>
-        <td>
-          <a href="{{ affiliateOrdersUrl }}" title="{{ _('Purchase History') }}"><i class="fas fa-info-circle" style="font-size: 20px; color: #E76F51;"></i></a>
+        <td class="row-actions" data-label="{{ _('Purchase History') }}">
+          <a href="{{ affiliateOrdersUrl }}" title="{{ _('Purchase History') }}" aria-label="{{ _('Purchase History') }}: {{ row['Promo'] }}"><i class="fas fa-info-circle" style="font-size: 20px; color: #E76F51;" aria-hidden="true"></i></a>
         </td>
       </tr>
       
       
       {% endif %}
     {% endfor %}
-
+      </tbody>
   </table>
 </div>
 
@@ -303,21 +424,20 @@ const stepsKeys = Object.keys(resultRevardsList);
 
 
 stepsKeys.forEach(key => {
-  // Create a step container
-  const stepDiv = document.createElement("div");
+  // The whole step (count + label) links to the matching orders
+  const stepDiv = document.createElement("a");
   stepDiv.classList.add("step");
   stepDiv.setAttribute("data-status", key);
+  stepDiv.href = "{{ url_for('home', _external=True) }}" + resultRevardsList[key][3];
 
   // Create the circular indicator
-  const circle = document.createElement("div");
+  const circle = document.createElement("span");
   circle.classList.add("circle", resultRevardsList[key][2]);
   circle.innerText = resultRevardsList[key][1];
 
   // Create the label for the status
-  const label = document.createElement("a");
-  label.classList.add("mt-2");
-  // label.target = "_BLANK";
-  label.href = "{{ url_for('home', _external=True) }}" + resultRevardsList[key][3];
+  const label = document.createElement("span");
+  label.classList.add("step-label");
   label.innerText = resultRevardsList[key][0];
 
   // Append the circle and label to the step container
@@ -345,72 +465,27 @@ window.addEventListener('load', () => {
   document.querySelector('body').classList.add('loaded');
 });
 
-let trace;
-
-function sortTable(arrowElement, n, direction) {
-  
-  // console.log(n);
-  if (trace === String(n) + direction) {
+// Sorts the table rows by the clicked column: "up" = A to Z / smallest first, "down" = the reverse.
+function sortTable(arrowElement, column, direction) {
+  const tbody = document.getElementById('myTable').tBodies[0];
+  if (!tbody) {
     return;
   }
+  const rows = Array.from(tbody.rows);
 
-  trace = String(n) + direction;
-  
+  const cellValue = row => {
+    const cell = row.cells[column];
+    return cell ? cell.textContent.trim() : '';
+  };
+
+  rows.sort((a, b) => {
+    const result = cellValue(a).localeCompare(cellValue(b), undefined, { numeric: true, sensitivity: 'base' });
+    return direction === 'down' ? -result : result;
+  });
+  rows.forEach(row => tbody.appendChild(row));
+
   document.querySelectorAll('.sort-icons i').forEach(icon => icon.style.color = '#fff');
   arrowElement.style.color = '#ff0000';
-
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("myTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
 }
 
 </script>

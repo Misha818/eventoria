@@ -5,16 +5,139 @@
 {% endblock %}
 
 
+{% block head %}
+<style>
+    .sps-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto 30px auto;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sps-card h1 {
+        margin: 0 0 12px 0;
+        font-size: 1.6rem;
+        text-align: center;
+        color: #333;
+    }
+
+    .sps-card .field-label {
+        margin: 8px 0 2px 0;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .sps-card #response {
+        color: red;
+    }
+
+    .sps-card #response:empty {
+        display: none !important;
+    }
+
+    .sps-card .pr-name,
+    .sps-card .parent {
+        margin-bottom: 10px;
+        border-radius: 6px;
+    }
+
+    .sps-card .pr-name {
+        border: 1px solid #333;
+    }
+
+    .sps-card input[type="text"] {
+        width: 100%;
+        min-width: 0;
+        padding: 10px 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .sps-card .remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        min-height: 40px;
+        padding: 0 !important;
+        line-height: 1;
+    }
+
+    .sps-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        padding: 0;
+        margin-top: 4px;
+    }
+
+    .sps-actions .plusDiv {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .sps-actions .pcButtonS {
+        width: 100%;
+        margin: 0;
+        padding: 15px;
+        font-size: 20px;
+        box-sizing: border-box;
+    }
+
+    .sps-card .remove:focus-visible,
+    .sps-actions .plusDiv:focus-visible,
+    .sps-actions .pcButtonS:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 768px) {
+        /* beats the inline width: 70% */
+        .container.sps-page {
+            width: 92% !important;
+        }
+
+        #tableDaddy.sps-page {
+            margin-left: 0 !important;
+        }
+
+        .sps-card {
+            padding: 16px;
+        }
+
+        .sps-card h1 {
+            font-size: 1.35rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
 {{ sideBar | safe }}
-<div class="container toRight" id="tableDaddy" style="width: 70%;">
-<div id="response"></div>
+<div class="container toRight sps-page" id="tableDaddy" style="width: 70%;">
+<div class="sps-card">
+<h1>{{ _('Edit Product Type Specification') }}</h1>
+<div id="response" role="alert" aria-live="polite"></div>
+<label for="name" class="field-label">{{ _('Name') }}</label>
 <div class="mb-3 containerSPS pr-name">
     <input type="hidden" id="ptsID" value="{{ result[0]['ID'] }}">
     <input autocomplete="off" autofocus value="{{ result[0]['Name']}}" id="name" name="name" placeholder="{{ _('Product Type Situation name') }}" type="text">
 </div>
 
+<span class="field-label">{{ _('Product Type Specifications') }}</span>
 <form id="myForm" >
     <!-- Dynamic fields -->
     {% for row in result %}       
@@ -22,7 +145,7 @@
         
         <input type="text" name="text_{{ loop.index }}" value="{{ row['Text']}}">
         <input type="hidden" name="spssID" value="{{ row['spssID'] }}">
-        <div class="remove" data-onclick='["handleRemoveClick", "$this"]'>-</div>
+        <div class="remove" data-onclick='["handleRemoveClick", "$this"]' role="button" tabindex="0" title="{{ _('Remove') }}" aria-label="{{ _('Remove') }}">-</div>
                    
     </div>
     {% endfor %}
@@ -30,13 +153,13 @@
     
 </form>
 
+<div class="containerH sps-actions">
+
+    <div id="plusDiv" class="plusDiv" data-onclick='["handlePlusClick", "$this"]' role="button" tabindex="0" title="{{ _('Add') }}" aria-label="{{ _('Add') }}">+</div>
+    <div class="pcButtonS" id="submit" role="button" tabindex="0">{{ _('Submit')}}</div>
+    <div class="pcButtonS hidden" id="saving" aria-live="polite">{{ _('Saving...')}}</div>
 </div>
-
-<div class="containerH" style="width: 100%;">
-
-    <div id="plusDiv" class="plusDiv toRight tableDaddy" data-onclick='["handlePlusClick", "$this"]' >+</div>
-    <div class="pcButtonS toRight tableDaddy" id="submit">{{ _('Submit')}}</div>
-    <div class="pcButtonS hidden toRight tableDaddy" id="saving">{{ _('Saving...')}}</div>
+</div>
 </div>
 
     <script nonce="{{ csp_nonce() }}">
@@ -306,6 +429,19 @@
         
 
   
+    </script>
+
+    <script nonce="{{ csp_nonce() }}">
+        // The add / remove / submit controls are divs: let Enter and Space press them too
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+            if (event.target.matches('.sps-card .remove, .sps-actions .plusDiv, .sps-actions #submit')) {
+                event.preventDefault();
+                event.target.click();
+            }
+        });
     </script>
 
 {% endblock %}

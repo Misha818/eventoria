@@ -16,17 +16,115 @@
 <link href="https://fonts.googleapis.com/css?family=Montserrat|Roboto|Lato|Oswald|Playfair+Display|Raleway" rel="stylesheet">
 
 <style>
-.ql-snow .ql-picker.ql-font .ql-picker-label::before, .ql-snow .ql-picker.ql-font .ql-picker-item::before {
-    content: 'Montserrat';
-}
-
-.ql-snow .ql-picker.ql-font {
-    width: 120px;
-}
 
 #response {
-    width: 90%;
-    margin: 50px auto 15px auto;
+    width: 100%;
+    margin: 0 0 12px 0;
+    color: red;
+}
+
+#response:empty {
+    display: none !important;
+}
+
+/* ---- Form card ---- */
+.email-title {
+    max-width: 900px;
+    margin: 0 auto 12px auto;
+    font-size: 1.6rem;
+    text-align: center;
+    color: #333;
+}
+
+.email-page .transfer-funds {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.email-page .field-label {
+    margin: 8px 0 2px 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.email-page .styled-select {
+    margin-bottom: 0 !important;
+    font-size: 16px;
+}
+
+.email-page #to,
+.email-page #subject {
+    width: 100%;
+    min-height: 46px;
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.email-page #to:focus,
+.email-page #subject:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+/* the whole message box is clickable, not just its first line */
+.email-page .ql-container.ql-snow .ql-editor {
+    min-height: 300px;
+}
+
+.email-page .email-actions {
+    padding: 0;
+    margin-top: 12px;
+}
+
+.email-page .email-actions .pcButtonS {
+    width: 100%;
+    margin: 0;
+    padding: 15px;
+    font-size: 20px;
+    box-sizing: border-box;
+}
+
+.email-page .email-actions .pcButtonS:focus-visible {
+    outline: 3px solid #264653;
+    outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+    /* beats the inline width: 987px */
+    .container.email-page {
+        width: 94% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #tableDaddy.email-page {
+        margin-left: auto !important;
+    }
+
+    .email-page .transfer-funds {
+        padding: 16px;
+    }
+
+    .email-title {
+        font-size: 1.35rem;
+    }
 }
 
 
@@ -158,6 +256,7 @@
 }
 
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='rte.css') }}">
 
 {% endblock %}
 
@@ -167,7 +266,7 @@
 
 
 
-<div class="container toRight" id="tableDaddy" style="width: 987px;">
+<div class="container toRight email-page" id="tableDaddy" style="width: 987px;">
     {% set email = '' %}
     {% set emailID = '' %}
 
@@ -180,11 +279,13 @@
             {% set emailID = filterContent.emailID | int %}
         {% endif %}
     {% endif %}
-<div id="response"></div>
+<h1 class="email-title">{{ _('Send Email') }}</h1>
 <div class="mb-3 transfer-funds">
+    <div id="response" role="alert" aria-live="polite"></div>
 
     {% if result.length > 0 %}
-        <select id="from" class="styled-select" style="margin-bottom: 10px;">
+        <label for="from" class="field-label">{{ _('From') }}</label>
+        <select id="from" class="styled-select">
             <option value="">{{ _('Choose sender email address') }}</option>
             {% for val in result.data %}                
                 {% set selected = '' %}
@@ -203,21 +304,24 @@
         
     {% endif %}
 
-    <input type="email" id="to" value="{{ email }}" placeholder="{{ _('Enter recipient email address') }}"  style="width: 100%; height: 45px;">
-    <input type="text" id="subject" placeholder="{{ _('Subject') }}"  style="width: 100%; height: 45px;">
+    <label for="to" class="field-label">{{ _('To') }}</label>
+    <input type="email" id="to" value="{{ email }}" placeholder="{{ _('Enter recipient email address') }}" inputmode="email" autocomplete="off">
+    <label for="subject" class="field-label">{{ _('Subject') }}</label>
+    <input type="text" id="subject" placeholder="{{ _('Subject') }}" autocomplete="off">
+    <span class="field-label" id="message-label">{{ _('Message') }}</span>
 
     <!-- Quill.js editor container -->
     <!-- <div id="editor" ></div> -->
 
         <div id="text-pickr-container" style="display: none;"></div>
         <div id="bg-pickr-container"   style="display: none;"></div>
-        <div id="editor-wrapper" class="quill-editor scroll-container" style="overflow-y: auto;">
+        <div id="editor-wrapper" class="quill-editor scroll-container" style="overflow-y: auto;" aria-labelledby="message-label">
             <div id="editor-container" style="width: 100%; min-height: 300px; margin-top: unset; margin-bottom: unset;"></div>
         </div>
 
-            <div class="containerH toRight tableDaddy">
-                <div class="pcButtonS" id="submit">{{ _('Submit')}}</div>
-                <div class="pcButtonS hidden" id="saving">{{ _('Saving...')}}</div>
+            <div class="containerH email-actions">
+                <div class="pcButtonS" id="submit" role="button" tabindex="0">{{ _('Submit')}}</div>
+                <div class="pcButtonS hidden" id="saving" aria-live="polite">{{ _('Saving...')}}</div>
             </div>
 
         <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
@@ -395,10 +499,11 @@ const Font = Quill.import('formats/font');
         [{ 'indent': '-1' }, { 'indent': '+1' }],
         [{ 'direction': 'rtl' }],
         // [{ 'size': ['small', false, 'large', 'huge'] }],
-        [{ 'size': Size.whitelist }],
+        // false = no size / no font chosen ("Normal" / "Sans Serif"), so the pickers are never blank
+        [{ 'size': [false, ...Size.whitelist] }],
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'color': [] }, { 'background': [] }],
-        [{ 'font': Font.whitelist }],
+        [{ 'font': [false, ...Font.whitelist] }],
         [{ 'align': [] }],
         ['clean']
     ];
@@ -443,39 +548,10 @@ const Font = Quill.import('formats/font');
         scrollingContainer: '#editor-wrapper'
     });
 
-    quill.format('font', 'montserrat');
+    // No font is forced on start: text without a chosen font is Sans Serif (see rte.css).
+    // Formatting here also focused the editor on page load and left a stray caret placeholder in it.
     const tb = quill.getModule('toolbar').container;
     tb.id = 'toolbar';
-
-    // 1. grab references to the toolbar’s <select> and its label
-const toolbar = quill.getModule('toolbar').container;
-const selectFont = toolbar.querySelector('select.ql-font');
-const labelFont  = toolbar.querySelector('.ql-font .ql-picker-label');
-
-// 2. a helper to pull the font and update the UI
-function syncFontPicker(range) {
-  // getFormat on a collapsed range tells you the active format
-  const { font } = quill.getFormat(range) || {};
-  const value = font || '';        // empty string = browser default
-
-  if (selectFont) {
-    selectFont.value = value;
-    // Snow’s picker listens for 'change' on the <select>
-    selectFont.dispatchEvent(new Event('change'));
-  }
-  if (labelFont) {
-    // this updates the pseudo‐element via your existing CSS mapping
-    labelFont.setAttribute('data-value', value);
-  }
-}
-
-// 3. run it on every cursor movement
-quill.on('selection-change', (range) => {
-  if (range) syncFontPicker(range);
-});
-
-// 4. and finally, prime it once at startup
-syncFontPicker(quill.getSelection());
 
 const textColorPickr = Pickr.create({
   el:  '#text-pickr-container',
@@ -548,6 +624,14 @@ const fontPicker = document.querySelector('.ql-picker.ql-font');
 
 
         let csrfToken = "{{ csrf_token() }}";
+        // Submit is a div: let Enter/Space press it too
+        document.getElementById('submit').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                this.click();
+            }
+        });
+
         document.getElementById('submit').onclick = function() {
             event.preventDefault(); // Prevent form submission
             clickedBotton = document.getElementById('submit');

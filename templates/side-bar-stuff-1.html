@@ -34,20 +34,21 @@
 <!-- <button class="toggle-btn" id="toggle-btn" data-onclick='["toggleSidebar"]'>
   <i class="fas fa-bars"></i>
 </button> -->
-<div id="sidebar" class="sidebar">
+<nav id="sidebar" class="sidebar" aria-label="{{ _('Tools') }}">
     <!-- <a href="#" class="closebtn">&times;</a> -->
-    
+
     <ul class="sidebar-menu">
-      <li style="border-bottom: 1px solid;"><a href="{{ url_for('home') + 'stuff' }}"><i class="fas fa-home"></i><span>{{ _('Dashboard') }}</span></a></li>
-      
+      <li style="border-bottom: 1px solid;"><a href="{{ url_for('home') + 'stuff' }}"{% if request.path == '/stuff' %} class="active" aria-current="page"{% endif %}><i class="fas fa-home"></i><span>{{ _('Dashboard') }}</span></a></li>
+
     {% for row in result %}
-      <li><a href="{{ url_for('home') + row['ActionDir']}}"><i class="{{ row['Img'] }}"></i><span></span>{{ _(row['ActionName']) }}</span></a></li>
+      {% set linkPath = url_for('home') + row['ActionDir'] %}
+      {% set isCurrent = request.path == linkPath or request.full_path.rstrip('?') == linkPath %}
+      <li><a href="{{ linkPath }}"{% if isCurrent %} class="active" aria-current="page"{% endif %}><i class="{{ row['Img'] }}" aria-hidden="true"></i><span>{{ _(row['ActionName']) }}</span></a></li>
     {% endfor %}
     
     </ul>
 
 
-    <a href=""></a>
 <!--     
   {% if supportedLangsData | length > 1 %}     
   <a>  
@@ -62,4 +63,4 @@
   <!-- <ul class="sidebar-menu">
     <li><a href="/logout"><i class="fas fa-right-from-bracket"></i><span>{{ _('Logout') }}</span></a></li>
   </ul>   -->
-</div>
+</nav>

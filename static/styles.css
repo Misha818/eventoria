@@ -2904,7 +2904,8 @@ h2 {
     margin: 5px auto 15px auto;
   }
 
-  .product-details h2, p {
+  /* not the rich text editor's paragraphs: centring them put the caret mid-line */
+  .product-details h2, p:not(.ql-editor p) {
     text-align: center;
   }
 
@@ -8338,9 +8339,9 @@ tr:nth-child(even) {
 .ql-font-roboto { font-family: 'Roboto', sans-serif; }
 .ql-font-lato { font-family: 'Lato', sans-serif; }
 .ql-font-oswald { font-family: 'Oswald', sans-serif; }
-.ql-font-playfair { font-family: 'Playfair Display', serif; }
+.ql-font-playfair,
+.ql-font-playfair-display { font-family: 'Playfair Display', serif; }
 .ql-font-raleway { font-family: 'Raleway', sans-serif; }
-.ql-font-raleway { font-family: 'cursive', 'Kurland'; }
 
 
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="montserrat"]::before {
@@ -8827,4 +8828,404 @@ tr:nth-child(even) {
 
 #promo-container {
   margin-top: 70px;
+}
+
+/* ===== Staff admin chrome: header + sidebar (responsive / UX) ===== */
+.header-stuff .avatar-stuff {
+  min-width: 0;
+}
+
+.header-stuff .avatar-stuff > .avatar,
+.header-stuff .avatar-stuff > img {
+  flex-shrink: 0;
+}
+
+.header-stuff .avatar-stuff > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-stuff [data-onclick*="toggleSidebar"]:focus-visible,
+.header-stuff-right a:focus-visible,
+.header-stuff-right select:focus-visible,
+.sidebar-menu li a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.sidebar-menu li a:focus-visible {
+  outline-color: #E76F51;
+}
+
+.header-stuff-right {
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.header-stuff-right .lang-drop-down {
+  max-width: 100%;
+}
+
+/* Current page in the staff sidebar */
+.sidebar-menu li a.active {
+  background-color: #e8e9f3;
+  font-weight: 600;
+}
+
+/* The menu can be longer than the screen: let it scroll instead of being cut off */
+.sidebar {
+  overflow-y: auto !important;
+  max-width: 85vw;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .header-stuff {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+
+  .header-stuff .avatar-stuff {
+    flex: 1 1 auto;
+    gap: 8px !important;
+  }
+
+  .header-stuff .avatar-stuff > .avatar,
+  .header-stuff .avatar-stuff > img {
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+  }
+
+  .header-stuff .avatar-stuff > div.avatar {
+    line-height: 48px !important;
+    font-size: 14pt !important;
+  }
+
+  .header-stuff .avatar-stuff > span {
+    font-size: 16px !important;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .header-stuff-right {
+    flex: 0 1 auto;
+    margin-left: auto;
+  }
+
+  .header-stuff-right .lang-drop-down {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .header-stuff-right .rolls {
+    font-size: 14px;
+    padding: 5px 10px;
+    margin: 0 !important;
+  }
+
+  .header-stuff-right > a {
+    padding: 6px;
+  }
+}
+
+
+/* ===== Staff admin forms: single-column card (teammates, corporate emails) ===== */
+.containerS.admin-form-card {
+  width: calc(100% - 32px);
+  max-width: 560px;
+  min-width: 0;
+  margin-top: 0;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.admin-form-card h1 {
+  font-size: 1.6rem;
+  margin: 0 0 12px 0;
+  text-align: center;
+  color: #333;
+}
+
+.admin-form-card #mistakes {
+  margin: 0 0 12px 0;
+}
+
+/* Some of these forms reuse ids that carry page-specific margins/widths elsewhere */
+.admin-form,
+#product-category-form.admin-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+}
+
+.admin-form .field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form .field-label {
+  font-weight: bold;
+  color: #333;
+  margin: 8px 0 2px 0;
+}
+
+.admin-form .text-field {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-form .text-field:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+/* Dropdowns are injected into Bootstrap ".row" wrappers: drop the gutters */
+.admin-form .row {
+  margin: 0;
+}
+
+.admin-form .row > * {
+  padding: 0;
+}
+
+.admin-form .styled-select,
+.admin-form .row > .styled-select {
+  margin-bottom: 0;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.admin-form .status-container {
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 12px 0 0 0;
+}
+
+.admin-form .status-container label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.admin-form .status-container input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: #E76F51;
+  cursor: pointer;
+}
+
+.admin-form .pcButtonS.modifiedB {
+  margin-top: 12px;
+  box-sizing: border-box;
+}
+
+.admin-form .pcButtonS.modifiedB:focus-visible {
+  outline: 3px solid #264653;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .containerS.admin-form-card {
+    width: calc(100% - 24px);
+    padding: 16px;
+  }
+
+  .admin-form-card h1 {
+    font-size: 1.35rem;
+  }
+}
+
+/* ===== Promo code create/edit form (shared by both templates) ===== */
+.containerS.promo-edit-card {
+    width: calc(100% - 32px);
+    max-width: 760px;
+    min-width: 0;
+    margin-top: 0;
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    align-items: stretch;
+}
+
+.promo-edit-card h1 {
+    font-size: 1.75rem;
+    text-align: center;
+    margin: 0 0 12px 0;
+    color: #333;
+}
+
+/* The id carries a global margin/width meant for other forms */
+#product-category-form.promo-edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+}
+
+.promo-edit-form .field-label {
+    font-weight: bold;
+    color: #333;
+    margin: 8px 0 2px 0;
+}
+
+.promo-edit-form .styled-select {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.promo-edit-form .dropdown {
+    display: block;
+    width: 100%;
+    margin: 10px 0 0 0;
+}
+
+.promo-edit-form .dropdown-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+}
+
+.promo-edit-form .dropdown-label:focus-visible {
+    outline: 3px solid #264653;
+    outline-offset: 2px;
+}
+
+.promo-edit-form .dropdown-label i {
+    color: #E76F51;
+    transition: transform 0.2s ease;
+}
+
+.promo-edit-form .dropdown-label[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+/* Long product lists scroll inside the dropdown instead of running off the page */
+.promo-edit-form .dropdown-options {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.promo-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+}
+
+.promo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.promo-input-group {
+    gap: 0 !important;
+    flex-wrap: nowrap !important;
+}
+
+.promo-input-group input {
+    min-width: 0;
+    min-height: 46px;
+    padding: 10px 12px;
+}
+
+.promo-input-group .btn {
+    white-space: nowrap;
+}
+
+.promo-note {
+    margin: 8px 0 0 0;
+    color: #666;
+}
+
+.promo-edit-form .pcButtonS.modifiedB {
+    margin-top: 16px;
+    box-sizing: border-box;
+}
+
+.promo-edit-form .pcButtonS.modifiedB:focus-visible {
+    outline: 3px solid #264653;
+    outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+    .containerS.promo-edit-card {
+        width: calc(100% - 24px);
+        padding: 16px;
+    }
+
+    .promo-edit-card h1 {
+        font-size: 1.4rem;
+    }
+
+    .promo-fields {
+        grid-template-columns: 1fr;
+    }
+
+    /* Product rows: name on the first line, discount/reward/switch on the second */
+    .promo-edit-form .option-box,
+    .promo-edit-form .child-option {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+
+    .promo-edit-form .option-box .parent-title {
+        flex: 1 1 calc(100% - 40px);
+        margin: 0;
+        padding: 6px 8px;
+    }
+
+    .promo-edit-form .child-option > span:first-of-type {
+        flex: 1 1 calc(100% - 40px);
+    }
+
+    .promo-edit-form .option-box .parent-discount {
+        margin-left: auto;
+    }
+
+    .promo-edit-form .child-options {
+        margin-left: 8px;
+        padding-left: 8px;
+    }
+
+    /* Smaller on/off switches so a product row's controls fit on one line */
+    .promo-edit-form .switch {
+        width: 46px;
+        height: 26px;
+    }
+
+    .promo-edit-form .sliderA:before {
+        width: 20px;
+        height: 20px;
+        left: 3px;
+        bottom: 3px;
+    }
+
+    .promo-edit-form .sliderA.checked:before {
+        transform: translateX(20px);
+    }
 }

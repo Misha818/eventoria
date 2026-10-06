@@ -41,13 +41,6 @@
 
 <style>
 
-    .ql-snow .ql-picker.ql-font .ql-picker-label::before, .ql-snow .ql-picker.ql-font .ql-picker-item::before {
-        content: 'Montserrat';
-    }
-
-    .ql-snow .ql-picker.ql-font {
-        width: 110px;
-    }
 
     .dz-details:hover {
         cursor: all-scroll;
@@ -95,17 +88,221 @@
         overflow-y: scroll !important;
     }
 
+    /* ---- "Edit Header" window ---- */
+    #headerEditorModal.modal {
+        width: min(560px, calc(100vw - 24px)) !important;
+        max-height: calc(100vh - 32px) !important;
+        padding: 0 !important;
+        overflow-y: auto !important;
+        border-radius: 14px !important;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
+        box-sizing: border-box;
+    }
+
+    #headerEditorModal .he-head {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 20px;
+        background-color: #fff;
+        border-bottom: 1px solid #efece6;
+    }
+
+    #headerEditorModal .modal-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #264653;
+    }
+
+    #headerEditorModal .he-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        position: static !important;
+        margin: 0 !important;
+        padding: 0;
+        font-size: 24px;
+        line-height: 1;
+        color: #555;
+        background-color: #f4f2ee;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    #headerEditorModal .he-close:hover {
+        color: #fff;
+        background-color: #E76F51;
+    }
+
+    #headerEditorModal .he-body {
+        padding: 18px 20px 20px 20px;
+    }
+
+    #headerEditorModal .he-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+        margin: 0;
+    }
+
+    #headerEditorModal .he-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    #headerEditorModal .he-field label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* The page gives form fields a fixed 350px width; fill the window instead */
+    #headerEditorModal .form-control {
+        width: 100% !important;
+        margin: 0;
+        padding: 10px 12px !important;
+        font: inherit;
+        font-size: 15px !important;
+        color: #333;
+        background-color: #fff;
+        border: 1px solid #d9d5cd !important;
+        border-radius: 8px !important;
+        box-sizing: border-box;
+    }
+
+    #headerEditorModal textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+        font-family: inherit !important;
+    }
+
+    #headerEditorModal .form-control:focus {
+        outline: none;
+        border-color: #2A9D8F !important;
+        box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.18);
+    }
+
+    #headerEditorModal #mistakes_modal {
+        width: auto !important;
+        margin: 0;
+    }
+
+    #headerEditorModal .he-actions {
+        margin-top: 4px;
+    }
+
+    #headerEditorModal .middleButtun {
+        width: 100%;
+        margin: 0;
+        padding: 13px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        background-color: #E76F51;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: background-color 0.2s;
+    }
+
+    #headerEditorModal #saveEditedHeader:hover {
+        background-color: #d65f42;
+    }
+
+    #headerEditorModal .he-close:focus-visible,
+    #headerEditorModal #saveEditedHeader:focus-visible {
+        outline: 3px solid #264653;
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 600px) {
+        #headerEditorModal.modal {
+            max-height: calc(100vh - 24px) !important;
+        }
+
+        #headerEditorModal .he-head {
+            padding: 14px 16px;
+        }
+
+        #headerEditorModal .he-body {
+            padding: 14px 16px 16px 16px;
+        }
+    }
+
+
     /* #editorContent {
         margin-top: 100px;
     } */
 
+    /* The toolbar stays in view, just below the fixed 75px header, while the page scrolls */
     .ql-toolbar.ql-snow {
-        position: fixed;
-        width: 800px;
+        position: sticky;
+        top: 75px;
         z-index: 10;
         background-color: #ffffff;
         padding: 5pt !important;
-        top: 40px;
+    }
+
+    /* "hidden" made this a scroll box of its own, so the sticky toolbar scrolled away with the page;
+       "clip" cuts off sideways overflow the same way without that side effect */
+    .containerZ {
+        overflow-x: clip;
+    }
+
+    /* ---- Editor layout: fills the screen width up to 800px, below the fixed header ---- */
+    #myReachTextEditor {
+        width: min(800px, calc(100% - 24px));
+        margin: 110px auto 90px auto;
+        box-sizing: border-box;
+    }
+
+    /* Pickr's own trigger buttons: the toolbar's colour buttons open the pickers instead */
+    #myReachTextEditor .pickr {
+        display: none !important;
+    }
+
+    /* Same build as the Send Email editor: toolbar and text area are one bordered block of
+       the same width; the block grows with its text and the page scrolls (no inner card) */
+    #myReachTextEditor #editor-wrapper {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    #myReachTextEditor #editor-container {
+        width: 100%;
+        height: auto;
+        margin: 0;
+    }
+
+    /* the whole text area is clickable, not just the first line */
+    #myReachTextEditor .ql-container.ql-snow .ql-editor {
+        min-height: min(460px, calc(100vh - 260px));
+    }
+
+    @media (max-width: 600px) {
+        #myReachTextEditor {
+            width: calc(100% - 16px);
+            margin-top: 96px;
+        }
+
+        /* full-width Submit, without the 5px offset pushing it past the screen edge */
+        #myReachTextEditor #submit-btn,
+        #myReachTextEditor #saving-btn {
+            left: 8px;
+            right: 8px;
+            width: auto;
+            box-sizing: border-box;
+        }
     }
 
 
@@ -238,10 +435,11 @@
 }
 
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='rte.css') }}">
 
 <script nonce="{{ csp_nonce() }}" type="text/javascript">
 document.addEventListener('DOMContentLoaded', function(){
-    
+        
     let closedNav = true;
     const openWith = "11%";
     const closeWith = "0";
@@ -708,58 +906,64 @@ function closeImageEditorModal(modal) {
                 headerEditorModal.id = 'headerEditorModal';
                 headerEditorModal.className = 'modal open';
                 headerEditorModal.innerHTML = `
-    <div type="button" class="close" id="cancelHeaderEdit" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+    <div class="he-head">
+        <h5 class="modal-title" id="header-editor-title">{{ _('Edit Header') }}</h5>
+        <button type="button" class="he-close" id="cancelHeaderEdit" aria-label="{{ _('Close') }}" title="{{ _('Close') }}">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-    <div class="modal-header">
-        <h5 class="modal-title">{{ _('Edit Header') }}</h5>
-    </div>
-    <div class="modal-body">
-        <form id="add-product-form" class="form">
-            <div class="form-group row">
-                <p id="mistakes_modal" style="width: 350px;"></>
-            </div>    
-            <div class="form-group row">
-                <label for="product-name" class="col-sm-3 col-form-label">{{ _('Product name') }}</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control" value="${escapeHtml(ProductName)}" id="product-name" placeholder="{{ _('Max allowed number of chars is 20') }}">
-                </div>
-            </div>
-            <div class="form-group row">
-                <label for="product-link" class="col-sm-3 col-form-label">{{ _('Product link') }}</label>
-                <div class="col-sm-9">
-                    <input type="text" class="form-control" value="${escapeHtml(ProductLink)}" id="product-link" >
-                </div>
-            </div>
-                    
-            <div class="form-group row">
-                <label for="short-description" class="col-sm-3 col-form-label">{{ _('Short Description') }}</label>
-                <div class="col-sm-9">
-                    <input type="text" id="short-description" class="form-control" value="${escapeHtml(ShortDescription)}" }}" />
-                </div>
-            </div>
-            
-            <div class="form-group row">
-                <label for="long-description" class="col-sm-3 col-form-label">{{ _('Long Description') }}</label>
-                <div class="col-sm-9">
-                    <textarea id="long-description" class="form-control" placeholder="{{ _('Suggested max number of chars is 125') }}" style="padding: 21px; border: 1px solid; font-family: Arial, sans-serif;">${escapeHtml(LongDescription)}</textarea>
-                </div>
+    <div class="he-body">
+        <form id="add-product-form" class="form he-form" novalidate>
+            <p id="mistakes_modal" role="alert" aria-live="polite"></p>
+
+            <div class="he-field">
+                <label for="product-name">{{ _('Product name') }}</label>
+                <input type="text" class="form-control" value="${escapeHtml(ProductName)}" id="product-name" placeholder="{{ _('Max allowed number of chars is 20') }}" autocomplete="off">
             </div>
 
+            <div class="he-field">
+                <label for="product-link">{{ _('Product link') }}</label>
+                <input type="text" class="form-control" value="${escapeHtml(ProductLink)}" id="product-link" autocomplete="off">
+            </div>
 
-            <div class="form-group row" id="pcDropDown"></div>
-                    
-            <div class="form-group row">
-                <div class="col-sm-12 text-right">
-                    <div class="middleButtun" id="saveEditedHeader">${escapeHtml(prUpdate)}</div>
-                    <div id="saving" class="hidden middleButtun">${escapeHtml(prSaving)}</div>
-                </div>
+            <div class="he-field">
+                <label for="short-description">{{ _('Short Description') }}</label>
+                <input type="text" id="short-description" class="form-control" value="${escapeHtml(ShortDescription)}" autocomplete="off">
+            </div>
+
+            <div class="he-field">
+                <label for="long-description">{{ _('Long Description') }}</label>
+                <textarea id="long-description" class="form-control" rows="4" placeholder="{{ _('Suggested max number of chars is 125') }}">${escapeHtml(LongDescription)}</textarea>
+            </div>
+
+            <div class="he-field" id="pcField">
+                <label for="category-id">{{ _('Product Category') }}</label>
+                <div id="pcDropDown"></div>
+            </div>
+
+            <div class="he-actions">
+                <div class="middleButtun" id="saveEditedHeader" role="button" tabindex="0">${escapeHtml(prUpdate)}</div>
+                <div id="saving" class="hidden middleButtun" aria-live="polite">${escapeHtml(prSaving)}</div>
             </div>
         </form>
     </div>
 `;
+                headerEditorModal.setAttribute('role', 'dialog');
+                headerEditorModal.setAttribute('aria-modal', 'true');
+                headerEditorModal.setAttribute('aria-labelledby', 'header-editor-title');
                 document.body.appendChild(headerEditorModal);
                 productCategoryDropDown();
+                if (!document.getElementById('category-id')) {
+                    document.getElementById('pcField').classList.add('hidden');
+                }
+                document.getElementById('product-name').focus();
+
+                document.getElementById('saveEditedHeader').addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        this.click();
+                    }
+                });
 
                 const inputElement = document.getElementById("product-link");
 
@@ -785,7 +989,7 @@ function closeImageEditorModal(modal) {
     let productName = document.getElementById('product-name').value;
     let productLink = document.getElementById('product-link').value;
     let languageID = document.getElementById('language-id').value;
-    let CategoryID = document.getElementById('category-id').value;
+    let CategoryID = document.getElementById('category-id') ? document.getElementById('category-id').value : '';
     let RefKey = document.getElementById('RefKey').value;
     let shortDescription = document.getElementById('short-description').value;
     let longDescription = document.getElementById('long-description').value;
@@ -920,6 +1124,13 @@ function closeImageEditorModal(modal) {
                 openHeaderEditorModal(prData);
                 document.getElementById('editorStatus').value = 0;
             };
+
+            // Escape closes the "Edit Header" window, like its close button
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && document.getElementById('headerEditorModal')) {
+                    document.getElementById('cancelHeaderEdit').click();
+                }
+            });
 
 
             function closeHeaderEditorModal(modal) {
@@ -1111,10 +1322,11 @@ document.addEventListener('DOMContentLoaded', function() {
         [{ 'indent': '-1' }, { 'indent': '+1' }],
         [{ 'direction': 'rtl' }],
         // [{ 'size': ['small', false, 'large', 'huge'] }],
-        [{ 'size': Size.whitelist }],
+        // false = no size / no font chosen ("Normal" / "Sans Serif"), so the pickers are never blank
+        [{ 'size': [false, ...Size.whitelist] }],
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'color': [] }, { 'background': [] }],
-        [{ 'font': Font.whitelist }],
+        [{ 'font': [false, ...Font.whitelist] }],
         [{ 'align': [] }],
         ['clean']
     ];
@@ -1159,39 +1371,10 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollingContainer: '#editor-wrapper'
     });
 
-    quill.format('font', 'montserrat');
+    // No font is forced on start: text without a chosen font is Sans Serif (see rte.css).
+    // Formatting here also focused the hidden editor and left a stray caret placeholder in it.
     const tb = quill.getModule('toolbar').container;
     tb.id = 'toolbar';
-
-    // 1. grab references to the toolbar’s <select> and its label
-const toolbar = quill.getModule('toolbar').container;
-const selectFont = toolbar.querySelector('select.ql-font');
-const labelFont  = toolbar.querySelector('.ql-font .ql-picker-label');
-
-// 2. a helper to pull the font and update the UI
-function syncFontPicker(range) {
-  // getFormat on a collapsed range tells you the active format
-  const { font } = quill.getFormat(range) || {};
-  const value = font || '';        // empty string = browser default
-
-  if (selectFont) {
-    selectFont.value = value;
-    // Snow’s picker listens for 'change' on the <select>
-    selectFont.dispatchEvent(new Event('change'));
-  }
-  if (labelFont) {
-    // this updates the pseudo‐element via your existing CSS mapping
-    labelFont.setAttribute('data-value', value);
-  }
-}
-
-// 3. run it on every cursor movement
-quill.on('selection-change', (range) => {
-  if (range) syncFontPicker(range);
-});
-
-// 4. and finally, prime it once at startup
-syncFontPicker(quill.getSelection());
 
 
     
