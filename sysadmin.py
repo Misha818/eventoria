@@ -1140,7 +1140,9 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
     sqlValTuple = (data['promo'], ptIDs, languageID)
     result = sqlSelect(sqlQuaryStore, sqlValTuple, True)
     if result['length'] == 0:
+        print('buffer_1')
         return {'status': "0", 'answer': smthWrong}  
+
     
     if data['promo'] != '' and result['data'][0]['promoID'] is None:
         return {'status': "2"}
@@ -1155,6 +1157,8 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                     maxAllowdQuantity = checkR['maxQuantity']
 
                 if maxAllowdQuantity < QUANTITY:  
+                    print('buffer_2')
+
                     return {'status': "0", 'answer': smthWrong}  
                     # return {'status': "0", 'answer': smthWrong + 'maxAllowdQuantity is ' + str(maxAllowdQuantity) + ' and QUANTITY is ' + str(QUANTITY) + ' and ptID is ' + str(checkRow['ptID'])}  
 
@@ -1213,6 +1217,7 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                         })
                     
     if paymentMethod == False and totalPrice > 0: #checkout without paying
+        print('buffer_3')
         return {'status': "0", 'answer': smthWrong}  
 
 
@@ -1340,7 +1345,7 @@ def insertPUpdateP(pdID, paymentData):
 # delete from bufer and update table quantity
 # update payment_details with id pdID
 def deletePUpdateP(pdID):
-    sqlQuery = """"
+    sqlQuery = """
             SELECT 
                 `quantityID`,
                 `quantity`
@@ -1359,7 +1364,7 @@ def deletePUpdateP(pdID):
     
     sqlQueryPaymentD = """
                         UPDATE `payment_details` SET
-                            `Status` = 3 -- 3 means canceled
+                            `Status` = 0 -- 0 means canceled
                         WHERE `ID` = %s
                         ;"""
     sqlUpdate(sqlQueryPaymentD, (pdID,))

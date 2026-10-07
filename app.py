@@ -1241,7 +1241,7 @@ def checkout():
 
         # Lock some tables, unlock at the end
         if not request.form.get('data'):
-            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})    
+            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again! 0'), 'newCSRFtoken': newCSRFtoken})    
 
         json_str = request.form.get('data')
 
@@ -1289,19 +1289,18 @@ def checkout():
         # checking payment availbility and methods
 
         pmData = get_payment_methods('`ID`, `method`', False)
-        allowedPaymentMethods = [str(x[0]) for x in pmData]
-
+        allowedPaymentMethods = [str(x[0]) for x in pmData.get('data')]
         paymentMethod, priceState = [False, False]
         for key, value in data.items():
-            if key == "payment_methods" and value in allowedPaymentMethods:
+            if key == "payment_method" and value in allowedPaymentMethods:
                 paymentMethod = value
             if key != 'email' and key != 'promo' and key != 'ptData' and list != type(value) != bool and value.strip() == '':
                 answer = gettext('Invalid value for ') + key
                 return jsonify({'status': "0", 'answer': answer, 'newCSRFtoken': newCSRFtoken})    
 
         
-        if paymentMethod == False and priceState == True or paymentMethod and priceState == False:
-            return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
+        # if paymentMethod == False and priceState == True or paymentMethod and priceState == False:
+            # return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})   
         
         # End of checking payment availbility and methods
         # End of Validation
@@ -1383,7 +1382,7 @@ def checkout():
                 'paymentStatus': 1
             }
             purchseData = insertPUpdateP(pdID, paymentData)
-            if purchseData['status'] == 0:
+            if purchseData['status'] == '0':
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
         
 
@@ -1398,8 +1397,8 @@ def checkout():
             if resultBuffer['status'] == 0:
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
             
-            if data['contact_list'][0].get('email'):
-                send_confirmation_email(pdID, trackOrderUrl)
+            # if data['contact_list'][0].get('email'):
+            #     send_confirmation_email(pdID, trackOrderUrl)
 
             return jsonify({'status': "1", 'pdID': uniqueURL, 'purchseData': purchseData, 'newCSRFtoken': newCSRFtoken})    
                 
@@ -2348,6 +2347,10 @@ def edit_order_details():
         result = sqlUpdate(sqlQuery, sqlValTuple)
         if result['status'] == '-1':
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
+
+        # cancelled: return reserved quantities to stock and clear the buffer
+        if status == '0':
+            deletePUpdateP(pdID)
 
         if status == '5':
             sqlQuery = "SELECT * FROM `delivered` WHERE `pdID` = %s;"
@@ -4002,7 +4005,7 @@ def edit_position(positionID):
         Roles = request.form.get('Roles').strip()
 
         # Check whether the position exists or not
-        sqlQuery = "SELECT `Position` FROM `positions` WHERE `Position` = %s AND `ID` != %s;"
+        sqlQuery = "SELECT `Position` FROM `position` WHERE `Position` = %s AND `ID` != %s;"
         sqlValTuple = (Position, positionID)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
 
