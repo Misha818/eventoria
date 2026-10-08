@@ -1369,6 +1369,11 @@ def checkout():
         # insert data into table buffer
         # This also checks if specified amount of product exists
         buffer = insertIntoBuffer(data, pdID, gettext('Something went wrong. Please try again!'), languageID, paymentMethod, priceState)
+        if buffer['status'] != "1":
+            # Nothing was reserved (insertIntoBuffer takes stock all or nothing): the order
+            # created above is cancelled instead of being left "waiting for payment"
+            sqlUpdate("UPDATE `payment_details` SET `Status` = 0 WHERE `ID` = %s AND `Status` = 1;", (pdID,))
+
         if buffer['status'] == "0":
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
         
@@ -1394,20 +1399,49 @@ def checkout():
             }
             purchseData = insertPUpdateP(pdID, paymentData)
             if purchseData['status'] == '0':
+                # Recording the sale failed and was rolled back: nothing of the order was saved,
+                # but its stock is still reserved. What happens to that stock depends on the money:
+                # the bank step above is a stand-in that takes no money; when a real bank is
+                # connected, set this from its answer
+                paymentTaken = False
+
+                if paymentTaken:
+                    # The customer has paid: don't cancel. The order stays "waiting for payment"
+                    # with its stock reserved, so staff can finish recording it or refund it
+                    app.logger.error("Order %s: payment received but recording the sale failed. "
+                                  "Stock stays reserved; finish the order or refund it", pdID)
+                    return jsonify({'status': "0", 'answer': gettext("Your payment was received, but we couldn't complete your order. Please don't pay again: our team will contact you."), 'newCSRFtoken': newCSRFtoken})
+
+                # No money taken: give the stock back and cancel the order (removing any sale
+                # records, though after the rollback there should be none)
+                deletePUpdateP(pdID, removeSaleRecords=True)
                 return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
         
 
             # answer = gettext('Payment passed successfully') + ' ' + str(amount) + ' ' + MAIN_CURRENCY
             purchseData = json.dumps(purchseData['answer'])
-            uniqueURL = generate_random_unique_string('pd_buffer')
+
+            # The order is paid and recorded from here on, so a failure below must never tell the
+            # customer to try again (they would pay twice). Saving the confirmation-page link is
+            # retried with a fresh link (a clash with another link or a short database hiccup)
+            sqlInsertBuffer = "INSERT INTO `pd_buffer` (`pdID`, `Url`) VALUES (%s, %s);"
+            uniqueURL = None
+            for _ in range(3):
+                candidateURL = generate_random_unique_string('pd_buffer')
+                if sqlInsert(sqlInsertBuffer, (pdID, candidateURL))['status'] == 1:
+                    uniqueURL = candidateURL
+                    break
+
+            if uniqueURL is None:
+                # Paid and recorded, but there is no confirmation page: answer "paid" without a
+                # link, so the page shows this message, empties the cart and offers no second payment
+                app.logger.error("Order %s: paid and recorded, but its confirmation-page link could not be saved. "
+                                 "Send the customer the order details", pdID)
+                answer = gettext("Your payment was received and your order is confirmed, but we couldn't open your order page. Please don't pay again: our team will send you the order details. Order number: %(order)s", order=pdID)
+                return jsonify({'status': "1", 'pdID': None, 'answer': answer, 'purchseData': purchseData, 'newCSRFtoken': newCSRFtoken})
+
             trackOrderUrl = get_full_website_name() + '/confirmation-page/' + uniqueURL
 
-            sqlInsertBuffer = "INSERT INTO `pd_buffer` (`pdID`, `Url`) VALUES (%s, %s);"
-            sqlValTupleBuffer = (pdID, uniqueURL)
-            resultBuffer = sqlInsert(sqlInsertBuffer, sqlValTupleBuffer)
-            if resultBuffer['status'] == 0:
-                return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
-            
             # if data['contact_list'][0].get('email'):
             #     send_confirmation_email(pdID, trackOrderUrl)
 

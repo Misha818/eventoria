@@ -3000,3 +3000,12 @@ msgstr "Year"
 msgid "Months"
 msgstr "Months"
 
+#: app.py
+msgid "Your payment was received, but we couldn't complete your order. Please don't pay again: our team will contact you."
+msgstr "Your payment was received, but we couldn't complete your order. Please don't pay again: our team will contact you."
+
+#: app.py
+#, python-format
+msgid "Your payment was received and your order is confirmed, but we couldn't open your order page. Please don't pay again: our team will send you the order details. Order number: %(order)s"
+msgstr "Your payment was received and your order is confirmed, but we couldn't open your order page. Please don't pay again: our team will send you the order details. Order number: %(order)s"
+

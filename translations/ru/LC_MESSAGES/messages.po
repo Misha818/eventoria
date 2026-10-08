@@ -2796,6 +2796,15 @@ msgstr "Год"
 msgid "Months"
 msgstr "Месяцы"
 
+#: app.py
+msgid "Your payment was received, but we couldn't complete your order. Please don't pay again: our team will contact you."
+msgstr "Ваш платёж получен, но завершить заказ не удалось. Пожалуйста, не оплачивайте повторно: наша команда свяжется с вами."
+
+#: app.py
+#, python-format
+msgid "Your payment was received and your order is confirmed, but we couldn't open your order page. Please don't pay again: our team will send you the order details. Order number: %(order)s"
+msgstr "Ваш платёж получен, и заказ подтверждён, но открыть страницу заказа не удалось. Пожалуйста, не оплачивайте повторно: наша команда отправит вам детали заказа. Номер заказа: %(order)s"
+
 #~ msgid "Dashboards"
 #~ msgstr "Панели управления"
 

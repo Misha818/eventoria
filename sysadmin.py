@@ -1125,18 +1125,16 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
         # Check credentials for credit/debit card
         if paymentMethod == '1':
             if not data['cc-name']:
-                return {'status': '3', 'amswer': gettext("Name on card is required.")}
+                return {'status': '3', 'answer': gettext("Name on card is required.")}
             if not data['cc-number']:
-                return {'status': '3', 'amswer': gettext("Credit card number is required.")}
+                return {'status': '3', 'answer': gettext("Credit card number is required.")}
             if not data['cc-expiration']:
-                return {'status': '3', 'amswer': gettext("Expiration date required.")}
+                return {'status': '3', 'answer': gettext("Expiration date required.")}
             if not data['cc-cvv']:
-                return {'status': '3', 'amswer': gettext("Security code required.")}
+                return {'status': '3', 'answer': gettext("Security code required.")}
         
 
     bufferQuantities = []
-    bufferInsertRows = ''
-    sqlUpdateQuantity = "UPDATE `quantity` SET `Quantity` = %s WHERE `ID` = %s;"
     ptIDs = ''
 
     for row in data['ptData']:
@@ -1203,6 +1201,9 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                     return {'status': "0", 'answer': smthWrong}  
                     # return {'status': "0", 'answer': smthWrong + 'maxAllowdQuantity is ' + str(maxAllowdQuantity) + ' and QUANTITY is ' + str(QUANTITY) + ' and ptID is ' + str(checkRow['ptID'])}  
 
+    # 1) Plan the reservation: which stock rows give how many units, and the total price.
+    #    Nothing is written yet, so any check below can still refuse the order without taking
+    #    stock (before, the stock was subtracted first and a refusal lost those units for good)
     totalPrice = 0
     for row in data['ptData']:
         QUANTITY = len(data['contact_list'])
@@ -1211,69 +1212,69 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
                 break
             
             if row['ptID'] == r['ptID']:
-                if r['Quantity'] >= QUANTITY:
-                    if r['discount'] is not None:
-                        totalPrice = totalPrice +  r['Price'] * QUANTITY - r['Price'] * QUANTITY * r['discount'] / 100
-                    else:
-                        totalPrice = totalPrice + r['Price'] * QUANTITY
-                        
+                take = min(r['Quantity'], QUANTITY)
+                if r['discount'] is not None:
+                    totalPrice = totalPrice + r['Price'] * take - r['Price'] * take * r['discount'] / 100
+                else:
+                    totalPrice = totalPrice + r['Price'] * take
 
+                bufferQuantities.append(
+                    {
+                        'quantityID': r['quantityID'],
+                        'quantity': take, 
+                        'promo_code_id': r['promoID'], 
+                        'promo_code': r['Promo'], 
+                        'discount': r['discount'], 
+                        'affiliateID': r['affiliateID'], 
+                        'price': r['Price'], 
+                        'ptID': r['ptID'],
+                        'payment_details_id': pdID
+                    })
+                QUANTITY = QUANTITY - take
 
-                    sqlUpdate(sqlUpdateQuantity, (r['Quantity']-QUANTITY, r['quantityID']))
-                    bufferQuantities.append(
-                        {
-                            'quantityID': r['quantityID'],
-                            'quantity': QUANTITY, 
-                            'promo_code_id': r['promoID'], 
-                            'promo_code': r['Promo'], 
-                            'discount': r['discount'], 
-                            'affiliateID': r['affiliateID'], 
-                            'price': r['Price'], 
-                            'ptID': r['ptID'],
-                            'payment_details_id': pdID
-                        })
-                    break
+        # every requested unit must be covered, otherwise nothing is reserved (no half orders)
+        if QUANTITY > 0:
+            print('buffer_4')
+            return {'status': "0", 'answer': smthWrong}
 
-                if r['Quantity'] < QUANTITY:
-                    if r['discount'] is not None:
-                        totalPrice = totalPrice + r['Price'] * r['Quantity']  - r['Price'] * r['Quantity'] * r['discount'] / 100
-                    else:
-                        totalPrice = totalPrice + r['Price'] * r['Quantity']
-                        
-
-                    sqlUpdate(sqlUpdateQuantity, (0, r['quantityID']))
-                    QUANTITY = QUANTITY - r['Quantity']
-
-                    bufferQuantities.append(
-                        {
-                            'quantityID': r['quantityID'],
-                            'quantity': r['Quantity'], 
-                            'promo_code_id': r['promoID'], 
-                            'promo_code': r['Promo'], 
-                            'discount': r['discount'], 
-                            'affiliateID': r['affiliateID'], 
-                            'price': r['Price'], 
-                            'ptID': r['ptID'],
-                            'payment_details_id': pdID
-                        })
-                    
     if paymentMethod == False and totalPrice > 0: #checkout without paying
         print('buffer_3')
         return {'status': "0", 'answer': smthWrong}  
 
+    if not bufferQuantities:
+        return {'status': "0", 'answer': smthWrong}
 
-
-    # insert into `buffer_store` bufferQuantities
+    # 2) Reserve: take the units and write them to `buffer_store` in ONE transaction, committed
+    #    once. Each stock row is decreased relative to its current value and only while it still
+    #    has enough (two buyers at the same time can't oversell it); any failed step rolls back
+    #    everything, so stock is never taken without being noted in `buffer_store`
     bufferInsertRows = "(%s, %s, %s, %s, %s, %s, %s, %s, %s)," * len(bufferQuantities)
     bufferValuePrototype = []
     for row in bufferQuantities:
         for key, val in row.items():
             bufferValuePrototype.append(val)
     
-    
     sqlInsertBuffer = f"INSERT INTO `buffer_store` (`quantityID`, `quantity`,`promo_code_id`, `promo_code`,  `discount`, `affiliateID`, `price`, `ptRefKey`,  `payment_details_id`) VALUES {bufferInsertRows[:-1]};"
-    sqlValTupleBuffer = tuple(bufferValuePrototype)
-    result = sqlInsert(sqlInsertBuffer, sqlValTupleBuffer)
+    sqlTakeQuantity = "UPDATE `quantity` SET `Quantity` = `Quantity` - %s WHERE `ID` = %s AND `Quantity` >= %s;"
+
+    conn = get_db()
+    try:
+        with conn.cursor() as cursor:
+            for row in bufferQuantities:
+                cursor.execute(sqlTakeQuantity, (row['quantity'], row['quantityID'], row['quantity']))
+                if cursor.rowcount != 1:
+                    # someone else bought these units in the meantime
+                    raise RuntimeError(f"quantity {row['quantityID']} no longer has {row['quantity']} units")
+
+            cursor.execute(sqlInsertBuffer, tuple(bufferValuePrototype))
+            if cursor.rowcount != len(bufferQuantities):
+                raise RuntimeError(f"buffer_store: {cursor.rowcount} of {len(bufferQuantities)} rows written")
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        logging.exception("Reserving the stock failed and was rolled back (payment_details %s)", pdID)
+        print('buffer_5')
+        return {'status': "0", 'answer': smthWrong}
 
     return {'status': '1', 'answer': bufferQuantities, 'totalPrice': totalPrice}
 
@@ -1326,47 +1327,18 @@ def insertPUpdateP(pdID, paymentData):
                     (`ptRefKey`, `quantity`, `payment_details_id`, `price`, `discount`, `Status`)
                     VALUES {values[:-1]};
                     """
-    
-    result = sqlInsert(sqlQueryInsert, sqlValTuple)
-    if result['status'] == 0:
-        return {'status': '0', 'answer': result['answer']}
-    
 
-    if affiliateID is not None:
-        sqlQueryAff = """SELECT
-                            `purchase_history`.`ID`,	
-                            `purchase_history`.`ptRefKey` AS `ptID`,	
-                            `purchase_history`.`quantity`,		
-                            `purchase_history`.`price`,	
-                            -- `purchase_history`.`discount`,
-                            `discount`.`promo_code_id`,
-                            `promo_code`.`Promo` AS `promo_code`,
-                            `discount`.`revard_value`,
-                            `discount`.`revard_type`
-                        FROM `purchase_history` 
-                            LEFT JOIN `payment_details` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
-                            LEFT JOIN `discount` ON `discount`.`promo_code_id` = `payment_details`.`promo_code_id`
-                            LEFT JOIN `promo_code` ON `discount`.`promo_code_id` = `promo_code`.`ID`
-                        WHERE `payment_details_id` = %s AND `purchase_history`.`discount` is not null;"""
-        
-        resultAff = sqlSelect(sqlQueryAff, (pdID,), True)
-        values = "(%s, %s, %s, %s, %s, %s)," * resultAff['length']
-        protoTupleAff = []
-        sqlQueryInsertAFF = f"INSERT INTO `affiliate_history` (`purchase_history_id`, `affiliateID`, `promo_code_id`, `promo_code`, `revard_value`, `revard_type`) VALUES{values[:-1]}"
-        for row in resultAff['data']:
-            protoTupleAff.append(row['ID'])
-            protoTupleAff.append(affiliateID)
-            protoTupleAff.append(row['promo_code_id'])
-            protoTupleAff.append(row['promo_code'])
-            protoTupleAff.append(row['revard_value'])
-            protoTupleAff.append(row['revard_type'])
-        
-        sqlVTAff = tuple(protoTupleAff)
-        resultInsertAff = sqlInsert(sqlQueryInsertAFF, sqlVTAff)
-        if resultInsertAff['status'] == 0:
-            return {'status': '0', 'answer': resultInsertAff['answer']}
-    
-    sqlQueryPaymentD = """
+    # Recording the sale is all or nothing: the order is marked paid, its lines are written to
+    # purchase_history and the affiliate's rewards to affiliate_history in ONE transaction on the
+    # request's connection, committed once at the end. If any step fails everything is rolled
+    # back, so a failure leaves no half-written order behind (the caller then decides what happens
+    # to the reserved stock). sqlInsert/sqlUpdate commit on their own, so they can't be used here
+    conn = get_db()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            # Paid only from "waiting for payment" (Status 1): a second call for the same order
+            # (double submit, retry) changes nothing and is rolled back instead of recording it twice
+            cursor.execute("""
                         UPDATE `payment_details` SET 
                             `promo_code_id` = %s,
                             `promo_code` = %s,
@@ -1377,16 +1349,71 @@ def insertPUpdateP(pdID, paymentData):
                             `payment_status` = %s,
                             `timestamp` = NOW(),
                             `Status` = 2 
-                        WHERE `ID` = %s
-                        ;"""
-    sqlUpdate(sqlQueryPaymentD, (promoID, promo, affiliateID, paymentData['finalPrice'], paymentData['paymentMethod'], paymentData['CMD'], paymentData['paymentStatus'], pdID))
+                        WHERE `ID` = %s AND `Status` = 1
+                        ;""", (promoID, promo, affiliateID, paymentData['finalPrice'], paymentData['paymentMethod'], paymentData['CMD'], paymentData['paymentStatus'], pdID))
+            if cursor.rowcount != 1:
+                raise RuntimeError(f'payment_details {pdID} is not waiting for payment')
+
+            cursor.execute(sqlQueryInsert, sqlValTuple)
+            if cursor.rowcount != len(result['data']):
+                raise RuntimeError(f'purchase_history: {cursor.rowcount} of {len(result["data"])} rows written for order {pdID}')
+
+            if affiliateID is not None:
+                # the lines just written (visible here: same connection and transaction)
+                cursor.execute("""SELECT
+                                    `purchase_history`.`ID`,	
+                                    `discount`.`promo_code_id`,
+                                    `promo_code`.`Promo` AS `promo_code`,
+                                    `discount`.`revard_value`,
+                                    `discount`.`revard_type`
+                                FROM `purchase_history` 
+                                    LEFT JOIN `payment_details` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
+                                    LEFT JOIN `discount` ON `discount`.`promo_code_id` = `payment_details`.`promo_code_id`
+                                    LEFT JOIN `promo_code` ON `discount`.`promo_code_id` = `promo_code`.`ID`
+                                WHERE `payment_details_id` = %s AND `purchase_history`.`discount` is not null;""", (pdID,))
+                rowsAff = cursor.fetchall()
+
+                # no discounted line, no reward (an INSERT with an empty VALUES list would fail)
+                if rowsAff:
+                    protoTupleAff = []
+                    for row in rowsAff:
+                        protoTupleAff += [row['ID'], affiliateID, row['promo_code_id'], row['promo_code'], row['revard_value'], row['revard_type']]
+                    valuesAff = "(%s, %s, %s, %s, %s, %s)," * len(rowsAff)
+                    cursor.execute(f"INSERT INTO `affiliate_history` (`purchase_history_id`, `affiliateID`, `promo_code_id`, `promo_code`, `revard_value`, `revard_type`) VALUES {valuesAff[:-1]};", tuple(protoTupleAff))
+                    if cursor.rowcount != len(rowsAff):
+                        raise RuntimeError(f'affiliate_history: {cursor.rowcount} of {len(rowsAff)} rows written for order {pdID}')
+
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        logging.exception("Recording the sale failed and was rolled back (payment_details %s)", pdID)
+        return {'status': '0', 'answer': gettext('Something went wrong. Please try again!')}
+
     return {'status': '1', 'answer': answer}
 
 
 # release the order's buffer rows and return their quantities to table quantity
 # update payment_details with id pdID
 # Buffer rows are kept (Released = 1) so reservePUpdateP can take the stock again
-def deletePUpdateP(pdID):
+#
+# removeSaleRecords: only for a checkout that failed before the order was recorded. It also deletes
+# any purchase_history / affiliate_history rows of the order, so a cancelled order can never keep
+# sale lines or affiliate rewards. Staff cancelling a real order must NOT use it: those rows are the
+# order's history (an affiliate's "Voided" rewards are counted from them, and un-cancelling needs them)
+def deletePUpdateP(pdID, removeSaleRecords=False):
+    if removeSaleRecords:
+        conn = get_db()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute("""DELETE `affiliate_history` FROM `affiliate_history`
+                                    JOIN `purchase_history` ON `purchase_history`.`ID` = `affiliate_history`.`purchase_history_id`
+                                  WHERE `purchase_history`.`payment_details_id` = %s;""", (pdID,))
+                cursor.execute("DELETE FROM `purchase_history` WHERE `payment_details_id` = %s;", (pdID,))
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            logging.exception("Removing the sale records of failed order %s failed", pdID)
+
     sqlQuery = """
             SELECT
                 `ID`,

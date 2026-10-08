@@ -3028,3 +3028,12 @@ msgstr "Տարի"
 msgid "Months"
 msgstr "Ամիսներ"
 
+#: app.py
+msgid "Your payment was received, but we couldn't complete your order. Please don't pay again: our team will contact you."
+msgstr "Ձեր վճարումը ստացվել է, սակայն չհաջողվեց ավարտել պատվերը։ Խնդրում ենք կրկին չվճարել. մեր թիմը կկապվի Ձեզ հետ։"
+
+#: app.py
+#, python-format
+msgid "Your payment was received and your order is confirmed, but we couldn't open your order page. Please don't pay again: our team will send you the order details. Order number: %(order)s"
+msgstr "Ձեր վճարումը ստացվել է, և պատվերը հաստատված է, սակայն չհաջողվեց բացել պատվերի էջը։ Խնդրում ենք կրկին չվճարել. մեր թիմը կուղարկի Ձեզ պատվերի մանրամասները։ Պատվերի համարը՝ %(order)s"
+

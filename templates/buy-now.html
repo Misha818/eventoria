@@ -1957,6 +1957,19 @@ document.querySelector('.btn-primary').addEventListener('click', function(event)
             let Cart = cookie.get('Cart', false);
             
             cookie.remove('Cart', { path: '/' });
+
+            if (!response.pdID) {
+              // Paid and recorded, but the order page couldn't be created: show what happened and
+              // keep the pay button hidden, so the customer can't pay a second time
+              mistakes.textContent = response.answer;
+              mistakes.style.color = '#2A9D8F';
+              mistakes.style.display = 'block';
+              mistakes.scrollIntoView({ behavior: 'smooth' });
+              loaderBtn.classList.add('hidden');
+              gearElement.remove();
+              return;
+            }
+
             // Construct the base URL
             const cpageURL = `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/confirmation-page/${response.pdID}`;
             window.location.href = cpageURL;
