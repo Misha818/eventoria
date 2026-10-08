@@ -46,7 +46,7 @@
 
 <!-- Left Errow &#10094 -->
 <!-- Right Errow &#10095 -->
-<div class="product-container blocks" id="slides">
+<div class="product-container blocks{% if resultSpss.length == 0 %} no-price{% endif %}" id="slides">
 
   <input type="hidden" id="no-spot-left" value="{{ _('No spot left') }}">
 
@@ -68,8 +68,7 @@
         {% endif %}
 
         <img src="{{ url_for('static', filename='') + fileDir }}" alt="{{ row['AltText'] }}"
-            data-onclick='{{ ["showImage", ns.i | string] | tojson }}' class="{{ selectedThumbnail }}"
-            style="margin-bottom: 13px!important;">
+            data-onclick='{{ ["showImage", ns.i | string] | tojson }}' class="{{ selectedThumbnail }}">
 
         {% set ns.i = ns.i + 1 %}
         {% endfor %}
@@ -293,40 +292,25 @@
   <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/slideshow.js') }}"></script>
 
   <script nonce="{{ csp_nonce() }}">
+    // Centre the price thumbnails when they all fit (no scrolling): on screens up to 1365px, where the
+    // title and prices sit under the image. The widths match the CSS breakpoints (matchMedia, so a
+    // fractional window width can't fall between them); under 475px the strip shows 3 thumbnails, else 5
     const container = document.querySelector('.price-thumbnails');
-    if (container) {
-        if (window.innerWidth > 474 && window.innerWidth < 1366) {
-            if (container.querySelectorAll('img').length < 6) {
-                container.classList.add('centered');
-            }
-        } 
-        
-        if (window.innerWidth < 474) {
-            if (container.querySelectorAll('img').length < 4) {
-                container.classList.add('centered');
-            }
+
+    function centerPriceThumbnails() {
+        if (!container) {
+            return;
         }
+        const count = container.querySelectorAll('img').length;
+        let centered = false;
+        if (window.matchMedia('(max-width: 1365.98px)').matches) {
+            centered = window.matchMedia('(max-width: 474.98px)').matches ? count < 4 : count < 6;
+        }
+        container.classList.toggle('centered', centered);
     }
 
-  window.addEventListener('resize', function () {
-      if (container) {
-        if (window.innerWidth > 474 && window.innerWidth < 1365) {
-            if (container.querySelectorAll('img').length < 6) {
-                container.classList.add('centered');
-            }
-        } 
-        
-        if (window.innerWidth < 474) {
-            if (container.querySelectorAll('img').length < 4) {
-                container.classList.add('centered');
-            }
-        }
-
-        if (window.innerWidth >= 1365) {
-            container.classList.remove('centered');
-        }
-    }
-  });
+    centerPriceThumbnails();
+    window.addEventListener('resize', centerPriceThumbnails);
   </script>
 
 <style>

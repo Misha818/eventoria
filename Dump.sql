@@ -396,7 +396,7 @@ CREATE TABLE `payment_details` (
     `promo_code_id` INT,
     `promo_code` VARCHAR(255),
     `affiliateID` INT, 
-    `Status` INT, -- 0 == transaction cancellation; 1 == Purchased; 2 == panding, 3 == preparing; 4 == ready for delivery; 5 == delivered
+    `Status` INT, -- 0 == cancelled; 1 == pending; 2 == purchased; 3 == preparing; 4 == ready for delivery; 5 == delivered (see get_order_status_list)
     PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB;
 ALTER TABLE `payment_details` AUTO_INCREMENT = 1;
@@ -546,6 +546,7 @@ CREATE TABLE `buffer_store` (
     `discount` FLOAT,
     `price` FLOAT,
     `affiliateID` INT,
+    `Released` TINYINT NOT NULL DEFAULT 0, -- 1 = quantity given back to stock (order cancelled)
     PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB;
 ALTER TABLE `buffer_store` AUTO_INCREMENT = 1;

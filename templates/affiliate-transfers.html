@@ -212,34 +212,8 @@
   </div>
 </div>
 
-  {% if numRows > pagination %}
-
-  <div class="pagination">
-    {% set additionalPage = 0 %}
-    {% if numRows % pagination > 0 %}
-      {% set additionalPage = 1 %}
-    {% endif %}
-
-    {% if page > 1 %}
-    {% set urlPrev = '/' + (page - 1) | string %}
-    <div data-value="{{ page - 1 }}">❮</div>
-    {% endif %}
-    {% for i in range(1, (numRows // pagination) + additionalPage + 1) %}
-    
-    {% set urlPage = '/' ~ i %}
-    <div {% if i == page %} class="active" {% endif %} data-value="{{ i }}">{{ i }}</div>
-    {% endfor %}
-    
-
-    {% if page < (numRows // pagination) + additionalPage  %}
-    {% set urlNext = '/' + (page + 1) | string %}
-    <div data-value="{{ page + 1 }}">❯</div>
-    {% endif %}
-    
-  </div>
-  
-
-  {% endif %}
+  {% from '_pagination.html' import pagination as pagination_bar %}
+  {{ pagination_bar(page, numRows, pagination, pbc) }}
 
   <div id="myModal" class="transfer-details-modal hidden" >
     <div class="pt-quantity-modal-content">
@@ -434,6 +408,17 @@ if (document.querySelectorAll('.pagination div')) {
     });
   });
 }
+
+// Page numbers are divs: make Enter and Space work on them
+document.addEventListener('keydown', function (event) {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+  if (event.target.matches('.pagination [role="button"]')) {
+    event.preventDefault();
+    event.target.click();
+  }
+});
 
 
 

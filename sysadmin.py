@@ -47,7 +47,35 @@ MAIN_CURRENCY = os.getenv('MAIN_CURRENCY')
 def action_info():
     return session.get('action_info')
 
+def pagination_items(page, total_pages, window):
+    """
+    Page numbers for a pagination bar, with None where pages are skipped ("…").
+    Always shows the first and the last page plus `window` pages around the current one;
+    a gap of a single page shows that page instead of "…".
+    pagination_items(6, 120, 4) -> [1, None, 5, 6, 7, 8, None, 120]
+    """
+    window = max(1, int(window))
+    page = min(max(1, int(page)), total_pages)
+
+    start = max(1, page - (window - 1) // 2)
+    end = min(total_pages, start + window - 1)
+    start = max(1, end - window + 1)
+
+    items = []
+    prev = 0
+    for p in sorted({1, total_pages, *range(start, end + 1)}):
+        if p - prev == 2:
+            items.append(p - 1)
+        elif p - prev > 2:
+            items.append(None)
+        items.append(p)
+        prev = p
+    return items
+
+
 def init_sysadmin_context(app):
+    app.jinja_env.globals['pagination_items'] = pagination_items
+
     @app.context_processor
     def inject_action_info():
         # whatever keys you return here will be global in templates
@@ -131,6 +159,8 @@ def sqlInsert(
         logging.exception("Failed to execute INSERT")
         return {
             "status": 0,
+            # callers send 'answer' to the browser, so it must not contain the MySQL error (logged above)
+            "answer": gettext('Something went wrong. Please try again!'),
             "message": gettext("An error occurred: %(error)s", error=str(err)),
             "inserted_id": None,
             "rows_affected": 0,
@@ -1342,32 +1372,71 @@ def insertPUpdateP(pdID, paymentData):
     return {'status': '1', 'answer': answer}
 
 
-# delete from bufer and update table quantity
+# release the order's buffer rows and return their quantities to table quantity
 # update payment_details with id pdID
+# Buffer rows are kept (Released = 1) so reservePUpdateP can take the stock again
 def deletePUpdateP(pdID):
     sqlQuery = """
-            SELECT 
+            SELECT
+                `ID`,
                 `quantityID`,
                 `quantity`
-        FROM `buffer_store` WHERE `payment_details_id` = %s 
+        FROM `buffer_store` WHERE `payment_details_id` = %s AND `Released` = 0
         ;"""
     result = sqlSelect(sqlQuery, (pdID,), True)
     if result['length'] == 0:
         return {'status': '0'}
-    
+
+    sqlRelease = "UPDATE `buffer_store` SET `Released` = 1 WHERE `ID` = %s AND `Released` = 0;"
+    sqlUpdateQuantity = "UPDATE `quantity` SET `Quantity` = `Quantity` + %s WHERE `ID` = %s;"
     for row in result['data']:
-        sqlUpdateQuantity = "UPDATE `quantity` SET `Quantity` = `Quantity` + %s WHERE `ID` = %s;"
-        sqlUpdate(sqlUpdateQuantity, (row['quantity'], row['quantityID']))
-    
-    sqlQueryDelete = "DELETE FROM `buffer_store` WHERE `payment_details_id` = %s;"
-    sqlDelete(sqlQueryDelete, (pdID,))
-    
+        # the conditional update makes sure a row is only given back once
+        if sqlUpdate(sqlRelease, (row['ID'],))['rows_affected'] == 1:
+            sqlUpdate(sqlUpdateQuantity, (row['quantity'], row['quantityID']))
+
     sqlQueryPaymentD = """
                         UPDATE `payment_details` SET
                             `Status` = 0 -- 0 means canceled
                         WHERE `ID` = %s
                         ;"""
     sqlUpdate(sqlQueryPaymentD, (pdID,))
+    return {'status': '1'}
+
+
+# take the stock of a cancelled order again (undo of deletePUpdateP)
+# all or nothing: if any quantity row has too little stock, everything is given back
+def reservePUpdateP(pdID):
+    sqlQuery = """
+            SELECT
+                `ID`,
+                `quantityID`,
+                `quantity`
+        FROM `buffer_store` WHERE `payment_details_id` = %s AND `Released` = 1
+        ;"""
+    result = sqlSelect(sqlQuery, (pdID,), True)
+    if result['error']:
+        return {'status': '0'}
+
+    sqlClaim = "UPDATE `buffer_store` SET `Released` = 0 WHERE `ID` = %s AND `Released` = 1;"
+    sqlRelease = "UPDATE `buffer_store` SET `Released` = 1 WHERE `ID` = %s;"
+    sqlTake = "UPDATE `quantity` SET `Quantity` = `Quantity` - %s WHERE `ID` = %s AND `Quantity` >= %s;"
+    sqlGiveBack = "UPDATE `quantity` SET `Quantity` = `Quantity` + %s WHERE `ID` = %s;"
+
+    reserved = []
+    for row in result['data']:
+        if sqlUpdate(sqlClaim, (row['ID'],))['rows_affected'] != 1:
+            continue
+
+        if sqlUpdate(sqlTake, (row['quantity'], row['quantityID'], row['quantity']))['rows_affected'] != 1:
+            # not enough stock: undo this row and every row taken before it
+            sqlUpdate(sqlRelease, (row['ID'],))
+            for r in reserved:
+                sqlUpdate(sqlGiveBack, (r['quantity'], r['quantityID']))
+                sqlUpdate(sqlRelease, (r['ID'],))
+            return {'status': '0'}
+
+        reserved.append(row)
+
     return {'status': '1'}
 
 

@@ -434,6 +434,11 @@
     margin-top: 75px;
 }
 
+/* the fixed admin header is 75px tall at every width */
+#slides {
+    --product-header-h: 75px;
+}
+
 </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='rte.css') }}">
 
@@ -1364,8 +1369,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     handlers: {
                         'image': imageHandler
                     }
+                },
+            keyboard: {
+                bindings: {
+                    // Replaces Quill's default 'tab' binding (which inserts "\t"):
+                    // Tab inserts four spaces and keeps focus in the editor.
+                    // Tab in lists, blockquotes and code blocks still indents as before.
+                    // The spaces are non-breaking: the editor uses "white-space: pre-line"
+                    // (quill.snow.css), which would collapse four plain spaces into one.
+                    tab: {
+                        key: 9,
+                        handler: function (range) {
+                            this.quill.history.cutoff();
+                            this.quill.deleteText(range.index, range.length, Quill.sources.USER);
+                            this.quill.insertText(range.index, String.fromCharCode(160).repeat(4), Quill.sources.USER); // 160 = &nbsp;
+                            this.quill.history.cutoff();
+                            this.quill.setSelection(range.index + 4, Quill.sources.SILENT);
+                        }
+                    }
                 }
-            
+            }
         },
         theme: 'snow',
         scrollingContainer: '#editor-wrapper'
@@ -1808,8 +1831,18 @@ const fontPicker = document.querySelector('.ql-picker.ql-font');
                     
                     // alert(htmlToInsert)
                     if (htmlToInsert !== null) {
-                        
-                        quill.clipboard.dangerouslyPasteHTML(0, htmlToInsert);
+
+                        // Quill's paste cleanup collapses runs of spaces unless the text is in a
+                        // "white-space: pre*" element, so 4 saved spaces came back as 2 or 3.
+                        // Saved content is the editor's own HTML, so load it with spaces kept as is.
+                        // (Normal Ctrl+V pasting still collapses spaces as before.)
+                        const clipboardBox = quill.clipboard.container;
+                        clipboardBox.style.whiteSpace = 'pre-wrap';
+                        try {
+                            quill.clipboard.dangerouslyPasteHTML(0, htmlToInsert);
+                        } finally {
+                            clipboardBox.style.whiteSpace = '';
+                        }
                         // quill.setText(delta);
                     
                     }

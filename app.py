@@ -5,7 +5,7 @@ from flask_babel import Babel, _, lazy_gettext as _l, gettext
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from products import email_text, submit_notes_text, get_pr_order, slidesToEdit, checkCategoryName, checkProductCategoryName, get_RefKey_LangID_by_link, get_article_category_images, get_product_category_images, edit_p_h, submit_reach_text, submit_product_text, add_p_c_sql, edit_p_c_view, edit_a_c_view, edit_p_c_sql, get_product_categories, get_ar_thumbnail_images, get_pr_thumbnail_images, add_product, productDetails, constructPrData, add_product_lang
-from sysadmin import sanitize_html, jsonSanitaizer, get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, countRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
+from sysadmin import sanitize_html, jsonSanitaizer, get_pt_payment_methods, get_payment_methods, is_valid_url, validate_request, send_confirmation_email, get_create_email_id, inline_css, init_sysadmin_context, check_rol_id, check_delivery_status, send_email_mailgun, getSupportedLangIDs, getLangdata, check_alias, get_order_status_list, get_affiliates, get_affiliate_reward_progress, get_promo_code_id_affiliateID, deletePUpdateP, reservePUpdateP, insertPUpdateP, insertIntoBuffer, calculate_price_promo, clientID_contactID, checkSPSSDataLen, replace_spaces_in_text_nodes, totalNumRows, countRows, filter_multy_dict, getLangdatabyID, supported_langs, get_full_website_name, generate_random_unique_string, get_meta_tags, removeRedundantFiles, checkForRedundantFiles, getFileName, fileUpload, get_ar_id_by_lang, get_pr_id_by_lang, getDefLang, getSupportedLangs, getLangID, sqlSelect, sqlInsert, sqlUpdate, sqlDelete, get_pc_id_by_lang, get_pc_ref_key, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
@@ -1338,7 +1338,7 @@ def checkout():
         sqlValTuplePD = (promoID, data['promo'], affiliateID,  1)
         resultPD = sqlInsert(sqlQueryPD, sqlValTuplePD)
         if resultPD['status'] == 0:
-            return jsonify({'status': "0", 'answer': resultPD[0]['answer'], 'newCSRFtoken': newCSRFtoken})
+            return jsonify({'status': "0", 'answer': resultPD['answer'], 'newCSRFtoken': newCSRFtoken})
 
     
         pdID = resultPD['inserted_id']
@@ -1637,8 +1637,13 @@ def affiliate_orders(filter):
 
     # Shared by the listing and its row count
     affiliateOrdersFrom = """`payment_details`
-                LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                -- one client per order: the first one entered at checkout (lowest event_clients.ID);
+                -- orders saved before event_clients existed keep their client in payment_details
+                LEFT JOIN `event_clients` ON `event_clients`.`ID` = (SELECT MIN(`ec`.`ID`) FROM `event_clients` AS `ec` WHERE `ec`.`payment_details_id` = `payment_details`.`ID`)
+                LEFT JOIN `clients` ON `clients`.`ID` = COALESCE(`event_clients`.`clientID`, `payment_details`.`clientID`)
+                LEFT JOIN `client_contacts` ON `client_contacts`.`ID` = COALESCE(`event_clients`.`contactID`, `payment_details`.`contactID`)
+                LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
+                LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
                 LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`"""
 
     sqlQuery = f"""
@@ -1648,8 +1653,8 @@ def affiliate_orders(filter):
                 `payment_details`.`promo_code`,
                 `payment_details`.`final_price`,
                 `payment_details`.`Status`,
-                `clients`.`FirstName`,
-                `clients`.`LastName`,
+                MIN(`clients`.`FirstName`) AS `FirstName`, -- one client per order, MIN only satisfies GROUP BY
+                MIN(`clients`.`LastName`) AS `LastName`,
 
                 -- count affiliate revard
                 (SELECT 
@@ -1766,8 +1771,13 @@ def stuff_affiliate_orders(filter):
 
     # Shared by the listing and its row count
     affiliateOrdersFrom = """`payment_details`
-                    LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
-                    LEFT JOIN `client_contacts` ON `payment_details`.`contactID` = `client_contacts`.`ID`
+                    -- one client per order: the first one entered at checkout (lowest event_clients.ID);
+                    -- orders saved before event_clients existed keep their client in payment_details
+                    LEFT JOIN `event_clients` ON `event_clients`.`ID` = (SELECT MIN(`ec`.`ID`) FROM `event_clients` AS `ec` WHERE `ec`.`payment_details_id` = `payment_details`.`ID`)
+                    LEFT JOIN `clients` ON `clients`.`ID` = COALESCE(`event_clients`.`clientID`, `payment_details`.`clientID`)
+                    LEFT JOIN `client_contacts` ON `client_contacts`.`ID` = COALESCE(`event_clients`.`contactID`, `payment_details`.`contactID`)
+                    LEFT JOIN `phones` ON `client_contacts`.`phoneID` = `phones`.`ID`
+                    LEFT JOIN `emails` ON `client_contacts`.`emailID` = `emails`.`ID`
                     LEFT JOIN `purchase_history` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
                     LEFT JOIN `stuff` ON `stuff`.`ID` = `payment_details`.`affiliateID`"""
 
@@ -1778,8 +1788,8 @@ def stuff_affiliate_orders(filter):
                     `payment_details`.`promo_code`,
                     `payment_details`.`final_price`,
                     `payment_details`.`Status`,
-                    `clients`.`FirstName`,
-                    `clients`.`LastName`,
+                    MIN(`clients`.`FirstName`) AS `FirstName`, -- one client per order, MIN only satisfies GROUP BY
+                    MIN(`clients`.`LastName`) AS `LastName`,
                     CONCAT(`stuff`.`Firstname`, ' ', `stuff`.`Lastname`) AS `affiliate`,
 
                     -- count affiliate revard
@@ -2004,7 +2014,9 @@ def affiliate_order_details(pdID):
                     FROM `purchase_history` 
                         LEFT JOIN `payment_details` ON `payment_details`.`ID` = `purchase_history`.`payment_details_id`
                         LEFT JOIN `delivered` ON `delivered`.`pdID` = `payment_details`.`ID`
-                        LEFT JOIN `clients` ON `payment_details`.`clientID` = `clients`.`ID`
+                        -- the order's first client (see affiliate_orders)
+                        LEFT JOIN `event_clients` ON `event_clients`.`ID` = (SELECT MIN(`ec`.`ID`) FROM `event_clients` AS `ec` WHERE `ec`.`payment_details_id` = `payment_details`.`ID`)
+                        LEFT JOIN `clients` ON `clients`.`ID` = COALESCE(`event_clients`.`clientID`, `payment_details`.`clientID`)
                         LEFT JOIN `promo_code` ON `payment_details`.`promo_code_id` = `promo_code`.`ID`
                         LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = `purchase_history`.`ptRefKey` 
                         LEFT JOIN `product_type` ON `product_type`.`ID` = `product_type_relatives`.`PT_ID`
@@ -2322,12 +2334,11 @@ def edit_order_details():
         else:
             addressID = result['data'][0]['ID']
 
-    sqlQuery = "SELECT `clientID`, `contactID`, `Status` FROM `event_clients` WHERE `ID` = %s;"
+    sqlQuery = "SELECT `clientID`, `contactID` FROM `event_clients` WHERE `ID` = %s;"
     result = sqlSelect(sqlQuery, (ecID,), True)
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
     contactID = result['data'][0]['contactID']
-    Status = result['data'][0]['Status']
 
     sqlQuery = "UPDATE `client_contacts` SET `phoneID` = %s, `emailID` = %s, `addressID` = %s WHERE `ID` = %s;"
     sqlValTuple = (phoneID, emailID, addressID, contactID)
@@ -2341,14 +2352,25 @@ def edit_order_details():
     if result['status'] == '-1':
         return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
-    if Status != int(status):
+    # the order's current status lives in payment_details
+    result = sqlSelect("SELECT `Status` FROM `payment_details` WHERE `ID` = %s;", (pdID,), True)
+    if result['length'] == 0:
+        return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
+    currentStatus = result['data'][0]['Status']
+
+    # un-cancelled: take the order's stock again before changing the status
+    if currentStatus == 0 and status != '0':
+        if reservePUpdateP(pdID)['status'] == '0':
+            return jsonify({'status': "0", 'answer': gettext('Not enough stock to restore this order. The status was not changed.'), 'newCSRFtoken': newCSRFtoken})
+
+    if currentStatus != int(status):
         sqlQuery = "UPDATE `payment_details` SET `Status` = %s WHERE `ID` = %s;"
         sqlValTuple = (status, pdID)
         result = sqlUpdate(sqlQuery, sqlValTuple)
         if result['status'] == '-1':
             return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
-        # cancelled: return reserved quantities to stock and clear the buffer
+        # cancelled: return reserved quantities to stock (buffer rows are kept as released)
         if status == '0':
             deletePUpdateP(pdID)
 
@@ -2358,7 +2380,7 @@ def edit_order_details():
             if result['length'] == 0:
                 sqlQurty = "INSERT INTO `delivered` (`pdID`, `timestamp`) VALUES (%s, NOW());"
                 result = sqlInsert(sqlQurty, (pdID,))
-                if result['status'] == '-1':
+                if result['status'] == 0:
                     return jsonify({'status': "0", 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
             else:
                 sqlQuery = "UPDATE `delivered` SET `timestamp` = NOW() WHERE `pdID` = %s;"
@@ -5115,31 +5137,40 @@ def store():
 
 
 @app.route("/pt-specifications", methods=['GET', 'POST'])
+@app.route("/pt-specifications/<int:page>", methods=['GET'])
 @login_required
 @validate_request
-def pt_specifications():
+def pt_specifications(page=1):
     newCSRFtoken = generate_csrf()
     languageID = getLangID()
     if request.method == 'GET':
+        if page < 1:
+            return render_template('error.html', current_locale=get_locale())
+
+        rowsToSelect = (page - 1) * int(PAGINATION)
+        # Shared by the listing and its row count
+        ptsFrom = """`sub_product_specification`
+                    LEFT JOIN `sps_relatives` ON `sps_relatives`.`SPS_ID` = `sub_product_specification`.`ID`"""
+        where = "WHERE `sps_relatives`.`Language_ID` = %s"
         sqlQuery = f"""
-                    SELECT 
+                    SELECT
                         `sub_product_specification`.`ID`,
                         `sps_relatives`.`Ref_Key`,
                         `sub_product_specification`.`Name`,
                         `sub_product_specification`.`Status`
-                    FROM `sub_product_specification`
-                    LEFT JOIN `sps_relatives` ON `sps_relatives`.`SPS_ID` = `sub_product_specification`.`ID` 
-                    WHERE `sps_relatives`.`Language_ID` = %s
-                    ORDER BY `sub_product_specification`.`ID` DESC;
+                    FROM {ptsFrom}
+                    {where}
+                    ORDER BY `sub_product_specification`.`ID` DESC
+                    LIMIT {rowsToSelect}, {int(PAGINATION)};
                     """
         sqlValTuple = (languageID,)
         result = sqlSelect(sqlQuery, sqlValTuple, True)
-        numRows = totalNumRows('sub_product_specification')
+        numRows = countRows(ptsFrom, where, sqlValTuple)
         sideBar = side_bar_stuff()
         translated = False
         if getDefLang()['id'] != languageID:
             translated = True
-        return render_template('product-type-specifications.html', result=result, sideBar=sideBar, translated=translated, numRows=numRows, page=1,  pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), newCSRFtoken=newCSRFtoken, current_locale=get_locale())
+        return render_template('product-type-specifications.html', result=result, sideBar=sideBar, translated=translated, numRows=numRows, page=page,  pagination=int(PAGINATION), pbc=int(PAGINATION_BUTTONS_COUNT), newCSRFtoken=newCSRFtoken, current_locale=get_locale())
     else:
         if request.form.get('shTP') == '1':
             sqlQuery = """
@@ -6110,7 +6141,7 @@ def getSlides(PrID, languageID):
                         `product_type_relatives`.`PT_Ref_Key` AS `ptID`,
                         `product`.`Title` AS `prTitle`,
                         (SELECT COUNT(`ID`) FROM `product_type` WHERE `product_type`.`Product_ID` = %s) AS `ptCount`,
-                        (SELECT SUM(`Quantity`) FROM `quantity` WHERE `productTypeID` = `ptID` AND `expDate` >= CURDATE()) AS `Quantity`
+                        (SELECT SUM(`quantity`.`Quantity`) FROM `quantity` WHERE `quantity`.`ptRefKey` = `product_type_relatives`.`PT_Ref_Key` AND `quantity`.`expDate` >= CURDATE()) AS `Quantity`
                     FROM `product_type`
                         LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_ID` = `product_type`.`ID` 
                         LEFT JOIN `product_type_details` ON `product_type`.`ID` = `product_type_details`.`ProductTypeID`
@@ -6273,7 +6304,8 @@ def get_product_types_quantity():
         sqlValList.append(request.form.get('storeID'))
 
     if request.form.get('ptID'):
-        filters = filters + ' AND `productTypeID` = %s ' 
+        # the Product Types dropdown sends the PT_Ref_Key
+        filters = filters + ' AND `quantity`.`ptRefKey` = %s '
         sqlValList.append(request.form.get('ptID'))
 
     
@@ -7444,8 +7476,8 @@ def subscribe():
     if resultSCH['length'] > 0:
         if resultSCH['data'][0]['Status'] != 1:
             sqlUpdateS = "UPDATE `subscribers` SET `Status` = 1 WHERE `emailID` = %s;"
-            resultS = sqlUpdate(sqlUpdateS, (emailID))
-            if resultS['status'] == 0:
+            resultS = sqlUpdate(sqlUpdateS, (emailID,))
+            if resultS['status'] == '-1':
                 return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!'), 'newCSRFtoken': newCSRFtoken})
 
     else:

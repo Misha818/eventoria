@@ -172,7 +172,7 @@
             <div class="col-md-3 text-start">
                 <h5 class="mb-3">{{ _('Client') }}</h5>
                 <p>
-                    <strong>{{ result[0].FirstName + ' ' + result[0].LastName}}</strong><br>
+                    <strong>{{ [result[0].FirstName, result[0].LastName] | select | join(' ') or _('N/A') }}</strong><br>
                 </p>
                 
                 {% if (result[0].promo_code) %}

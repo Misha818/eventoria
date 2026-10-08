@@ -7732,6 +7732,61 @@ tr:nth-child(even) {
   color: #fff;
 }
 
+/* Shared pagination bar (templates/_pagination.html) */
+.pagination--wide,
+.pagination--narrow {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 0;
+}
+
+.pagination--wide > div,
+.pagination--wide > a,
+.pagination--narrow > div,
+.pagination--narrow > a {
+  min-width: 36px;
+  text-align: center;
+  user-select: none;
+}
+
+.pagination .pagination-gap {
+  padding: 6px 4px;
+  color: #666;
+}
+
+/* .pagination twice: Bootstrap (loaded after this file) also sets .pagination { display: flex } */
+.pagination.pagination--narrow {
+  display: none;
+}
+
+@media (max-width: 575.98px) {
+  .pagination.pagination--wide {
+    display: none;
+  }
+
+  .pagination.pagination--narrow {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  /* bigger tap targets, tighter spacing so the bar fits a 320px screen */
+  .pagination--narrow > div,
+  .pagination--narrow > a {
+    min-width: 40px;
+    min-height: 40px;
+    margin: 0 3px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .pagination--narrow .pagination-gap {
+    padding: 0 2px;
+  }
+}
+
 .avatar {
   width: 80px;
   height: 80px;
@@ -9228,4 +9283,323 @@ tr:nth-child(even) {
     .promo-edit-form .sliderA.checked:before {
         transform: translateX(20px);
     }
+}
+
+
+/* ---- Product page: /product/<id> (editor view) and /<product-url> (public view) ----
+   Both pages render the same slideshow.html block (#slides), the saved text (#editorContentParent)
+   and, on the public page, the other-products cards (#card-container-user).
+   The per-50px ladders above size these with fixed widths; these ID-scoped rules come last
+   and replace them with one fluid layout, so both pages behave the same at every width. */
+
+#editorContent img,
+#editorContent iframe,
+#editorContent video,
+#editorContent table {
+  max-width: 100%;
+}
+
+/* Every width: the slideshow and the text are centred on the page and never wider than the screen
+   (the text's base rule is a fixed 1620px with 245px of left padding).
+   The image starts 24px below the header (8px margin + 16px padding). --product-header-h is the
+   height of a fixed header the slideshow has to clear; each page template sets it for its header */
+#slides {
+  width: min(calc(100% - 24px), 1346px);
+  margin-top: calc(var(--product-header-h, 0px) + 8px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 16px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+#editorContentParent {
+  width: min(calc(100% - 24px), 960px);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+#editorContent {
+  width: 100% !important;
+  padding: 3px 16px;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+}
+
+#card-container-user {
+  width: min(calc(100% - 24px), 1200px);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+/* slideshow.js adds no-spss when the price on show has no specifications: no button to unfold them */
+#slides .spss-button.no-spss {
+  display: none !important;
+}
+
+/* From 960px there's room for the thumbnail column next to the full 750x560 image.
+   The ladders above cap the gallery at 65-87% of the row (narrower than the image, which then
+   spilled out and pushed the row off centre) and shrink the image to 705px at 1365-1410px */
+@media screen and (min-width: 960px) {
+  #slides .image-gallery {
+    flex: 0 0 auto;
+    max-width: none;
+    margin: 0 !important;
+  }
+
+  /* no bottom margin, so the gallery is exactly as tall as the image and the thumbnail column
+     can be stretched to match it */
+  #slides .slider {
+    width: 750px !important;
+    height: 560px !important;
+    margin-bottom: 0;
+  }
+
+  /* Thumbnail column: as tall as the image, 116px wide with a 16px gap before the image.
+     Every thumbnail gets the same 116x87 (4:3) box, so a wider slide (e.g. 16:9) no longer widens
+     the column and slides under the image. slideshow.js scrolls the column one window height at a
+     time and shows 5 per window, so each thumbnail's slot is exactly 1/5 of the window (cqh = % of
+     the window's height); the extra height goes into the gaps between thumbnails */
+  #slides .thumbnail-container {
+    flex: 0 0 116px;
+    width: 116px;
+    max-width: none;
+    height: 560px;
+    margin: 0 16px 0 0;
+  }
+
+  #slides .thumbnails-wrapper {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100% !important;
+    height: auto !important;
+    container-type: size;
+  }
+
+  #slides .thumbnails img {
+    display: block;
+    width: 116px;
+    height: 87px;
+    object-fit: cover;
+    margin: 0 0 calc(20cqh - 87px) 0 !important;
+  }
+
+  /* No prices: nothing goes beside the image, so it fills the row at 16:9 (the 4:3 slides are
+     cropped top and bottom by object-fit: cover), never shorter than 560px.
+     The thumbnail column stretches to the same height */
+  #slides.no-price {
+    width: min(calc(100% - 24px), 1346px);
+    align-items: stretch;
+  }
+
+  #slides.no-price .image-gallery {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  #slides.no-price .slider {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 560px;
+    aspect-ratio: 16 / 9;
+  }
+
+  #slides.no-price .thumbnail-container {
+    height: auto;
+  }
+}
+
+/* Wide screens: thumbnails | image | title and prices, side by side */
+@media screen and (min-width: 1366px) {
+  #slides {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  #slides .product-details {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0 0 0 24px;
+  }
+
+  #slides .prTitle {
+    margin: 0 0 10px 0;
+  }
+
+  #slides .productType {
+    width: 100%;
+    max-width: 475px;
+    margin: 5px 0 15px 0;
+  }
+
+  /* no prices: nothing to show beside the image, so the title goes under it, as on smaller screens */
+  #slides.no-price {
+    flex-wrap: wrap;
+  }
+
+  #slides.no-price .product-details {
+    flex: 1 1 100%;
+    margin: 16px 0 0 0;
+    text-align: center;
+  }
+
+  /* With prices the text lines up with the thumbnails and image above it, not the page centre:
+     the same box and padding as #slides, then the width of the thumbnail column
+     (116px + 16px gap) plus the 750px image */
+  #slides:not(.no-price) ~ #editorContentParent {
+    width: min(calc(100% - 24px), 1346px);
+    padding: 0 16px;
+  }
+
+  #slides:not(.no-price) ~ #editorContentParent #editorContent {
+    max-width: 882px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Narrower: the title and prices go under the image */
+@media screen and (max-width: 1365.98px) {
+  #slides {
+    width: min(calc(100% - 24px), 960px);
+  }
+
+  #slides .product-details {
+    flex: 1 1 100%;
+    width: 100%;
+    margin: 16px 0 0 0;
+    text-align: center;
+  }
+
+  #slides .productType {
+    width: 100%;
+    max-width: 560px;
+    margin: 5px auto 12px auto;
+  }
+
+  /* Everything in a price block is centred: the price name, price, stock note, Apply row and the
+     specification rows (each a column flexbox, title above text) */
+  #slides .productType,
+  #slides .productType > *,
+  #slides .productType .spss {
+    text-align: center;
+  }
+
+  #slides .productType > * {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  #slides .productType .spss {
+    align-items: center;
+  }
+
+  /* Specifications are folded behind the arrow button here. The older rule for this ends at
+     max-width: 1365px, which a fractional window width (about 1365.2px with display scaling)
+     slipped past */
+  #slides .spss-view {
+    display: none !important;
+  }
+
+  #slides .spss-button {
+    display: block !important;
+  }
+
+  /* slideshow.html gives the price-thumbnail strip an inline 18px left margin when its scroll
+     arrows are hidden, which put it 9px right of centre here */
+  #slides .price-thumbnails-wrapper {
+    margin-left: 0 !important;
+  }
+
+  /* the Apply row's items had right margins only, which pulled the row left of centre;
+     spacing them with a gap keeps the row centred */
+  #slides .cart-container {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 8px;
+    column-gap: 6px;
+  }
+
+  #slides .cart-container > * {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* Below this there's no room for the vertical thumbnail column: the arrows on the image
+   change slides, and the image scales with the screen at the desktop 750x560 proportions */
+@media screen and (max-width: 959.98px) {
+  #slides .thumbnail-container {
+    display: none !important;
+  }
+
+  #slides .image-gallery {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 750px;
+    margin: 0 !important;
+  }
+
+  #slides .slider {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 750 / 560;
+    margin: 0;
+  }
+
+  #slides .prTitle {
+    margin: 0 0 8px 0;
+    font-size: clamp(1.4em, 5vw, 2em);
+    line-height: 1.2;
+    overflow-wrap: break-word;
+  }
+
+  /* on a phone the price list scrolls with the page instead of in its own small box */
+  #slides .productType {
+    max-height: none;
+    overflow: visible;
+  }
+
+  #slides .thumbnail-containerX {
+    width: auto !important;
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  #slides {
+    width: calc(100% - 16px);
+    margin-top: calc(var(--product-header-h, 0px) + 12px);
+    padding: 12px;
+  }
+
+  #slides .productType {
+    font-size: 1.2em;
+  }
+
+  #editorContentParent {
+    width: calc(100% - 16px);
+  }
+
+  #editorContent {
+    padding: 3px 8px;
+    font-size: 1.1em;
+  }
+
+  #card-container-user {
+    width: calc(100% - 16px);
+    grid-template-columns: 1fr;
+  }
+}
+
+/* slideshow.js pages the price thumbnails by the wrapper's width and shows 3 of them
+   below a 475px screen, so the wrapper is exactly 3 thumbnails (81px each) wide there */
+@media screen and (max-width: 474.98px) {
+  #slides .price-thumbnails-wrapper {
+    width: 243px;
+  }
 }

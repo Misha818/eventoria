@@ -25,7 +25,8 @@
     let imgHeight = thumbnailImage ? thumbnailImage.offsetHeight : 0;
     let imgStyle = window.getComputedStyle(thumbnailImage);
     let marginBottom = imgStyle.marginBottom;
-    marginBottom = parseInt(marginBottom.replace("px", ""), 10);
+    // the gap between thumbnails can be fractional (it's sized from the column's height in CSS)
+    marginBottom = parseFloat(marginBottom);
 
     let itemHeight = imgHeight + marginBottom;
     let scrollTo = 0;
@@ -82,11 +83,22 @@
         
 
     function displaySize() {
-        thumbnailsWrapperHeight = document.querySelector('.thumbnails-wrapper').offsetHeight;
-        let imgHeight = thumbnailImage ? thumbnailImage.offsetHeight : 0;
-        let imgStyle = window.getComputedStyle(thumbnailImage);
-        let marginBottom = imgStyle.marginBottom;
-        marginBottom = parseInt(marginBottom.replace("px", ""), 10);
+        // The thumbnail column follows the main image's height, so its window and the thumbnail
+        // spacing change with the screen width: update the sizes the scrolling uses, and keep the
+        // column on the same thumbnails
+        // (on narrow screens the column is hidden and measures 0: keep the last sizes for when it's back)
+        let newWrapperHeight = document.querySelector('.thumbnails-wrapper').offsetHeight;
+        if (thumbnailImage && newWrapperHeight > 0) {
+            if (thumbnailsWrapperHeight > 0 && scrollTo > 0) {
+                scrollTo = scrollTo * newWrapperHeight / thumbnailsWrapperHeight;
+                thumbnailContainer.style.transform = `translateY(-${scrollTo}px)`;
+            }
+            thumbnailsWrapperHeight = newWrapperHeight;
+            imgHeight = thumbnailImage.offsetHeight;
+            imgStyle = window.getComputedStyle(thumbnailImage);
+            marginBottom = parseFloat(imgStyle.marginBottom);
+            itemHeight = imgHeight + marginBottom;
+        }
 
         // Price Thumbnails
         if (screen.width < 475) {
@@ -376,6 +388,17 @@
         });
 
         imgElement.classList.add('selectedThumbnail');
+        updateSpssButton();
+    }
+
+    // The show/hide-specifications button is only needed when the price on show has specifications
+    function updateSpssButton() {
+        const btn = document.querySelector('.spss-button');
+        if (!btn) {
+            return;
+        }
+        const shown = [...document.querySelectorAll('.productType')].find(block => block.style.display !== 'none');
+        btn.classList.toggle('no-spss', !(shown && shown.querySelector('.spss')));
     }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -426,6 +449,8 @@ document.addEventListener("DOMContentLoaded", function() {
             showImage(dataValue);
         }
     }
+
+    updateSpssButton();
 
   
 

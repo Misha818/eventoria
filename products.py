@@ -236,7 +236,7 @@ def edit_p_c_sql(categoryName, file, AltText, pc_id, image, categoryStatus, relI
     
 
     # new_id = '2'
-    if result['status'] == 1:
+    if result['status'] == '1':
         answer = gettext('Done!')
     else:
         answer = result['answer']

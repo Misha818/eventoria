@@ -20,6 +20,14 @@
             font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
+        /* The 60px public header is fixed up to 800px (styles.css); wider, it sits above the
+           page and the slideshow needs no room for it */
+        @media screen and (max-width: 800px) {
+            #slides {
+                --product-header-h: 60px;
+            }
+        }
+
     </style>
 
 {% endblock %}
