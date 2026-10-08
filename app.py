@@ -173,6 +173,9 @@ PAGINATION = os.getenv('PAGINATION')
 PAGINATION_BUTTONS_COUNT = os.getenv('PAGINATION_BUTTONS_COUNT')
 MAIN_CURRENCY = os.getenv('MAIN_CURRENCY')
 
+# MAX_ALLOWED_QUANTITY (from .env) is defined in sysadmin.py, which the checkout code there also uses
+from sysadmin import MAX_ALLOWED_QUANTITY
+
 SMAIL_API_KEY = os.getenv('SMAIL_API_KEY')
 SMAIL_API = os.getenv('SMAIL_API')
 
@@ -226,25 +229,33 @@ def csp_report():
     )
     return '', 204
 
+def get_active_role_id():
+    """The role the logged-in staff member is working as: the one picked with /setroll while they
+    still hold it, otherwise their highest role. Every page and endpoint uses this, so the
+    dashboard, the side bar and the data behind them always agree on the role, and a role taken
+    away from the position stops working straight away instead of lasting until logout."""
+    sqlQuery = """
+        SELECT `rol`.`ID`
+        FROM `stuff`
+            LEFT JOIN `position` ON `position`.`ID` = `stuff`.`PositionID`
+            LEFT JOIN `rol` ON find_in_set(`rol`.`ID`, `position`.`rolIDs`)
+        WHERE `stuff`.`ID` = %s AND `stuff`.`Status` = 1
+        ORDER BY `rol`.`ID` DESC;
+    """
+    result = sqlSelect(sqlQuery, (session.get('user_id'),), True)
+    roleIDs = [row['ID'] for row in result['data'] if row['ID'] is not None]
+    if not roleIDs:
+        return None
+
+    if session.get('roll_id') in roleIDs:
+        return session['roll_id']
+    return roleIDs[0]
+
 def side_bar_stuff():
     stuffID = session.get("user_id")
-    if session.get('roll_id'):
-        rollID = session.get('roll_id')
-    else:
-        sqlQueryRollID = """
-                  SELECT `rolIDS` FROM `position` 
-                    LEFT JOIN `stuff` ON `stuff`.`PositionID` = `position`.`ID`
-                WHERE `stuff`.`ID` = %s;
-            """
-        resultRollID = sqlSelect(sqlQueryRollID, (stuffID,), True)
-        if resultRollID['length'] == 0:
-            return render_template('error.html', current_locale=get_locale())
-
-        rollIDstr = resultRollID['data'][0]['rolIDS']  
-        if ',' in rollIDstr:
-            rollID = int(rollIDstr.split(',')[0])
-        else:
-            rollID = int(rollIDstr)
+    rollID = get_active_role_id()
+    if rollID is None:
+        return render_template('error.html', current_locale=get_locale())
 
     sqlQuery = f"""
     SELECT 
@@ -4754,11 +4765,10 @@ def stuff():
     if result['length'] == 0:
         return render_template('error.html', current_locale=get_locale())
 
-    g.rolls = result['data'] 
-    if session.get('roll_id'):
-        g.activeRoleID = session['roll_id']  
-    else:
-        g.activeRoleID = result['data'][0]['rolID']  
+    g.rolls = result['data']
+    g.activeRoleID = get_active_role_id()
+    if g.activeRoleID is None:
+        return render_template('error.html', current_locale=get_locale())
 
     sqlQueryActions = f"""  SELECT 
                                 `rol`.`ID` AS `rolID`,
@@ -4809,8 +4819,18 @@ def stuff():
         }
         # End of view file and data for affiliate Role
 
+    # Years for the dashboard charts' year filters: this year back to the year of the first order.
+    # datetime.now() is the clock /get-chart-data defaults to when no year is sent
+    chartYears = []
+    if g.activeRoleID == 4:
+        thisYear = datetime.now().year
+        resultFirstYear = sqlSelect("SELECT MIN(YEAR(`timestamp`)) AS `firstYear` FROM `payment_details`;", (), True)
+        firstYear = thisYear
+        if resultFirstYear['length'] > 0 and resultFirstYear['data'][0]['firstYear']:
+            firstYear = min(int(resultFirstYear['data'][0]['firstYear']), thisYear)
+        chartYears = list(range(thisYear, firstYear - 1, -1))
 
-    return render_template(view, result=result, resultActions=resultActions, resultP=resultP, resultRevardsList=json.dumps(resultRevardsList), supportedLangsData=supportedLangsData, currentDate=date.today(), newCSRFtoken=newCSRFtoken, languageID=getLangID(), current_locale=get_locale())
+    return render_template(view, result=result, resultActions=resultActions, resultP=resultP, resultRevardsList=json.dumps(resultRevardsList), supportedLangsData=supportedLangsData, currentDate=date.today(), newCSRFtoken=newCSRFtoken, languageID=getLangID(), chartYears=chartYears, current_locale=get_locale())
 
 
 @app.route('/affiliate/<affID>', methods=['GET'])
@@ -6440,6 +6460,11 @@ def analyse_cart_data(cartData):
     
     sqlValTuple = (languageID, languageID, languageID, findInSetPtIDs, languageID)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
+
+    # stock saved without a limit is capped at MAX_ALLOWED_QUANTITY (.env), like on the service page
+    for row in result['data']:
+        if row['maxAllowdQuantity'] is None:
+            row['maxAllowdQuantity'] = MAX_ALLOWED_QUANTITY
     cartMessage = [ 
                 gettext("You have already added this product to the basket. You can change the quantity if You would like to."),
                 generate_csrf(),
@@ -6572,6 +6597,11 @@ def get_pt_quantity():
     status, message = [1, '']
 
     if result['length'] > 0:
+        # stock saved without a limit is capped too, so the service page's quantity dropdown
+        # (which lists 1..maxQuantity) doesn't list every unit in stock
+        if result['data'][0]['maxQuantity'] is None:
+            result['data'][0]['maxQuantity'] = MAX_ALLOWED_QUANTITY
+
         if result['data'][0]['maxQuantity'] is not None:
             maxQuantity = result['data'][0]['maxQuantity']
             if float(maxQuantity) >= quantity:
@@ -6640,7 +6670,7 @@ def edit_store(quantity_pt_IDs=None):
                 return jsonify({'status': '0', 'answer': answer,  'newCSRFtoken': newCSRFtoken})
             
             if not request.form.get('maxQuantity').isdigit():
-                return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!') + 'sSSSDASDF',  'newCSRFtoken': newCSRFtoken})
+                return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!'),  'newCSRFtoken': newCSRFtoken})
 
             if int(request.form.get('maxQuantity')) < 1:
                 answer = gettext('Max Allowed Quantity should be greater than Zero')
@@ -6723,7 +6753,7 @@ def edit_store(quantity_pt_IDs=None):
 
         sideBar = side_bar_stuff()
 
-        return render_template('edit_store.html', resultQuantity=resultQuantity['data'],  storeData=storeData, storeID = resultQuantity['data'][0]['storeID'], dataLength=result['length'], prData=prData, ptID=ptID, languageID=languageID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
+        return render_template('edit_store.html', maxAllowedQuantity=MAX_ALLOWED_QUANTITY, resultQuantity=resultQuantity['data'],  storeData=storeData, storeID = resultQuantity['data'][0]['storeID'], dataLength=result['length'], prData=prData, ptID=ptID, languageID=languageID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale()) 
 
 
 
@@ -6760,7 +6790,7 @@ def add_to_store(ptID=None):
 
         sideBar = side_bar_stuff()
 
-        return render_template('add_to_store.html', storeData=storeData, dataLength=result['length'], prData=prData, ptID=ptID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
+        return render_template('add_to_store.html', maxAllowedQuantity=MAX_ALLOWED_QUANTITY, storeData=storeData, dataLength=result['length'], prData=prData, ptID=ptID, sideBar=sideBar, newCSRFtoken=newCSRFtoken, current_locale=get_locale())
     else:
 
         if not request.form.get('ptID') or request.form.get('ptID') == 'null':
@@ -6797,7 +6827,7 @@ def add_to_store(ptID=None):
                 return jsonify({'status': '0', 'answer': answer,  'newCSRFtoken': newCSRFtoken})
             
             if not request.form.get('maxQuantity').isdigit():
-                return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!') + 'sSSSDASDF',  'newCSRFtoken': newCSRFtoken})
+                return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!'),  'newCSRFtoken': newCSRFtoken})
 
             if int(request.form.get('maxQuantity')) < 1:
                 answer = gettext('Max Allowed Quantity should be greater than Zero')
@@ -6822,19 +6852,23 @@ def add_to_store(ptID=None):
         if result['status'] == 0:
             return jsonify({'status': '0', 'answer': gettext('Something went wrong. Please try again!'),  'newCSRFtoken': newCSRFtoken})
 
+        # The service this price belongs to: its ref key for the product page and its ID for the
+        # add-price page, taken from the current language's version when there is one
         sqlQueryPR_RefKey = """
-                        SELECT `product_relatives`.`P_Ref_Key`
+                        SELECT `product_relatives`.`P_Ref_Key`, `product_type`.`Product_ID`
                         FROM `product_type`
                             LEFT JOIN `product_type_relatives` ON `product_type_relatives`.`PT_Ref_Key` = %s
                             LEFT JOIN `product_relatives` ON `product_relatives`.`P_ID` = `product_type`.`Product_ID`
                         WHERE `product_type`.`ID` = `product_type_relatives`.`PT_ID` 
+                        ORDER BY `product_type_relatives`.`Language_ID` = %s DESC
                         LIMIT 1;
         """
-        resultPR_RefKey = sqlSelect(sqlQueryPR_RefKey, (ptID,), True)
+        resultPR_RefKey = sqlSelect(sqlQueryPR_RefKey, (ptID, getLangID()), True)
         prRefKey = resultPR_RefKey['data'][0]['P_Ref_Key']
+        prID = resultPR_RefKey['data'][0]['Product_ID']
         answer = gettext('Add more products?')
 
-        return jsonify({'status': '1', 'answer': answer, 'prRefKey': prRefKey, 'newCSRFtoken': newCSRFtoken})
+        return jsonify({'status': '1', 'answer': answer, 'prRefKey': prRefKey, 'prID': prID, 'newCSRFtoken': newCSRFtoken})
 
 
 @app.route("/create-promo-code", methods=["GET", "POST"])
@@ -7318,11 +7352,13 @@ def check_pt_quantity():
     sqlQueryMax = "SELECT `maxQuantity` FROM `quantity` WHERE `ptRefKey` = %s AND `maxQuantity` IS NOT NULL AND `expDate` >= CURDATE()  AND `Status` = 1 ORDER BY `maxQuantity` DESC LIMIT 1;"
     sqlValTupleMax = (ptID,)
     resultMax = sqlSelect(sqlQueryMax, sqlValTupleMax, True)
+    # stock saved without a limit is capped at MAX_ALLOWED_QUANTITY (.env)
+    maxQuantity = MAX_ALLOWED_QUANTITY
     if resultMax['length'] > 0:
         maxQuantity = resultMax['data'][0]['maxQuantity']
-        if maxQuantity < int(num):
-            answer = gettext("Maximum available quantity for single purchase is ") + str(maxQuantity)
-            return jsonify({'status': '2', 'max': maxQuantity, 'answer': answer, 'newCSRFtoken': newCSRFtoken})
+    if maxQuantity < int(num):
+        answer = gettext("Maximum available quantity for single purchase is ") + str(maxQuantity)
+        return jsonify({'status': '2', 'max': maxQuantity, 'answer': answer, 'newCSRFtoken': newCSRFtoken})
 
     if int(result['data'][0]['Quantity']) == 0:
         maxQuantity = result['data'][0]['Quantity']
@@ -7630,11 +7666,19 @@ ORDER BY `product`.`Order`, `product_type`.`Order`;   """
     # sqlValTuple = (prID, languageID)
     sqlValTuple = (prID,)
     result = sqlSelect(sqlQuery, sqlValTuple, True)
+
+    # stock saved without a limit is capped at MAX_ALLOWED_QUANTITY (.env), like on the service page
+    for row in result['data']:
+        if row['maxAllowdQuantity'] is None:
+            row['maxAllowdQuantity'] = MAX_ALLOWED_QUANTITY
     if result['length'] == 0:
         return jsonify({'status': "0", 'answer': gettext("Out of stock."), 'newCSRFtoken': newCSRFtoken})
     
     return jsonify({'status': "1", 'data': result['data'], 'newCSRFtoken': newCSRFtoken})
 
+
+# Month values the dashboard charts can filter by (DATE_FORMAT(..., '%m'))
+CHART_MONTHS = {f'{m:02d}' for m in range(1, 13)}
 
 @app.route("/get-chart-data", methods=["POST"])
 @login_required
@@ -7643,95 +7687,101 @@ def get_chart_data():
  
     newCSRFtoken = generate_csrf()
     languageID = getLangID()
-    if request.form.get('languageID'):
+    if request.form.get('languageID', '').isdigit():
         if int(request.form.get('languageID')) in getSupportedLangIDs():
             languageID = int(request.form.get('languageID'))
 
     chartData = {}
-    if request.form.get('affiliates'):
+    # the role the dashboard was shown for (session['roll_id'] alone is empty until a role is picked)
+    activeRoleID = get_active_role_id()
+
+    # only the Sales and Marketing dashboard (role 4) asks for the affiliate list
+    if request.form.get('affiliates') and activeRoleID == 4:
         affiliates = get_affiliates()
         chartData['affiliates'] = affiliates['data']
 
-    if session.get('roll_id') == 4:
-        if request.form.get('persons') == '1':
-            orderBy = "ORDER BY `value` DESC"
-            monthFilter, personFilter, monthQuery, month = ['', '', '', '']
-            # Prepare protoTuple for SQL parameters
-            protoTuple = [datetime.now().year]
-            yearFilter = "AND YEAR(`payment_details`.`timestamp`) = %s "
-            if request.form.get('year'):
-                year = request.form.get('year')
-                protoTuple[0] = year
-            
-            if request.form.get('month'):
-                month = request.form.get('month')
-                protoTuple.append(month)
-                monthQuery = "DATE_FORMAT(`payment_details`.`timestamp`, '%m') AS `month`,"
-                month = "`month`,"
-                monthFilter = " AND DATE_FORMAT(`payment_details`.`timestamp`, '%m') = %s "
+    if activeRoleID == 4:
+        # Filters can hold several values each (the dashboard's checkbox dropdowns send one
+        # form field per ticked option); anything that isn't a valid month or ID is ignored
+        months = sorted({m for m in request.form.getlist('month') if m in CHART_MONTHS})
+        monthFilter = ''
+        if months:
+            monthFilter = " AND DATE_FORMAT(`payment_details`.`timestamp`, '%m') IN (" + ', '.join(['%s'] * len(months)) + ") "
 
-            if request.form.get('person'):
-                person = request.form.get('person')
-                if person == '0':
-                    personFilter = " AND `payment_details`.`affiliateID` IS NULL "
-                else:
-                    protoTuple.append(person)
-                    personFilter = " AND `payment_details`.`affiliateID` = %s "
-                
-                if not request.form.get('month'):
-                    monthQuery = "DATE_FORMAT(`payment_details`.`timestamp`, '%m') AS `month`,"
-                    month = "`month`,"
-                    orderBy = "ORDER BY `month`"
+        year = datetime.now().year
+        # a 4-digit year, otherwise the current year stays
+        if request.form.get('year', '').isdigit() and len(request.form.get('year')) == 4:
+            year = request.form.get('year')
+        yearFilter = "AND YEAR(`payment_details`.`timestamp`) = %s "
+
+        if request.form.get('persons') == '1':
+            # '0' stands for orders without an affiliate (sold by Eventoria itself)
+            persons = list(dict.fromkeys(p for p in request.form.getlist('person') if p.isdigit()))
+            affiliateIDs = [p for p in persons if p != '0']
+            personConditions = []
+            protoTuple = [year] + months
+            if affiliateIDs:
+                personConditions.append("`payment_details`.`affiliateID` IN (" + ', '.join(['%s'] * len(affiliateIDs)) + ")")
+                protoTuple += affiliateIDs
+            if '0' in persons:
+                personConditions.append("`payment_details`.`affiliateID` IS NULL")
+            personFilter = ''
+            if personConditions:
+                personFilter = " AND (" + " OR ".join(personConditions) + ") "
+
+            # One affiliate: a bar per month. None or several: a bar per affiliate
+            # (the bars are named by month there, so the affiliate's name isn't selected)
+            if len(persons) == 1:
+                chartData['groupBy'] = 'month'
+                selectGroup = "DATE_FORMAT(`payment_details`.`timestamp`, '%m') AS `month`,"
+                groupBy = "GROUP BY `month`"
+                orderBy = "ORDER BY `month`"
+            else:
+                chartData['groupBy'] = 'affiliate'
+                selectGroup = "`payment_details`.`affiliateID`, CONCAT(`stuff`.`FirstName`, ' ', `stuff`.`LastName`) AS `label`,"
+                groupBy = "GROUP BY `payment_details`.`affiliateID`, `label`"
+                orderBy = "ORDER BY `value` DESC"
 
             filters = yearFilter + monthFilter + personFilter
             sqlQuery = f"""
                 SELECT
-                    DATE_FORMAT(`payment_details`.`timestamp`, '%Y') AS `year`,
-                    {monthQuery}            
-                    -- DATE_FORMAT(`payment_details`.`timestamp`, '%M') AS `monthname`,
-                    CONCAT(`stuff`.`FirstName`, ' ', `stuff`.`LastName`) AS `label`,
+                    {selectGroup}
                     SUM(`payment_details`.`final_price`) AS `value`
                 FROM `payment_details`
                     LEFT JOIN `stuff` ON `stuff`.`ID` = `payment_details`.`affiliateID`
                 WHERE  `payment_details`.`Status` = 5
                     {filters}
-                    GROUP BY `year`, {month} `label`
+                    {groupBy}
                     {orderBy}
                 """
             sqlValTuple = tuple(protoTuple)
             result = sqlSelect(sqlQuery, sqlValTuple, True)
             chartData['data'] = result['data']
-           
+
         if request.form.get('sales') == '1':
-            label_value = "`product`.`Title` AS `label`, COUNT(`product`.`ID`) AS `value`"
-            orderBy = "ORDER BY `value` DESC"
             limit = 5
             LIMIT = ""
-            monthFilter, productFilter, monthQuery, month = ['', '', '', '']
-            # Prepare protoTuple for SQL parameters
-            protoTuple = [languageID, datetime.now().year]
-            yearFilter = "AND YEAR(`payment_details`.`timestamp`) = %s "
-            if request.form.get('year'):
-                year = request.form.get('year')
-                protoTuple[1] = year
-            
-            if request.form.get('month'):
-                month = request.form.get('month')
-                protoTuple.append(month)
-                monthFilter = " AND DATE_FORMAT(`payment_details`.`timestamp`, '%m') = %s "
+            products = list(dict.fromkeys(p for p in request.form.getlist('product') if p.isdigit()))
+            protoTuple = [languageID, year] + months
 
+            productFilter = ''
+            if products:
+                productFilter = " AND `product`.`ID` IN (" + ', '.join(['%s'] * len(products)) + ") "
+                protoTuple += products
 
-            if request.form.get('product'):
-                productID = request.form.get('product')
+            # One service: a slice per price. None or several: a slice per service
+            if len(products) == 1:
+                chartData['groupBy'] = 'price'
                 label_value = "`product_type`.`Title` AS `label`, COUNT(`product_type`.`ID`) AS `value`"
-                
-                productFilter = " AND `product`.`ID` = %s "
-                protoTuple.append(productID)
-               
+                groupBy = "GROUP BY `product_type`.`ID`, `label`"
+            else:
+                chartData['groupBy'] = 'product'
+                label_value = "`product`.`Title` AS `label`, COUNT(`product`.`ID`) AS `value`"
+                groupBy = "GROUP BY `product`.`ID`, `label`"
+
             if request.form.get('top') and request.form.get('top').isdigit():
                 LIMIT = "LIMIT %s"
                 protoTuple.append(int(request.form.get('top')))
-
 
             filters = yearFilter + monthFilter + productFilter
             sqlQuery = f"""
@@ -7745,7 +7795,7 @@ def get_chart_data():
                 WHERE  `payment_details`.`Status` = 5
                     AND `product_type_relatives`.`Language_ID` = %s
                     {filters}
-                GROUP BY `label`
+                {groupBy}
                 ORDER BY `value` DESC
                 {LIMIT};
             """
@@ -7766,7 +7816,7 @@ def get_chart_data():
             resultP = sqlSelect(sqlQueryP, sqlValTupleP, True)
             chartData['products'] = resultP['data']
                    
-    if session.get('roll_id') == 3:
+    if activeRoleID == 3:
         pass
 
     return jsonify({'status': "1", 'chartData': chartData, 'answer': gettext('Done!'), 'newCSRFtoken': newCSRFtoken})

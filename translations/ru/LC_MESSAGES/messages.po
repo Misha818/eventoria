@@ -324,7 +324,7 @@ msgid "Please choose at least on role"
 msgstr "Пожалуйста, выберите хотя бы одну роль!"
 
 msgid "Add more products?"
-msgstr "Сервис успешно добавлен. Хотите добавить еще один сервис?"
+msgstr "Количество успешно добавлено. Хотите добавить еще одну цену для этой услуги?"
 
 #: app.py:4107 templates/affiliates.html:23 templates/affiliates.html:67
 #: templates/affiliates.html:74 templates/confirmation-page.html:351
@@ -2767,6 +2767,34 @@ msgstr "Фильтр по сотруднику"
 #: templates/transfers.html:156
 msgid "Staff member"
 msgstr "Сотрудник"
+
+#: templates/admin_panel.html
+msgid "All Products"
+msgstr "Все услуги"
+
+#: templates/admin_panel.html
+msgid "selected"
+msgstr "выбрано"
+
+#: templates/admin_panel.html
+msgid "Search..."
+msgstr "Поиск..."
+
+#: templates/admin_panel.html
+msgid "Clear"
+msgstr "Очистить"
+
+#: templates/admin_panel.html
+msgid "No matches"
+msgstr "Нет совпадений"
+
+#: templates/admin_panel.html
+msgid "Year"
+msgstr "Год"
+
+#: templates/admin_panel.html
+msgid "Months"
+msgstr "Месяцы"
 
 #~ msgid "Dashboards"
 #~ msgstr "Панели управления"

@@ -2972,3 +2972,31 @@ msgstr "Download all"
 msgid "Add more products?"
 msgstr "Add another price?"
 
+#: templates/admin_panel.html
+msgid "All Products"
+msgstr "All Services"
+
+#: templates/admin_panel.html
+msgid "selected"
+msgstr "selected"
+
+#: templates/admin_panel.html
+msgid "Search..."
+msgstr "Search..."
+
+#: templates/admin_panel.html
+msgid "Clear"
+msgstr "Clear"
+
+#: templates/admin_panel.html
+msgid "No matches"
+msgstr "No matches"
+
+#: templates/admin_panel.html
+msgid "Year"
+msgstr "Year"
+
+#: templates/admin_panel.html
+msgid "Months"
+msgstr "Months"
+

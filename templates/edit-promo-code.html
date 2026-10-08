@@ -126,6 +126,24 @@
     font-weight: bold;
     }
 
+    /* Partial tick: some of the product's prices are selected (set in the page script) */
+    .parent-checkbox:indeterminate {
+        background-color: #4CAF50;
+        border-color: #4CAF50;
+    }
+
+    .parent-checkbox:indeterminate::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 2px;
+        background-color: white;
+        border-radius: 1px;
+        transform: translate(-50%, -50%);
+    }
+
     .revard-input-parent, .revard-input {
         padding: 3px!important;
         width: 50px!important;
@@ -148,7 +166,7 @@
         {% if affiliates.length > 0 %}
 
         <label for="affiliates" class="field-label">{{ _('Affiliate') }}</label>
-        <select name="affiliates" id="affiliates" class="styled-select">
+        <select name="affiliates" id="affiliates" class="styled-select" data-search="{{ _('Search...') }}" data-no-matches="{{ _('No matches') }}">
             <option value="">{{ _('Select an affiliate') }}</option>
             {% for row in affiliates.data %}
                 <option value="{{ row['ID'] }}"  {{ "selected" if row['ID'] == affiliateID else "" }}>{{ row['Firstname'] + ' ' + row['Lastname'] + ' ' + row['email'] }}</option>
@@ -165,7 +183,7 @@
             <div class="dropdown-label" id="selected-label" role="button" tabindex="0" aria-controls="parent-options" aria-expanded="false"><span>{{ _('Products') }}</span><i class="fas fa-chevron-down" aria-hidden="true"></i></div>
 
             <!-- Parents list (hidden initially) -->
-            <div class="dropdown-options hidden" id="parent-options"></div>
+            <div class="dropdown-options hidden" id="parent-options" data-search="{{ _('Search...') }}" data-no-matches="{{ _('No matches') }}"></div>
         </div>
         <!-- End of drop-down container -->
 
@@ -1808,8 +1826,9 @@ saveButton.addEventListener('click', function (event) {
 
                                     });
 
+                                    // a reward typed for the whole product applies to each of its prices
                                     if (parentElement.querySelector('.revard-input-parent').value) {
-                                        inputElement.value = grandpa.querySelector('.revard-input-parent').value;  
+                                        inputElement.value = parentElement.querySelector('.revard-input-parent').value;
                                     }
 
                                     // Create the select element
@@ -1913,6 +1932,39 @@ saveButton.addEventListener('click', function (event) {
         });
     });
 
+    // A product whose prices are only partly selected gets a partial tick (–) on its checkbox.
+    // It's only a visual state: a ticked product checkbox means "one discount for all of its
+    // prices", and saving would then replace the per-price discounts, so the box stays unticked
+    const productRows = () => document.querySelectorAll('#parent-options .option[id^="parent_"]');
+
+    function updatePartialTick(productRow) {
+        const parentCheckbox = productRow.querySelector('.parent-checkbox');
+        if (!parentCheckbox) {
+            return;
+        }
+        const anyPriceTicked = [...productRow.querySelectorAll('.child-checkbox')].some(cb => cb.checked);
+        parentCheckbox.indeterminate = !parentCheckbox.checked && anyPriceTicked;
+    }
+
+    // Open the price lists that hold this promo code's discounts, so they show without clicking
+    productRows().forEach(productRow => {
+        updatePartialTick(productRow);
+        if (productRow.querySelector('.child-checkbox:checked')) {
+            productRow.querySelector('.child-options').classList.remove('hidden');
+        }
+    });
+
+    // keep the partial tick right as prices are ticked, unticked or given a value (typing a
+    // discount or reward ticks the price), and when the product checkbox itself is used
+    ['change', 'input', 'click'].forEach(eventName => {
+        document.getElementById('parent-options').addEventListener(eventName, event => {
+            const productRow = event.target.closest('.option[id^="parent_"]');
+            if (productRow) {
+                updatePartialTick(productRow);
+            }
+        });
+    });
+
     if ("{{ affiliateID }}" > 0) {
         revardBoxChilds = document.querySelectorAll('.revard-box-child');
         revardBoxChilds.forEach(revardBox => {
@@ -1997,6 +2049,8 @@ saveButton.addEventListener('click', function (event) {
 </script>
 
 <script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/drop-down-tree-edit-promo-code.js')}}"></script>
+<!-- Search in the Affiliate and Services dropdowns -->
+<script nonce="{{ csp_nonce() }}" type="text/javascript" src="{{ url_for('static', filename='JS/promo-search.js')}}"></script>
 
 <!-- 3. Bootstrap 5 JS (Popper included) -->
 <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -44,6 +44,16 @@ os.makedirs(target_directory, exist_ok=True)
 
 MAIN_CURRENCY = os.getenv('MAIN_CURRENCY')
 
+# The most of one price that a single purchase may take (MAX_ALLOWED_QUANTITY in .env).
+# Add to Store offers it as the stock's limit, and stock saved without a limit is capped at it
+# everywhere a purchase is checked; otherwise the quantity dropdown lists every unit in stock
+try:
+    MAX_ALLOWED_QUANTITY = int(os.getenv('MAX_ALLOWED_QUANTITY', '20'))
+except ValueError:
+    MAX_ALLOWED_QUANTITY = 20
+if MAX_ALLOWED_QUANTITY < 1:
+    MAX_ALLOWED_QUANTITY = 20
+
 def action_info():
     return session.get('action_info')
 
@@ -1182,9 +1192,10 @@ def insertIntoBuffer(data, pdID, smthWrong, languageID, paymentMethod, priceStat
         for checkR in result['data']:
             if checkRow['ptID'] == checkR['ptID']:
                 QUANTITY = checkRow['quantity']
-                maxAllowdQuantity = checkR['totalQuantity']
-                if checkR['maxQuantity'] is not None:
-                    maxAllowdQuantity = checkR['maxQuantity']
+                # the stock's own limit, or MAX_ALLOWED_QUANTITY when it was saved without one,
+                # and never more than is in stock
+                purchaseLimit = checkR['maxQuantity'] if checkR['maxQuantity'] is not None else MAX_ALLOWED_QUANTITY
+                maxAllowdQuantity = min(checkR['totalQuantity'], purchaseLimit)
 
                 if maxAllowdQuantity < QUANTITY:  
                     print('buffer_2')

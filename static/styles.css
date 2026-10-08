@@ -9184,6 +9184,138 @@ tr:nth-child(even) {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* ---- Search in the promo code forms (static/JS/promo-search.js) ---- */
+.promo-edit-form [hidden] {
+    display: none !important;
+}
+
+.promo-edit-form .search-select-input,
+.promo-edit-form .services-search-input {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 15px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.promo-edit-form .search-select-input:focus,
+.promo-edit-form .services-search-input:focus {
+    outline: none;
+    border-color: #2A9D8F;
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.18);
+}
+
+/* Services: the search box stays at the top while the list scrolls */
+.promo-edit-form .services-search {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    padding: 8px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.promo-edit-form .services-search-empty,
+.promo-edit-form .search-select-empty {
+    padding: 10px 12px;
+    color: #8a8a8a;
+}
+
+/* Affiliate: a button showing the choice, opening a searchable list */
+.promo-edit-form .search-select {
+    position: relative;
+    width: 100%;
+}
+
+.promo-edit-form .search-select-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #6b6b6b;
+    text-align: left;
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.promo-edit-form .search-select.has-value .search-select-toggle {
+    color: #333;
+}
+
+.promo-edit-form .search-select-toggle:focus-visible,
+.promo-edit-form .search-select.is-open .search-select-toggle {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+.promo-edit-form .search-select-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.promo-edit-form .search-select-toggle i {
+    flex-shrink: 0;
+    color: #E76F51;
+    transition: transform 0.2s ease;
+}
+
+.promo-edit-form .search-select.is-open .search-select-toggle i {
+    transform: rotate(180deg);
+}
+
+.promo-edit-form .search-select-panel {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.promo-edit-form .search-select-list {
+    max-height: 260px;
+    margin: 6px 0 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.promo-edit-form .search-select-list li {
+    padding: 9px 10px;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.promo-edit-form .search-select-list li:hover,
+.promo-edit-form .search-select-list li.is-active {
+    background-color: #f4f2ee;
+}
+
+.promo-edit-form .search-select-list li[aria-selected="true"] {
+    font-weight: 600;
+    color: #264653;
+}
+
 .promo-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;

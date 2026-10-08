@@ -2054,7 +2054,7 @@ msgid "Activities"
 msgstr "Թրեյնինգներ"
 
 msgid "Add more products?"
-msgstr "Քանակը հաջողությամբ ավելացվեց։ Ցանկանու՞մ եք ավելացնել այլ ծառայությունների քանակներ"
+msgstr "Քանակը հաջողությամբ ավելացվեց։ Ցանկանու՞մ եք ավելացնել ևս մեկ գին այս ծառայության համար"
 
 #: templates/index.html:38
 msgid "Collaboration"
@@ -2999,3 +2999,32 @@ msgstr "Փոստարկղ"
 
 msgid "Add Discount Rate"
 msgstr "Նշել զեղչի տոկոսադրույքը"
+
+#: templates/admin_panel.html
+msgid "All Products"
+msgstr "Բոլոր ծառայությունները"
+
+#: templates/admin_panel.html
+msgid "selected"
+msgstr "ընտրված"
+
+#: templates/admin_panel.html
+msgid "Search..."
+msgstr "Որոնել..."
+
+#: templates/admin_panel.html
+msgid "Clear"
+msgstr "Մաքրել"
+
+#: templates/admin_panel.html
+msgid "No matches"
+msgstr "Համընկնումներ չկան"
+
+#: templates/admin_panel.html
+msgid "Year"
+msgstr "Տարի"
+
+#: templates/admin_panel.html
+msgid "Months"
+msgstr "Ամիսներ"
+

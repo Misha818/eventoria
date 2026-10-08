@@ -174,7 +174,9 @@
 
         <div>
             <label class="checkbox-container" for="maxQuantityCheckbox">
-                <input type="checkbox" id="maxQuantityCheckbox" aria-controls="maxQuantity">
+                <!-- ticked by default with MAX_ALLOWED_QUANTITY from .env: without a limit the service page
+                     offers every unit in stock in its quantity dropdown -->
+                <input type="checkbox" id="maxQuantityCheckbox" aria-controls="maxQuantity" checked>
                 <span class="checkmark"></span>
                 <span>{{ _('Max allowed quantity to purchase') }}</span>
               </label>
@@ -188,7 +190,8 @@
                 class="store-quantity"
                 id="maxQuantity"
                 inputmode="numeric"
-                disabled
+                min="1"
+                value="{{ maxAllowedQuantity }}"
             >
         </div>
             
@@ -209,7 +212,7 @@
     checkbox.addEventListener('change', function() {
         if (this.checked) {
         inputField.disabled = false;
-        inputField.value = 20;
+        inputField.value = {{ maxAllowedQuantity | tojson }};
         } else {
             inputField.disabled = true;
             inputField.value = '';
@@ -267,10 +270,13 @@ saveButton.addEventListener('click', function (event) {
             mistakesDiv.innerHTML = ''; // Clear previous messages
 
             if (response.status === '1') {
+                // "Add another price?": OK opens the add-price page of this service,
+                // Cancel goes to the service's page
                 let confirmed = window.confirm(response.answer);
-                if (!confirmed) {
-                    let new_location = window.location.origin + '/product/' + response.prRefKey;
-                    window.location.href = new_location;
+                if (confirmed) {
+                    window.location.href = window.location.origin + '/add-price/' + response.prID;
+                } else {
+                    window.location.href = window.location.origin + '/product/' + response.prRefKey;
                 }
             }
 

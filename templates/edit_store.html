@@ -202,7 +202,8 @@
     // Max quantity checkbox
     const checkbox = document.getElementById('maxQuantityCheckbox');
     const inputField = document.getElementById('maxQuantity');
-    let inputFieldValue = 20;
+    // offered when the box is ticked on stock saved without a limit (MAX_ALLOWED_QUANTITY in .env)
+    let inputFieldValue = {{ maxAllowedQuantity | tojson }};
     checkbox.addEventListener('change', function() {
         if (this.checked) {
         inputField.disabled = false;
